@@ -1,0 +1,4 @@
+//npm.pkg.github.com/:_authToken=XXXX
+@nkmr-lab:registry=https://npm.pkg.github.com/
+
+## .npmrcファイルを作成し，上記をコピーしてXXXXにトークンをかく
