@@ -9,6 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/icons-material": "^5.11.9",
+    "@mui/material": "^5.11.9",
     "@nkmr-lab/average-figure-drawer": "^0.7.0",
     "@types/react-router-dom": "^5.3.3",
     "react": "^18.2.0",

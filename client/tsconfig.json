@@ -19,6 +19,7 @@
     "paths": {
       "@/*": ["src/*"]
     }, // 絶対パスでのimportを可能に
+    "jsxImportSource": "@emotion/react"
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
