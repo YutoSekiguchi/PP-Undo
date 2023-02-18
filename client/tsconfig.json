@@ -15,7 +15,10 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": "src" // 絶対パスでのimportを可能に
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }, // 絶対パスでのimportを可能に
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

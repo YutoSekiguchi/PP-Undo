@@ -1,6 +1,6 @@
 import React from "react";
 import { Drawer, Figure, Stroke } from "@nkmr-lab/average-figure-drawer";
-import { DrawerConfig } from "configs/DrawerConfig";
+import { DrawerConfig } from "@/configs/DrawerConfig";
 
 export const Home:React.FC =() => {
 
