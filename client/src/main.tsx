@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { Provider } from "jotai";
 import { RouterConfig } from '@/configs/RouterConfig'
 import './App.css'
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -24,8 +25,10 @@ const darkTheme = createTheme({
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <RouterConfig />
+      <Provider>
+        <CssBaseline />
+        <RouterConfig />
+      </Provider>
     </ThemeProvider>
   </React.StrictMode>,
 )
