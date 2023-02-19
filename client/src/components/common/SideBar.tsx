@@ -1,4 +1,7 @@
 import React from "react";
+import { Link, useLocation, Location } from "react-router-dom";
+import { SideBarMenuType } from "@/@types/common";
+import { notShowPathList } from "@/configs/NotShowPath";
 import { 
   Box,
   List,
@@ -15,7 +18,8 @@ import {
 } from "@mui/icons-material"
 
 export const SideBar:React.FC =() => {
-  const menuList = [
+  const location: Location = useLocation();
+  const menuList: SideBarMenuType[] = [
     {
       label: "Home",
       icon: <HomeOutlined />
@@ -36,6 +40,7 @@ export const SideBar:React.FC =() => {
 
   return (
     <>
+    {!notShowPathList.includes(location.pathname) &&
       <Box
         sx={{ width: 250 }}
         // role="presentation"
@@ -43,16 +48,19 @@ export const SideBar:React.FC =() => {
       <List>
         {menuList.map((menu, index) => (
           <ListItem key={index} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                { menu.icon }
-              </ListItemIcon>
-              <ListItemText primary={menu.label} />
-            </ListItemButton>
+            <Link to="/note">
+              <ListItemButton>
+                <ListItemIcon>
+                  { menu.icon }
+                </ListItemIcon>
+                <ListItemText primary={menu.label} />
+              </ListItemButton>
+            </Link>
           </ListItem>
         ))}
       </List>
     </Box>
+    }
     </>
   );
 }
