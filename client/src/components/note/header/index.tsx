@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Logo from '@/assets/logo.png'
 import { ColorButton } from "./ColorButton";
 import { Link } from "react-router-dom";
@@ -9,9 +9,23 @@ import {
   Typography,
   Paper
 } from "@mui/material";
+import { PenColorType } from "@/@types/note";
+import { penColorList } from "@/configs/PenColorConfig";
 
 export const NoteHeader:React.FC =() => {
-  const colorList: string[] = ['#000000', '#808080', '#D9D9D9', '#1C8CFF', '#FF1A40', '#2BD965', '#FFDD33'];
+  const [colorList, setColorList] = useState<PenColorType[]>(penColorList);
+
+  const colorChange = (index: number) => {
+    let tmp = colorList.slice(0, colorList.length); ;
+    for (let i=0; i<colorList.length; i++) {
+      if (i == index) {
+        tmp[i].useable = true;
+      } else {
+        tmp[i].useable = false;
+      }
+    }
+    setColorList(tmp);
+  }
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -34,13 +48,17 @@ export const NoteHeader:React.FC =() => {
             </Box>
 
             <Box sx={{ display: "flex", alignItems: "center" }}>
-            {colorList.map((label, index) => (
+            {colorList.map((el, index) => (
               <Box 
-                // onClick={() => buttonClick(label, index)} 
                 key={index}
                 className='my-auto'
               >
-                <ColorButton buttonColor={label} />
+                <ColorButton
+                  buttonColor={el.penColor}
+                  isChoice={el.useable}
+                  colorChange={colorChange}
+                  index={index}
+                />
               </Box>
             ))}
             </Box>
