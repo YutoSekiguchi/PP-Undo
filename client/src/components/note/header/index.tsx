@@ -27,6 +27,7 @@ export const NoteHeader:React.FC =() => {
     }
     setColorList(tmp);
   }
+  
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
