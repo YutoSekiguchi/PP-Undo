@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Logo from '@/assets/logo.png'
 import { ColorButton } from "./ColorButton";
+import { UndoButton } from "./UndoButton";
 import { Link } from "react-router-dom";
 import { 
   Box,
@@ -63,7 +64,9 @@ export const NoteHeader:React.FC =() => {
             ))}
             </Box>
             
-            <Button variant="outlined" color="inherit">Login</Button>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <UndoButton />
+            </Box>
           </Toolbar>
         </Paper>
       </Box>

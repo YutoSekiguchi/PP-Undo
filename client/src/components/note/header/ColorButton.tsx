@@ -21,7 +21,7 @@ export const ColorButton: React.FC<Props> = (props) => {
     margin: "0 3px",
     border: "1px solid gray",
     cursor: "pointer",
-    boxShadow: `0 0 ${isChoice? "8px": "0px"} #fff`
+    boxShadow: `0 0 ${isChoice? "8px": "0px"} #fff`,
   }
   
   const changeColor = (color: string) => {

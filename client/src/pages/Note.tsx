@@ -7,11 +7,12 @@ import {
   Box 
 } from "@mui/material";
 import { useAtom } from 'jotai'
-import { drawerAtom } from "@/infrastructures/jotai/Drawer";
+import { drawerAtom, drawerNumOfStrokeAtom } from "@/infrastructures/jotai/Drawer";
 
 export const Note:React.FC =() => {
   const [noteSize, setNoteSize] = useState<NoteSizeType>({width: "100%", height: "800px"})
   const [drawer, setDrawer] = useAtom<any, any, any>(drawerAtom);
+  const [, setNumOfStroke] = useAtom(drawerNumOfStrokeAtom);
 
   const drawers: any = {};
 
@@ -36,16 +37,28 @@ export const Note:React.FC =() => {
       drawers["drawer"] = new Drawer("#drawer", DrawerConfig);
       setDrawer(drawers["drawer"])
     }
-    
   }, [])
+
+  const finishDraw = () => {
+    setDrawer(drawer);
+    setNumOfStroke(drawer.numOfStroke);
+  }
+
+  useEffect(() => {
+    // console.log(drawer.numOfStroke)
+  }, [drawer])
 
   return (
     <Box sx={{ width: "100%" }}>
       <NoteHeader />
       <Box className="canvasWrapper" sx={{ width: noteSize['width'], height: noteSize["height"] }}>
-        <svg id="drawer" className="canvas write" style={{ width: noteSize["width"], height: noteSize["height"] }}></svg>
+        <svg
+          id="drawer"
+          className="canvas write"
+          style={{ width: noteSize["width"], height: noteSize["height"] }}
+          onPointerUpCapture={() => finishDraw()}
+        ></svg>
       </Box>
-      <button onClick={() => undo()}>undo</button>
       <button onClick={change}>button</button>
     </Box>
   );
