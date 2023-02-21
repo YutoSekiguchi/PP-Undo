@@ -7,8 +7,8 @@ export const UndoButton: React.FC = () => {
   const [numOfStroke, setNumOfStroke] = useAtom(drawerNumOfStrokeAtom);
 
   const buttonStyle = {
-    width: "32px",
-    height: "32px",
+    width: "40px",
+    height: "40px",
     backgroundColor: `${numOfStroke==0 ?"#eee": "rgb(96, 165, 250)"}`,
     borderRadius: "100px",
     padding: "0px",
