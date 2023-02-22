@@ -1,37 +1,31 @@
 import React from "react";
 import { useAtom } from 'jotai'
-import { drawerAtom, drawerNumOfStrokeAtom } from "@/infrastructures/jotai/Drawer";
+import { drawerAtom, drawerNumOfStrokeAtom, setUndoStrokeLogAtom } from "@/infrastructures/jotai/drawer";
 
 export const UndoButton: React.FC = () => {
-  const [drawer, setDrawer] = useAtom<any, any, any>(drawerAtom);
+  const [drawer, setDrawer] = useAtom(drawerAtom);
   const [numOfStroke, setNumOfStroke] = useAtom(drawerNumOfStrokeAtom);
+  const [, addLog] = useAtom(setUndoStrokeLogAtom);
 
   const buttonStyle = {
-    width: "40px",
-    height: "40px",
     backgroundColor: `${numOfStroke==0 ?"#eee": "rgb(96, 165, 250)"}`,
-    borderRadius: "100px",
-    padding: "0px",
-    border: "1px solid gray",
-    cursor: `${numOfStroke!=0 && "pointer"}`,
+    cursor: `${numOfStroke==0 ?"not-allowed" :"pointer"}`,
   }
 
-  const svgStyle = {
-    fontWeight: "bold",
-    width: "1.75em",
-    height: "1.75em",
-    padding: "0px"
-  }
-
-  const undo = () => {
+  const undo = async () => {
+    if (numOfStroke == 0) {
+      return;
+    }
+    addLog(drawer.currentFigure.strokes[drawer.currentFigure.strokes.length-1]);
     drawer.undo();
     setDrawer(drawer);
     setNumOfStroke(drawer.numOfStroke);
+    drawer.reDraw();
   }
 
   const undoIcon = (
     <svg
-      {... {style: svgStyle}}
+      className="undo-redo-svg"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -45,6 +39,7 @@ export const UndoButton: React.FC = () => {
 	return (
 		<>
       <button
+        className="undo-redo-button"
         {... {style: buttonStyle}}
         onClick={() => undo()}
       >

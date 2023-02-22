@@ -1,0 +1,20 @@
+@use '../../../styles/mixins.scss';
+
+$undo-redo-button-size: 40px;
+$undo-redo-svg-size: 2em;
+
+.undo-redo-button {
+  width: $undo-redo-button-size;
+  height: $undo-redo-button-size;
+  padding: 0px;
+  border: 1px solid gray;
+  @include mixins.rounded();
+  @include mixins.center();
+}
+
+.undo-redo-svg {
+  font-weight: bold;
+  width: $undo-redo-svg-size;
+  height: $undo-redo-svg-size;
+  padding: 0px;
+}

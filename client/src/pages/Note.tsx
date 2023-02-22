@@ -7,32 +7,18 @@ import {
   Box 
 } from "@mui/material";
 import { useAtom } from 'jotai'
-import { drawerAtom, drawerNumOfStrokeAtom } from "@/infrastructures/jotai/Drawer";
+import { clearUndoStrokeLogAtom, drawerAtom, drawerNumOfStrokeAtom } from "@/infrastructures/jotai/drawer";
 
 export const Note:React.FC =() => {
   const [noteSize, setNoteSize] = useState<NoteSizeType>({width: "100%", height: "800px"})
-  const [drawer, setDrawer] = useAtom<any, any, any>(drawerAtom);
+  const [drawer, setDrawer] = useAtom(drawerAtom);
   const [, setNumOfStroke] = useAtom(drawerNumOfStrokeAtom);
+  const [, clearUndoStrokeLog] = useAtom(clearUndoStrokeLogAtom);
 
   const drawers: any = {};
 
-  const change = () => {
-    // drawers["drawer2"] = new Drawer("#drawer", DrawerConfig);
-    drawers["drawer"].setStrokeColor("#ff0000");
-    drawers["drawer"].setStrokeColor("#ffff00");
-  }
-
-  const undo = () => {
-    // drawers["drawer"].undo();
-    // console.log(drawers["drawer"]);
-    console.log(drawer);
-    drawer.undo();
-    setDrawer(drawer);
-  }
-
   useEffect(() => {
     // Drawerの設定
-    console.log("useEffect実行")
     if (drawers["drawer"] == undefined) {
       drawers["drawer"] = new Drawer("#drawer", DrawerConfig);
       setDrawer(drawers["drawer"])
@@ -42,6 +28,7 @@ export const Note:React.FC =() => {
   const finishDraw = () => {
     setDrawer(drawer);
     setNumOfStroke(drawer.numOfStroke);
+    clearUndoStrokeLog();
   }
 
   useEffect(() => {
@@ -59,7 +46,6 @@ export const Note:React.FC =() => {
           onPointerUpCapture={() => finishDraw()}
         ></svg>
       </Box>
-      <button onClick={change}>button</button>
     </Box>
   );
 }

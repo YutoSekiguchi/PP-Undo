@@ -12,6 +12,8 @@ import {
 } from "@mui/material";
 import { PenColorType } from "@/@types/note";
 import { penColorList } from "@/configs/PenColorConfig";
+import { RedoButton } from "./RedoButton";
+import Spacer from "@/components/common/Spacer";
 
 export const NoteHeader:React.FC =() => {
   const [colorList, setColorList] = useState<PenColorType[]>(penColorList);
@@ -27,7 +29,7 @@ export const NoteHeader:React.FC =() => {
     }
     setColorList(tmp);
   }
-  
+
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -67,6 +69,8 @@ export const NoteHeader:React.FC =() => {
             
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <UndoButton />
+              <Spacer size={4} axis="horizontal" />
+              <RedoButton />
             </Box>
           </Toolbar>
         </Paper>

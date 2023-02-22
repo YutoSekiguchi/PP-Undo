@@ -1,6 +1,6 @@
 import React from "react";
 import { useAtom } from 'jotai'
-import { drawerAtom } from "@/infrastructures/jotai/Drawer";
+import { drawerAtom } from "@/infrastructures/jotai/drawer";
 
 interface Props {
   buttonColor: string,

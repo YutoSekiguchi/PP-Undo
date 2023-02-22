@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Provider } from "jotai";
 import { RouterConfig } from '@/configs/RouterConfig'
-import './App.css'
+import "@/styles/base.scss";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline'
 import { blueGrey } from '@mui/material/colors';
