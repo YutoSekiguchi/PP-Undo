@@ -2,6 +2,8 @@
 
 $undo-redo-button-size: 40px;
 $undo-redo-svg-size: 2em;
+$choice-color-button-size: 28px;
+$not-choice-color-button-size: 25px;
 
 .undo-redo-button {
   width: $undo-redo-button-size;
@@ -17,4 +19,27 @@ $undo-redo-svg-size: 2em;
   width: $undo-redo-svg-size;
   height: $undo-redo-svg-size;
   padding: 0px;
+}
+
+@mixin color_button {
+  margin: 0 3px;
+  border: 1px solid gray;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.7;
+  }
+  @include mixins.rounded();
+}
+
+.choice-color-button {
+  width: $choice-color-button-size;
+  height: $choice-color-button-size;
+  box-shadow: 0 0 8px #fff;
+  @include color_button();
+}
+
+.not-choice-color-button {
+  width: $not-choice-color-button-size;
+  height: $not-choice-color-button-size;
+  @include color_button();
 }

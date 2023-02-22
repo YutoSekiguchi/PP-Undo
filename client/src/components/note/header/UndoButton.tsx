@@ -1,18 +1,19 @@
 import React from "react";
 import { useAtom } from 'jotai'
 import { drawerAtom, drawerNumOfStrokeAtom, setUndoStrokeLogAtom } from "@/infrastructures/jotai/drawer";
+import { ButtonStyleType } from "@/@types/note";
 
 export const UndoButton: React.FC = () => {
   const [drawer, setDrawer] = useAtom(drawerAtom);
   const [numOfStroke, setNumOfStroke] = useAtom(drawerNumOfStrokeAtom);
   const [, addLog] = useAtom(setUndoStrokeLogAtom);
 
-  const buttonStyle = {
+  const buttonStyle: ButtonStyleType = {
     backgroundColor: `${numOfStroke==0 ?"#eee": "rgb(96, 165, 250)"}`,
     cursor: `${numOfStroke==0 ?"not-allowed" :"pointer"}`,
   }
 
-  const undo = async () => {
+  const undo = () => {
     if (numOfStroke == 0) {
       return;
     }

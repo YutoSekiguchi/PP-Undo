@@ -1,12 +1,14 @@
 import React from "react";
 import { useAtom } from 'jotai'
 import { drawerAtom, redoAtom, redoableAtom } from "@/infrastructures/jotai/drawer";
+import { ButtonStyleType } from "@/@types/note";
 
 export const RedoButton: React.FC = () => {
   const [drawer, setDrawer] = useAtom(drawerAtom);
   const [, redo] = useAtom(redoAtom);
   const redoable = useAtom(redoableAtom);
-  const buttonStyle = {
+
+  const buttonStyle: ButtonStyleType = {
     backgroundColor: `${redoable[0]? "rgb(96, 165, 250)": "#eee"}`,
     cursor: `${redoable[0]? "pointer": "not-allowed"}`,
   }

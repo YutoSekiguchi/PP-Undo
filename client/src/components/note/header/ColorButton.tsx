@@ -1,27 +1,14 @@
 import React from "react";
 import { useAtom } from 'jotai'
 import { drawerAtom } from "@/infrastructures/jotai/drawer";
+import { ColorButtonProps } from "@/@types/note";
 
-interface Props {
-  buttonColor: string,
-  isChoice: boolean,
-  colorChange: (index: number) => void,
-  index: number
-}
-
-export const ColorButton: React.FC<Props> = (props) => {
+export const ColorButton: React.FC<ColorButtonProps> = (props) => {
   const {buttonColor, isChoice, colorChange, index} = props;
-  const [drawer, setDrawer] = useAtom<any, any, any>(drawerAtom);
+  const [drawer, setDrawer] = useAtom(drawerAtom);
 
-  const buttonStyle = {
-    width: `${isChoice? "28px": "25px"}`,
-    height: `${isChoice? "28px": "25px"}`,
+  const buttonStyle: {backgroundColor: string} = {
     backgroundColor: `${buttonColor}`,
-    borderRadius: "100px",
-    margin: "0 3px",
-    border: "1px solid gray",
-    cursor: "pointer",
-    boxShadow: `0 0 ${isChoice? "8px": "0px"} #fff`,
   }
   
   const changeColor = (color: string) => {
@@ -34,6 +21,7 @@ export const ColorButton: React.FC<Props> = (props) => {
 	return (
 		<>
       <button 
+        className={isChoice? "choice-color-button": "not-choice-color-button"}
         {... {style: buttonStyle}}
         onClick={() => changeColor(buttonColor)}
       ></button>

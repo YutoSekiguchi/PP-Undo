@@ -31,10 +31,6 @@ export const Note:React.FC =() => {
     clearUndoStrokeLog();
   }
 
-  useEffect(() => {
-    // console.log(drawer.numOfStroke)
-  }, [drawer])
-
   return (
     <Box sx={{ width: "100%" }}>
       <NoteHeader />
