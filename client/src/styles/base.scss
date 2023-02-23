@@ -1,1 +1,17 @@
 @use "../components/note/header/NoteHeader.scss";
+@use "./mixins.scss";
+
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.center {
+  @include mixins.center();
+}
+
+.align-center {
+  display: flex;
+  align-items: center;
+}

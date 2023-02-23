@@ -1,6 +1,13 @@
 import { atom, useAtom } from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils'
 
+
+/**
+ * @description
+ * 描画モードを保持
+**/
+export const drawModeAtom = atom<"pen" | "strokeErase">("pen");
+
 /**
 @description
 drawerを保持

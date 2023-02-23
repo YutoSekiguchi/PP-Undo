@@ -1,5 +1,5 @@
 import React, { useState, useEffect, PointerEvent } from "react";
-import { NoteSizeType } from "@/@types/note";
+import { NoteSizeType, Point2Type } from "@/@types/note";
 import { Drawer, Figure, Stroke } from "@nkmr-lab/average-figure-drawer";
 import { DrawerConfig } from "@/configs/DrawerConfig";
 import { NoteHeader } from "@/components/note/header";
@@ -7,17 +7,19 @@ import {
   Box 
 } from "@mui/material";
 import { useAtom } from 'jotai'
-import { clearUndoStrokeLogAtom, drawerAtom, drawerNumOfStrokeAtom } from "@/infrastructures/jotai/drawer";
+import { clearUndoStrokeLogAtom, drawModeAtom, drawerAtom, drawerNumOfStrokeAtom, setUndoStrokeLogAtom } from "@/infrastructures/jotai/drawer";
+import { sum } from "@/modules/note/SumPressure";
 
 export const Note:React.FC =() => {
   const [noteSize, setNoteSize] = useState<NoteSizeType>({width: "100%", height: "800px"});
   const [isDraw, setIsDraw] = useState<boolean>(false);
+  const [drawMode, ] = useAtom(drawModeAtom);
   const [drawer, setDrawer] = useAtom(drawerAtom);
   const [, setNumOfStroke] = useAtom(drawerNumOfStrokeAtom);
   const [, clearUndoStrokeLog] = useAtom(clearUndoStrokeLogAtom);
-  let sumPressure: number = 0;
+  const [, addLog] = useAtom(setUndoStrokeLogAtom);
+  let strokePressureList: number[] = [];
   let countPoints: number = 0;
-
   const drawers: any = {};
 
   useEffect(() => {
@@ -34,7 +36,7 @@ export const Note:React.FC =() => {
     setDrawer(drawer);
     setNumOfStroke(0);
     setIsDraw(false);
-    sumPressure = 0;
+    strokePressureList = [];
     countPoints = 0;
     throw error;
   }
@@ -47,7 +49,7 @@ export const Note:React.FC =() => {
     if (!isDraw || e.pressure == 0) {
       return;
     }
-    sumPressure += e.pressure;
+    strokePressureList.push(e.pressure);
     countPoints += 1;
   }
 
@@ -60,19 +62,20 @@ export const Note:React.FC =() => {
           drawer.numOfStroke -= 1;
           setDrawer(drawer);
           setIsDraw(false);
-          sumPressure = 0;
+          strokePressureList = [];
           countPoints = 0;
           return;
         }
+        const sumPressure = sum(strokePressureList);
         const averagePressure = sumPressure / countPoints;
         setDrawer(drawer);
         setNumOfStroke(drawer.numOfStroke);
         clearUndoStrokeLog();
         setIsDraw(false);
-        console.log(sumPressure);
-        console.log(countPoints);
+        console.log(strokePressureList)
         console.log(averagePressure);
-        sumPressure = 0;
+        console.log(drawer.currentFigure);
+        strokePressureList = [];
         countPoints = 0;
       } catch (error) {
         drawError(error);
@@ -80,10 +83,45 @@ export const Note:React.FC =() => {
     }, 10);
   }
 
+  const startEraseDraw = () => {
+    setIsDraw(true);
+  }
+
+  const eraseDraw = (e: PointerEvent<SVGSVGElement>) => {
+    if (!isDraw) { return; }
+    if (drawMode == "strokeErase") {
+      console.log(e.nativeEvent.offsetX, e.nativeEvent.offsetY)
+      const offsetXAbout = Math.round(e.nativeEvent.offsetX);
+      const offsetYAbout = Math.round(e.nativeEvent.offsetY);
+      drawer.currentFigure.strokes.map((stroke: any, i: number) => {
+        stroke.points.map((point2: Point2Type, j: number) => {
+          const pointX = Math.round(point2.x);
+          if (Math.abs(pointX - offsetXAbout) < 10) {
+            const pointY = Math.round(point2.y);
+            if (Math.abs(pointY - offsetYAbout) < 10) {
+              console.log("クロス！！")
+              console.log(drawer.currentFigure.strokes[i]);
+              addLog(drawer.currentFigure.strokes[i]);
+              drawer.numOfStroke -= 1;
+              drawer.currentFigure.strokes.splice(i, 1);
+              setDrawer(drawer);
+              setNumOfStroke(drawer.numOfStroke);
+              drawer.reDraw();
+            }
+          }
+        })
+      })
+    }
+  }
+
+  const finishEraseDraw = () => {
+    setIsDraw(false);
+  }
+
   return (
     <Box sx={{ width: "100%" }}>
       <NoteHeader />
-      <Box className="canvasWrapper" sx={{ width: noteSize['width'], height: noteSize["height"] }}>
+      <Box className="canvasWrapper" sx={{ width: noteSize['width'], height: noteSize["height"], position: "relative" }}>
         <svg
           id="drawer"
           className="canvas"
@@ -92,6 +130,16 @@ export const Note:React.FC =() => {
           onPointerMoveCapture={moveDraw}
           onPointerUpCapture={finishDraw}
         ></svg>
+        {drawMode == "strokeErase" &&
+          <svg
+            id="erase-drawer"
+            className="canvas"
+            style={{ width: noteSize["width"], height: noteSize["height"] }}
+            onPointerDownCapture={startEraseDraw}
+            onPointerMoveCapture={eraseDraw}
+            onPointerUpCapture={finishEraseDraw}
+          ></svg>
+        }
       </Box>
     </Box>
   );

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Logo from '@/assets/logo.png'
 import { ColorButton } from "./ColorButton";
 import { UndoButton } from "./UndoButton";
+import { StrokeEraseButton } from "./StrokeEraseButton";
 import { Link } from "react-router-dom";
 import { 
   Box,
@@ -14,6 +15,7 @@ import { PenColorType } from "@/@types/note";
 import { penColorList } from "@/configs/PenColorConfig";
 import { RedoButton } from "./RedoButton";
 import Spacer from "@/components/common/Spacer";
+import { PenButton } from "./PenButton";
 
 export const NoteHeader:React.FC =() => {
   const [colorList, setColorList] = useState<PenColorType[]>(penColorList);
@@ -35,7 +37,7 @@ export const NoteHeader:React.FC =() => {
       <Box sx={{ flexGrow: 1 }}>
         <Paper sx={{ background: "#37474f", borderBottom: '1px solid #57676f' }} elevation={0}  >
           <Toolbar sx={{ justifyContent: "space-between" }}>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box className="align-center">
               <img 
                 src={Logo}
                 style={{ width: "60px", height: "60px", marginRight: "10px" }}
@@ -51,23 +53,27 @@ export const NoteHeader:React.FC =() => {
               </Typography>
             </Box>
 
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-            {colorList.map((el, index) => (
-              <Box 
-                key={index}
-                className='my-auto'
-              >
-                <ColorButton
-                  buttonColor={el.penColor}
-                  isChoice={el.useable}
-                  colorChange={colorChange}
-                  index={index}
-                />
+            <Box className="align-center">
+              <Box className="align-center" sx={{ marginRight: "60px"}}>
+                <StrokeEraseButton />
+                <Spacer size={4} axis="horizontal" />
+                <PenButton />
               </Box>
-            ))}
+              {colorList.map((el, index) => (
+                <Box 
+                  key={index}
+                >
+                  <ColorButton
+                    buttonColor={el.penColor}
+                    isChoice={el.useable}
+                    colorChange={colorChange}
+                    index={index}
+                  />
+                </Box>
+              ))}
             </Box>
             
-            <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Box className="align-center">
               <UndoButton />
               <Spacer size={4} axis="horizontal" />
               <RedoButton />

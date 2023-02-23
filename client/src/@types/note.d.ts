@@ -18,3 +18,10 @@ export interface ButtonStyleType {
   backgroundColor: "#eee" | "rgb(96, 165, 250)";
   cursor: "not-allowed" | "pointer";
 }
+
+export interface Point2Type {
+  x: number;
+  y: number;
+  z: number;
+  time: number;
+}
