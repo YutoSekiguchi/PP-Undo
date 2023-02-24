@@ -17,6 +17,7 @@ export const RedoButton: React.FC = () => {
     if (redoable[0] == false) {
       return;
     }
+    console.log(drawer);
     redo();
     drawer.numOfStroke = drawer.numOfStroke + 1;
     setDrawer(drawer);

@@ -96,7 +96,7 @@ export const Note:React.FC =() => {
       drawer.currentFigure.strokes.map((stroke: any, i: number) => {
         stroke.points.map((point2: Point2Type, j: number) => {
           const pointX = Math.round(point2.x);
-          const toleranceRange = drawer.strokeWidth + 5;
+          const toleranceRange = drawer.strokeWidth < 10? drawer.strokeWidth + 3: drawer.strokeWidth;
           if (Math.abs(pointX - offsetXAbout) < toleranceRange) {
             const pointY = Math.round(point2.y);
             if (Math.abs(pointY - offsetYAbout) < toleranceRange) {

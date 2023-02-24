@@ -20,6 +20,16 @@ export const drawerAtom = atom<any>({});
 **/
 export const drawerNumOfStrokeAtom = atom<number>(0);
 
+
+/**
+ * @description
+ * stroke消しゴムによって削除したログ
+ * @params
+ * 要素がfalseなら普通のpen
+**/
+export const isEraseStroke = atom<any[]>([]);
+
+
 /**
  * @description
  * undo系
