@@ -74,7 +74,7 @@ export const Note:React.FC =() => {
         setIsDraw(false);
         console.log(strokePressureList)
         console.log(averagePressure);
-        console.log(drawer.currentFigure);
+        console.log(drawer);
         strokePressureList = [];
         countPoints = 0;
       } catch (error) {
@@ -96,9 +96,10 @@ export const Note:React.FC =() => {
       drawer.currentFigure.strokes.map((stroke: any, i: number) => {
         stroke.points.map((point2: Point2Type, j: number) => {
           const pointX = Math.round(point2.x);
-          if (Math.abs(pointX - offsetXAbout) < 10) {
+          const toleranceRange = drawer.strokeWidth + 5;
+          if (Math.abs(pointX - offsetXAbout) < toleranceRange) {
             const pointY = Math.round(point2.y);
-            if (Math.abs(pointY - offsetYAbout) < 10) {
+            if (Math.abs(pointY - offsetYAbout) < toleranceRange) {
               console.log("クロス！！")
               console.log(drawer.currentFigure.strokes[i]);
               addLog(drawer.currentFigure.strokes[i]);

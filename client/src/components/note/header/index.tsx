@@ -16,6 +16,7 @@ import { penColorList } from "@/configs/PenColorConfig";
 import { RedoButton } from "./RedoButton";
 import Spacer from "@/components/common/Spacer";
 import { PenButton } from "./PenButton";
+import { ChangePenWidthButton } from "./ChangePenWidthButton";
 
 export const NoteHeader:React.FC =() => {
   const [colorList, setColorList] = useState<PenColorType[]>(penColorList);
@@ -56,7 +57,7 @@ export const NoteHeader:React.FC =() => {
             <Box className="align-center">
               <Box className="align-center" sx={{ marginRight: "60px"}}>
                 <StrokeEraseButton />
-                <Spacer size={4} axis="horizontal" />
+                <Spacer size={6} axis="horizontal" />
                 <PenButton />
               </Box>
               {colorList.map((el, index) => (
@@ -71,6 +72,9 @@ export const NoteHeader:React.FC =() => {
                   />
                 </Box>
               ))}
+              <Box className="align-center" sx={{ marginLeft: "20px"}}>
+                <ChangePenWidthButton />
+              </Box>
             </Box>
             
             <Box className="align-center">

@@ -1,5 +1,6 @@
 @use "../components/note/header/NoteHeader.scss";
 @use "./mixins.scss";
+@use "./variables.scss";
 
 .canvas {
   position: absolute;
@@ -14,4 +15,18 @@
 .align-center {
   display: flex;
   align-items: center;
+}
+
+@mixin text-color {
+  color: variables.$p-text-color;
+}
+
+.text, .icon {
+  @include text-color();
+}
+
+.small-text {
+  margin: 0;
+  font-size: small;
+  @include text-color();
 }

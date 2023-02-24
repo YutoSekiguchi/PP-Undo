@@ -1,4 +1,5 @@
 @use '../../../styles/mixins.scss';
+@use '../../../styles/variables.scss';
 
 $undo-redo-button-size: 40px;
 $undo-redo-svg-size: 2em;
@@ -6,7 +7,7 @@ $choice-color-button-size: 28px;
 $not-choice-color-button-size: 25px;
 $mode-svg-size: 20px;
 $mode-button-size: $undo-redo-button-size;
-$no-mode-button-size: 30px;
+$no-mode-button-size: 28px;
 $button-border: 1px solid gray;
 
 .undo-redo-button {
@@ -70,4 +71,35 @@ $button-border: 1px solid gray;
 
 .no-mode-button {
   @include mode($no-mode-button-size);
+}
+
+.width-button {
+  background-color: #00000000;
+  cursor: pointer;
+  border: none;
+  position: relative;
+}
+
+.width-button-circle {
+  background-color: #fff;
+  margin: 0 auto;
+  @include mixins.rounded();
+}
+
+.width-menu {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: variables.$dark-color;
+  border-radius: 20px;
+  width: 250px;
+  padding: 16px 20px;
+  z-index: 999;
+}
+
+.choiced-width {
+  padding: 5px;
+  border: 1px solid #fff;
+  @include mixins.rounded();
 }
