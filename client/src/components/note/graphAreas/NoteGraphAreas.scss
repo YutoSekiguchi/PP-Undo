@@ -1,0 +1,8 @@
+@use '../../../styles/mixins.scss';
+@use '../../../styles/variables.scss';
+
+.graph-area {
+  background-color: variables.$base-color;
+  width: 30%;
+  height: 100%;
+}

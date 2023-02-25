@@ -9,9 +9,10 @@ import {
 import { useAtom } from 'jotai'
 import { clearUndoStrokeLogAtom, drawModeAtom, drawerAtom, drawerNumOfStrokeAtom, setUndoStrokeLogAtom } from "@/infrastructures/jotai/drawer";
 import { sum } from "@/modules/note/SumPressure";
+import { NoteGraphAreas } from "@/components/note/graphAreas";
 
 export const Note:React.FC =() => {
-  const [noteSize, setNoteSize] = useState<NoteSizeType>({width: "100%", height: "800px"});
+  const [noteSize, setNoteSize] = useState<NoteSizeType>({width: "70%", height: "800px"});
   const [isDraw, setIsDraw] = useState<boolean>(false);
   const [drawMode, ] = useAtom(drawModeAtom);
   const [drawer, setDrawer] = useAtom(drawerAtom);
@@ -122,25 +123,28 @@ export const Note:React.FC =() => {
   return (
     <Box sx={{ width: "100%" }}>
       <NoteHeader />
-      <Box className="canvasWrapper" sx={{ width: noteSize['width'], height: noteSize["height"], position: "relative" }}>
-        <svg
-          id="drawer"
-          className="canvas"
-          style={{ width: noteSize["width"], height: noteSize["height"] }}
-          onPointerDownCapture={startDraw}
-          onPointerMoveCapture={moveDraw}
-          onPointerUpCapture={finishDraw}
-        ></svg>
-        {drawMode == "strokeErase" &&
+      <Box sx={{ display: "flex" }}>
+        <Box className="canvasWrapper" sx={{ width: noteSize['width'], height: noteSize["height"], position: "relative" }}>
           <svg
-            id="erase-drawer"
+            id="drawer"
             className="canvas"
-            style={{ width: noteSize["width"], height: noteSize["height"] }}
-            onPointerDownCapture={startEraseDraw}
-            onPointerMoveCapture={eraseDraw}
-            onPointerUpCapture={finishEraseDraw}
+            style={{ width: "100%", height: noteSize["height"] }}
+            onPointerDownCapture={startDraw}
+            onPointerMoveCapture={moveDraw}
+            onPointerUpCapture={finishDraw}
           ></svg>
-        }
+          {drawMode == "strokeErase" &&
+            <svg
+              id="erase-drawer"
+              className="canvas"
+              style={{ width: "100%", height: noteSize["height"] }}
+              onPointerDownCapture={startEraseDraw}
+              onPointerMoveCapture={eraseDraw}
+              onPointerUpCapture={finishEraseDraw}
+            ></svg>
+          }
+        </Box>
+        <NoteGraphAreas />
       </Box>
     </Box>
   );
