@@ -7,7 +7,7 @@ import {
   Box 
 } from "@mui/material";
 import { useAtom } from 'jotai'
-import { clearUndoStrokeLogAtom, drawModeAtom, drawerAtom, drawerNumOfStrokeAtom, setUndoStrokeLogAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawModeAtom, drawerAtom, drawerNumOfStrokeAtom, setUndoStrokeLogAtom } from "@/infrastructures/jotai/drawer";
 import { sum } from "@/modules/note/SumPressure";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 
@@ -16,6 +16,7 @@ export const Note:React.FC =() => {
   const [isDraw, setIsDraw] = useState<boolean>(false);
   const [drawMode, ] = useAtom(drawModeAtom);
   const [drawer, setDrawer] = useAtom(drawerAtom);
+  const [, setAddAvgPressureOfStroke] = useAtom(addAvgPressureOfStrokeAtom);
   const [, setNumOfStroke] = useAtom(drawerNumOfStrokeAtom);
   const [, clearUndoStrokeLog] = useAtom(clearUndoStrokeLogAtom);
   const [, addLog] = useAtom(setUndoStrokeLogAtom);
@@ -54,7 +55,7 @@ export const Note:React.FC =() => {
     countPoints += 1;
   }
 
-  const finishDraw = () => {
+  const finishDraw = (e: PointerEvent<SVGSVGElement>) => {
     setTimeout(() => {
       try {
         const finalStroke = drawer.currentFigure.strokes[drawer.currentFigure.strokes.length-1];
@@ -68,7 +69,7 @@ export const Note:React.FC =() => {
           return;
         }
         const sumPressure = sum(strokePressureList);
-        const averagePressure = sumPressure / countPoints;
+        const averagePressure = e.pointerType=="mouse"? Math.random() :sumPressure / countPoints;
         setDrawer(drawer);
         setNumOfStroke(drawer.numOfStroke);
         clearUndoStrokeLog();
@@ -76,6 +77,7 @@ export const Note:React.FC =() => {
         console.log(strokePressureList)
         console.log(averagePressure);
         console.log(drawer);
+        setAddAvgPressureOfStroke(averagePressure);
         strokePressureList = [];
         countPoints = 0;
       } catch (error) {
@@ -121,9 +123,9 @@ export const Note:React.FC =() => {
   }
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box className="width100">
       <NoteHeader />
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ display: "flex" }} className="width100">
         <Box className="canvasWrapper" sx={{ width: noteSize['width'], height: noteSize["height"], position: "relative" }}>
           <svg
             id="drawer"

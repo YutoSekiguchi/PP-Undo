@@ -25,3 +25,10 @@ export interface Point2Type {
   z: number;
   time: number;
 }
+
+export interface PPUndoGraphDatasetsConfigType {
+  label: string;
+  borderColor: string;
+  backgroundColor?: string;
+  fill: boolean;
+}

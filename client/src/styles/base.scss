@@ -1,4 +1,4 @@
-@use "../components/note/header/NoteHeader.scss";
+@use "../components/note/Note.scss";
 @use "./mixins.scss";
 @use "./variables.scss";
 
@@ -17,8 +17,23 @@
   align-items: center;
 }
 
+.width80 {
+  width: 80%;
+}
+
+.width100 {
+  width: 100%;
+}
+
 @mixin text-color {
   color: variables.$p-text-color;
+}
+
+.big-text {
+  margin: 0;
+  font-size: large;
+  font-weight: bold;
+  @include text-color();
 }
 
 .text, .icon {

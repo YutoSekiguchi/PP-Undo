@@ -4,6 +4,7 @@ import { drawerAtom } from "@/infrastructures/jotai/drawer";
 import {
   Box 
 } from "@mui/material";
+import { PPUndoArea } from "./PPUndoArea";
 
 export const NoteGraphAreas: React.FC = () => {
   // const {buttonColor, isChoice, colorChange, index} = props;
@@ -22,7 +23,7 @@ export const NoteGraphAreas: React.FC = () => {
 
 	return (
     <Box className="graph-area">
-      
+      <PPUndoArea />
     </Box>
 	);
 }

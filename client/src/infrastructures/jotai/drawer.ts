@@ -23,15 +23,6 @@ export const drawerNumOfStrokeAtom = atom<number>(0);
 
 /**
  * @description
- * stroke消しゴムによって削除したログ
- * @params
- * 要素がfalseなら普通のpen
-**/
-export const isEraseStroke = atom<any[]>([]);
-
-
-/**
- * @description
  * undo系
 **/
 const undoStrokeLogAtom = atom<any[]>([]);
@@ -67,4 +58,25 @@ export const redoAtom = atom((get) => {get(undoStrokeLogAtom)}, (get, set) => {
   
   set(undoStrokeLogAtom, get(undoStrokeLogAtom).slice(0, -1));
   set(drawerNumOfStrokeAtom, get(drawerNumOfStrokeAtom)+1);
+})
+
+
+/**
+ * @description
+ * ストロークごとの筆圧を保持
+ */
+export const avgPressureOfStrokeAtom = atom<number[]>([]);
+// 追加
+export const addAvgPressureOfStrokeAtom = atom(null, (get, set, val: number) => {
+  set(avgPressureOfStrokeAtom, get(avgPressureOfStrokeAtom).concat([val]));
+})
+// const avgPressureOfStrokeCountAtom = atom<number[]>([...Array(21)].fill(0));
+// PPUndoグラフ用に筆圧とストロークの長さを返す
+export const getAvgPressureOfStrokeCountAtom = atom((get) => {
+  let tmp: number[] = [...Array(21)].fill(0);
+  get(avgPressureOfStrokeAtom).map((pressure, i) => {
+    const j = Math.round(pressure*100)/100;
+    tmp[Math.ceil(j*20)] += 1
+  })
+  return tmp;
 })
