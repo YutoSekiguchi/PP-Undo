@@ -1,12 +1,14 @@
 import React from "react";
 import { useAtom } from 'jotai'
-import { drawerAtom, drawerNumOfStrokeAtom, setUndoStrokeLogAtom } from "@/infrastructures/jotai/drawer";
+import { avgPressureOfStrokeAtom, drawerAtom, drawerNumOfStrokeAtom, removeAvgPressureOfStrokeAtom, setUndoStrokeLogAtom } from "@/infrastructures/jotai/drawer";
 import { ButtonStyleType } from "@/@types/note";
 
 export const UndoButton: React.FC = () => {
   const [drawer, setDrawer] = useAtom(drawerAtom);
   const [numOfStroke, setNumOfStroke] = useAtom(drawerNumOfStrokeAtom);
   const [, addLog] = useAtom(setUndoStrokeLogAtom);
+  const [, removeAvgPressureOfStroke] = useAtom(removeAvgPressureOfStrokeAtom);
+  const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom);
 
   const buttonStyle: ButtonStyleType = {
     backgroundColor: `${numOfStroke==0 ?"#eee": "rgb(96, 165, 250)"}`,
@@ -17,7 +19,11 @@ export const UndoButton: React.FC = () => {
     if (numOfStroke == 0) {
       return;
     }
-    addLog(drawer.currentFigure.strokes[drawer.currentFigure.strokes.length-1]);
+    addLog({
+      stroke: drawer.currentFigure.strokes[drawer.currentFigure.strokes.length-1],
+      pressure: avgPressureOfStroke[drawer.currentFigure.strokes.length-1]
+    });
+    removeAvgPressureOfStroke(drawer.currentFigure.strokes.length-1);
     drawer.undo();
     setDrawer(drawer);
     setNumOfStroke(drawer.numOfStroke);

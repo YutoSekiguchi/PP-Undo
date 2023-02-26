@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useAtom } from 'jotai'
-import { avgPressureOfStrokeAtom, getAvgPressureOfStrokeCountAtom } from "@/infrastructures/jotai/drawer";
+import { drawerAtom, getAvgPressureOfStrokeCountAtom, sliderValueAtom } from "@/infrastructures/jotai/drawer";
 import {
   Chart as ChartJS,
-  ChartData,
   CategoryScale,
   LinearScale,
   PointElement,
@@ -16,11 +15,11 @@ import {
 } from 'chart.js'
 import { Line } from "react-chartjs-2";
 import {
-  Box, Typography 
+  Box,
 } from "@mui/material";
 import Spacer from "@/components/common/Spacer";
 import { PPUndoGraphDatasetsConfigType } from "@/@types/note";
-import { datasetsConfig, options, xLabels } from "@/configs/PPUndoGraphConifig";
+import { PrettoSlider, datasetsConfig, options, xLabels } from "@/configs/PPUndoGraphConifig";
 
 
 export const PPUndoArea: React.FC = () => {
@@ -37,6 +36,7 @@ export const PPUndoArea: React.FC = () => {
   )
   ChartJS.defaults.scales.linear.min = 0;
 
+
   interface dataType {
     data: number[];
   }
@@ -46,9 +46,7 @@ export const PPUndoArea: React.FC = () => {
     datasets: datasetsType[];
   }
 
-  // const [data, ] = useAtom(avgPressureOfStrokeAtom);
-  const data = useAtom(getAvgPressureOfStrokeCountAtom)[0];
-
+  const data: number[] = useAtom(getAvgPressureOfStrokeCountAtom)[0];
   const graphData: graphDataType = {
     labels: xLabels,
     datasets: [
@@ -56,11 +54,33 @@ export const PPUndoArea: React.FC = () => {
     ],
   };
 
+  const [sliderValue, setSliderValue] = useAtom(sliderValueAtom);
+  const [drawer, setDrawer] = useAtom(drawerAtom);
+
+  const changeValue = (event: Event, newValue: number | number[]) => {
+    setSliderValue(newValue);
+    
+  }
+
 	return (
     <>
       <Box className="graph-wrapper">
         <p className="big-text center">PPUndo</p>
         <Spacer size={6} />
+        <Box className="slider-wrapper">
+          <PrettoSlider
+            className="slider"
+            aria-label="PenPressure"
+            defaultValue={0}
+            value={sliderValue}
+            // getAriaValueText={valuetext}
+            valueLabelDisplay="auto"
+            step={0.01}
+            min={0}
+            max={1}
+            onChange={changeValue}
+          />
+        </Box>
         <Box className="center">
           <Line
             className="graph"

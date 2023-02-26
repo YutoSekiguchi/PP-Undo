@@ -7,19 +7,21 @@ import {
   Box 
 } from "@mui/material";
 import { useAtom } from 'jotai'
-import { addAvgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawModeAtom, drawerAtom, drawerNumOfStrokeAtom, setUndoStrokeLogAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, avgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawModeAtom, drawerAtom, drawerNumOfStrokeAtom, removeAvgPressureOfStrokeAtom, setUndoStrokeLogAtom } from "@/infrastructures/jotai/drawer";
 import { sum } from "@/modules/note/SumPressure";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 
 export const Note:React.FC =() => {
-  const [noteSize, setNoteSize] = useState<NoteSizeType>({width: "70%", height: "800px"});
-  const [isDraw, setIsDraw] = useState<boolean>(false);
-  const [drawMode, ] = useAtom(drawModeAtom);
-  const [drawer, setDrawer] = useAtom(drawerAtom);
-  const [, setAddAvgPressureOfStroke] = useAtom(addAvgPressureOfStrokeAtom);
-  const [, setNumOfStroke] = useAtom(drawerNumOfStrokeAtom);
-  const [, clearUndoStrokeLog] = useAtom(clearUndoStrokeLogAtom);
-  const [, addLog] = useAtom(setUndoStrokeLogAtom);
+  const [noteSize, setNoteSize] = useState<NoteSizeType>({width: "70%", height: "800px"}); // ノートサイズ(svgのサイズ)
+  const [isDraw, setIsDraw] = useState<boolean>(false); // 書いているかどうか
+  const [drawMode, ] = useAtom(drawModeAtom); // penか消しゴムか
+  const [drawer, setDrawer] = useAtom(drawerAtom); // drawerの情報
+  const [, setAddAvgPressureOfStroke] = useAtom(addAvgPressureOfStrokeAtom); // ストロークの平均筆圧を追加する関数
+  const [, setNumOfStroke] = useAtom(drawerNumOfStrokeAtom); // ストローク数の変更 FIXME: 他の配列の長さとかで取得できるだろうしdrawer内にもあるからそのうち削除
+  const [, clearUndoStrokeLog] = useAtom(clearUndoStrokeLogAtom); // undoしたストロークのログを空に（redo不可状態に）
+  const [, addLog] = useAtom(setUndoStrokeLogAtom); // undoしたストロークのログの追加
+  const [, removeAvgPressureOfStroke] = useAtom(removeAvgPressureOfStrokeAtom); // ストロークの平均筆圧を削除(消しゴム時やundo時)
+  const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom); // ストロークの筆圧平均のリストの取得
   let strokePressureList: number[] = [];
   let countPoints: number = 0;
   const drawers: any = {};
@@ -105,7 +107,11 @@ export const Note:React.FC =() => {
             if (Math.abs(pointY - offsetYAbout) < toleranceRange) {
               console.log("クロス！！")
               console.log(drawer.currentFigure.strokes[i]);
-              addLog(drawer.currentFigure.strokes[i]);
+              addLog({
+                stroke: drawer.currentFigure.strokes[i],
+                pressure: avgPressureOfStroke[i]
+              });
+              removeAvgPressureOfStroke(i);
               drawer.numOfStroke -= 1;
               drawer.currentFigure.strokes.splice(i, 1);
               setDrawer(drawer);
