@@ -32,4 +32,5 @@ export interface PPUndoGraphDatasetsConfigType {
   backgroundColor?: string;
   fill?: boolean | string;
   smooth?: boolean;
+  tension?: number;
 }
