@@ -1,13 +1,16 @@
 import { PPUndoGraphDatasetsConfigType } from "@/@types/note";
+import { styled } from '@mui/material/styles';
+import { Slider } from "@mui/material";
 
 export const xLabels: number[] = [...Array(21)].map((_, i) => Math.round((i*0.05)*100)/100);
 
 export const datasetsConfig: PPUndoGraphDatasetsConfigType = {
   label: "筆圧",
   borderColor: "#30CFD0",
-  backgroundColor: "#0003",
+  backgroundColor: "#30CFD033",
   fill: true,
   smooth: true,
+  tension: 0.3,
 }
 
 export const options: {} = {
@@ -33,8 +36,6 @@ export const options: {} = {
   },
 }
 
-import { styled } from '@mui/material/styles';
-import { Slider } from "@mui/material";
 export const PrettoSlider = styled(Slider)({
   color: '#cc66ff',
   height: 12,
@@ -70,7 +71,7 @@ export const PrettoSlider = styled(Slider)({
     transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
     '&:before': { display: 'none' },
     '&.MuiSlider-valueLabelOpen': {
-      transform: 'translate(a50%, -100%) rotate(-45deg) scale(1)',
+      transform: 'translate(50%, -100%) rotate(-45deg) scale(1)',
     },
     '& > *': {
       transform: 'rotate(45deg)',

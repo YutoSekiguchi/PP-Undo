@@ -59,7 +59,7 @@ export const PPUndoArea: React.FC = () => {
 
   const changeValue = (event: Event, newValue: number | number[]) => {
     setSliderValue(newValue);
-    
+
   }
 
 	return (
