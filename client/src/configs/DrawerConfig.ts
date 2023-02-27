@@ -10,11 +10,11 @@ export const DrawerConfig = {
     "dft": 1.5
   },
   "colors": { // 描線の色
-    "originalPoint": "rgb(0, 0, 0)",
-    "originalPath": "rgb(0, 0, 0)",
-    "point": "rgb(0, 0, 25)",
-    "spline": "rgb(0, 0, 0)",
-    "dft": "rgb(0, 0, 0)",
+    "originalPoint": "#000000",
+    "originalPath": "#000000",
+    "point": "#000000",
+    "spline": "#000000",
+    "dft": "#000000",
     "onion": {
       "current": "rgba(30, 100, 100, 0.1)",
       "others": "rgba(0, 100, 100, 0.05)"

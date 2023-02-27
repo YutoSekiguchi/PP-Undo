@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAtom } from 'jotai'
-import { drawerAtom, getAvgPressureOfStrokeCountAtom, sliderValueAtom } from "@/infrastructures/jotai/drawer";
+import { avgPressureOfStrokeAtom, drawerAtom, getAvgPressureOfStrokeCountAtom, sliderValueAtom } from "@/infrastructures/jotai/drawer";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -56,10 +56,55 @@ export const PPUndoArea: React.FC = () => {
 
   const [sliderValue, setSliderValue] = useAtom(sliderValueAtom);
   const [drawer, setDrawer] = useAtom(drawerAtom);
+  const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom);
+  const [lowerPressureIndexList, setLowerPressureIndexList] = useState<number[]>([]);
 
   const changeValue = (event: Event, newValue: number | number[]) => {
+    let tmp: number[] = [];
+    avgPressureOfStroke.map((pressure, i) => {
+      if(typeof newValue == "number" && Math.round(pressure*100)/100 <= newValue) {
+        tmp.push(i);
+      }
+    })
     setSliderValue(newValue);
+    if (tmp.length == lowerPressureIndexList.length) {
+      return;
+    }
+    
+    tmp.map(val => {
+      if(drawer.currentFigure.strokes[val].color.length == 7) {
+        drawer.currentFigure.strokes[val].color += "22";
+      }
+    })
+    lowerPressureIndexList.map(val => {
+      if (!tmp.includes(val) && drawer.currentFigure.strokes[val].color.length == 9 && drawer.currentFigure.strokes[val].color.slice(-2) != "00") {
+        drawer.currentFigure.strokes[val].color = drawer.currentFigure.strokes[val].color.slice(0, -2);
+      }
+    })
+    setLowerPressureIndexList(tmp);
+    setDrawer(drawer);
+    setTimeout(() => {
+      drawer.reDraw();
+    }, 100);
+  }
 
+  const actionStart = () => {
+    console.log("PPUndo操作開始");
+  }
+
+  const actionFinish = () => {
+    console.log("PPUndo操作終了")
+    lowerPressureIndexList.map(val => {
+      if (drawer.currentFigure.strokes[val].color.length == 9) {
+        drawer.currentFigure.strokes[val].color = drawer.currentFigure.strokes[val].color.slice(0, -2) + "00";
+      } else if (drawer.currentFigure.strokes[val].color.length == 7) {
+        drawer.currentFigure.strokes[val].color += "00";
+      }
+    })
+    setDrawer(drawer);
+    setTimeout(() => {
+      drawer.reDraw();
+    }, 100);
   }
 
 	return (
@@ -74,11 +119,13 @@ export const PPUndoArea: React.FC = () => {
             defaultValue={0}
             value={sliderValue}
             // getAriaValueText={valuetext}
-            valueLabelDisplay="auto"
-            step={0.01}
+            // valueLabelDisplay="auto"
+            step={0.0001}
             min={0}
             max={1}
             onChange={changeValue}
+            onChangeCommitted={actionFinish}
+            onPointerDownCapture={actionStart}
           />
         </Box>
         <Box className="center">
