@@ -34,3 +34,19 @@ export interface PPUndoGraphDatasetsConfigType {
   smooth?: boolean;
   tension?: number;
 }
+
+export interface PointType {
+  x: number;
+  y: number;
+  z: number;
+}
+
+export interface StrokeType {
+  points: PointType[];
+  color: string;
+}
+
+export interface StrokeDataType {
+  image: string | null;
+  strokes: StrokeType[];
+}
