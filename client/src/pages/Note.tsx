@@ -132,11 +132,11 @@ export const Note:React.FC =() => {
     <Box className="width100">
       <NoteHeader />
       <Box sx={{ display: "flex" }} className="width100">
-        <Box className="canvasWrapper" sx={{ width: noteSize['width'], height: noteSize["height"], position: "relative" }}>
+        <Box className="canvasWrapper" id="canvasWrapper" sx={{ width: noteSize['width'], height: noteSize["height"], position: "relative" }}>
           <svg
             id="drawer"
             className="canvas"
-            style={{ width: "100%", height: noteSize["height"] }}
+            style={{ width: `${document.getElementById('canvasWrapper') && document.getElementById('canvasWrapper')!.clientWidth}px`, height: noteSize["height"] }}
             onPointerDownCapture={startDraw}
             onPointerMoveCapture={moveDraw}
             onPointerUpCapture={finishDraw}
@@ -145,7 +145,7 @@ export const Note:React.FC =() => {
             <svg
               id="erase-drawer"
               className="canvas"
-              style={{ width: "100%", height: noteSize["height"] }}
+              style={{ width: `${document.getElementById('canvasWrapper') && document.getElementById('canvasWrapper')!.clientWidth}px`, height: noteSize["height"] }}
               onPointerDownCapture={startEraseDraw}
               onPointerMoveCapture={eraseDraw}
               onPointerUpCapture={finishEraseDraw}
