@@ -1,3 +1,4 @@
+import { StrokeDataType } from '@/@types/note';
 import { atom, useAtom } from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils'
 
@@ -68,6 +69,10 @@ export const removeAvgPressureOfStrokeAtom = atom(null, (get, set, values: numbe
   });
   set(avgPressureOfStrokeAtom, tmp);
 })
+// 空にする処理
+export const clearAvgPressureOfStrokeAtom = atom(null, (_get, set) => {
+  set(avgPressureOfStrokeAtom, [])
+})
 // PPUndoグラフ用に筆圧とストロークの長さを返す
 export const getAvgPressureOfStrokeCountAtom = atom((get) => {
   let tmp: number[] = [...Array(21)].fill(0);
@@ -100,4 +105,15 @@ export const redoAtom = atom((get) => {get(undoStrokeLogAtom)}, (get, set) => {
   set(avgPressureOfStrokeAtom, get(avgPressureOfStrokeAtom).concat([get(undoStrokeLogAtom)[get(undoStrokeLogAtom).length-1]["pressure"]]));
   set(undoStrokeLogAtom, get(undoStrokeLogAtom).slice(0, -1));
   set(drawerNumOfStrokeAtom, get(drawerNumOfStrokeAtom)+1);
+})
+
+
+/**
+ * @description
+ * PP-Undo前の状態のログ
+ */
+export const logOfBeforePPUndoAtom = atom<StrokeDataType[]>([])
+
+export const addLogOfBeforePPUndoAtom = atom(null, (get, set, strokeData: StrokeDataType) => {
+  set(logOfBeforePPUndoAtom, get(logOfBeforePPUndoAtom).concat([strokeData]));
 })
