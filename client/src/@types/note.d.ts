@@ -45,6 +45,7 @@ export interface StrokeType {
   points: PointType[];
   color: string;
   strokeWidth: number;
+  strokeAvgPressure: number;
 }
 
 export interface StrokeDataType {
