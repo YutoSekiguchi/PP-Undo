@@ -1,22 +1,22 @@
 import React from "react";
 import { useAtom } from 'jotai'
-import { avgPressureOfStrokeAtom, drawerAtom, drawerNumOfStrokeAtom, removeAvgPressureOfStrokeAtom, setUndoStrokeLogAtom } from "@/infrastructures/jotai/drawer";
+import { avgPressureOfStrokeAtom, drawerAtom, undoableCountAtom, removeAvgPressureOfStrokeAtom, setUndoStrokeLogAtom } from "@/infrastructures/jotai/drawer";
 import { ButtonStyleType } from "@/@types/note";
 
 export const UndoButton: React.FC = () => {
   const [drawer, setDrawer] = useAtom(drawerAtom);
-  const [numOfStroke, setNumOfStroke] = useAtom(drawerNumOfStrokeAtom);
+  const [undoableCount, setUndoableCount] = useAtom(undoableCountAtom);
   const [, addLog] = useAtom(setUndoStrokeLogAtom);
   const [, removeAvgPressureOfStroke] = useAtom(removeAvgPressureOfStrokeAtom);
   const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom);
 
   const buttonStyle: ButtonStyleType = {
-    backgroundColor: `${numOfStroke==0 ?"#eee": "rgb(96, 165, 250)"}`,
-    cursor: `${numOfStroke==0 ?"not-allowed" :"pointer"}`,
+    backgroundColor: `${undoableCount<=0 || drawer.numOfStroke<=0 ?"#eee": "rgb(96, 165, 250)"}`,
+    cursor: `${undoableCount<=0 || drawer.numOfStroke<=0 ?"not-allowed" :"pointer"}`,
   }
 
   const undo = () => {
-    if (numOfStroke == 0) {
+    if (undoableCount <= 0 || drawer.numOfStroke<=0) {
       return;
     }
     addLog({
@@ -26,7 +26,7 @@ export const UndoButton: React.FC = () => {
     removeAvgPressureOfStroke(drawer.currentFigure.strokes.length-1);
     drawer.undo();
     setDrawer(drawer);
-    setNumOfStroke(drawer.numOfStroke);
+    setUndoableCount(undoableCount-1);
     drawer.reDraw();
   }
 
