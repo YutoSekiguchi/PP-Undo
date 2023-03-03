@@ -7,7 +7,7 @@ import {
   Box 
 } from "@mui/material";
 import { useAtom } from 'jotai'
-import { addAvgPressureOfStrokeAtom, avgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawModeAtom, drawerAtom, drawerNumOfStrokeAtom, removeAvgPressureOfStrokeAtom, setUndoStrokeLogAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, avgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawModeAtom, drawerAtom, undoableCountAtom, removeAvgPressureOfStrokeAtom, setUndoStrokeLogAtom } from "@/infrastructures/jotai/drawer";
 import { sum } from "@/modules/note/SumPressure";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 
@@ -17,7 +17,7 @@ export const Note:React.FC =() => {
   const [drawMode, ] = useAtom(drawModeAtom); // penか消しゴムか
   const [drawer, setDrawer] = useAtom(drawerAtom); // drawerの情報
   const [, setAddAvgPressureOfStroke] = useAtom(addAvgPressureOfStrokeAtom); // ストロークの平均筆圧を追加する関数
-  const [, setNumOfStroke] = useAtom(drawerNumOfStrokeAtom); // ストローク数の変更 FIXME: 他の配列の長さとかで取得できるだろうしdrawer内にもあるからそのうち削除
+  const [undoableCount, setUndoableCount] = useAtom(undoableCountAtom); // ストローク数の変更
   const [, clearUndoStrokeLog] = useAtom(clearUndoStrokeLogAtom); // undoしたストロークのログを空に（redo不可状態に）
   const [, addLog] = useAtom(setUndoStrokeLogAtom); // undoしたストロークのログの追加
   const [, removeAvgPressureOfStroke] = useAtom(removeAvgPressureOfStrokeAtom); // ストロークの平均筆圧を削除(消しゴム時やundo時)
@@ -38,7 +38,7 @@ export const Note:React.FC =() => {
     alert("予期せぬエラーが発生したため，全てのストロークが削除されます。");
     drawer.clear();
     setDrawer(drawer);
-    setNumOfStroke(0);
+    setUndoableCount(0);
     setIsDraw(false);
     strokePressureList = [];
     countPoints = 0;
@@ -73,7 +73,7 @@ export const Note:React.FC =() => {
         const sumPressure = sum(strokePressureList);
         const averagePressure = e.pointerType=="mouse"? Math.random() :sumPressure / countPoints;
         setDrawer(drawer);
-        setNumOfStroke(drawer.numOfStroke);
+        setUndoableCount(undoableCount+1);
         clearUndoStrokeLog();
         setIsDraw(false);
         console.log(strokePressureList)
@@ -115,7 +115,7 @@ export const Note:React.FC =() => {
               drawer.numOfStroke -= 1;
               drawer.currentFigure.strokes.splice(i, 1);
               setDrawer(drawer);
-              setNumOfStroke(drawer.numOfStroke);
+              setUndoableCount(undoableCount+1);
               drawer.reDraw();
             }
           }
