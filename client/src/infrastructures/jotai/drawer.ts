@@ -1,6 +1,5 @@
 import { StrokeDataType } from '@/@types/note';
-import { atom, useAtom } from 'jotai';
-import { atomWithReset, useResetAtom } from 'jotai/utils'
+import { atom } from 'jotai';
 
 
 /**
@@ -17,9 +16,9 @@ export const drawerAtom = atom<any>({});
 
 /**
 @description
-ストローク量を保持
+undo出来る本数
 **/
-export const drawerNumOfStrokeAtom = atom<number>(0);
+export const undoableCountAtom = atom<number>(0);
 
 
 /**
@@ -104,7 +103,7 @@ export const redoAtom = atom((get) => {get(undoStrokeLogAtom)}, (get, set) => {
   );
   set(avgPressureOfStrokeAtom, get(avgPressureOfStrokeAtom).concat([get(undoStrokeLogAtom)[get(undoStrokeLogAtom).length-1]["pressure"]]));
   set(undoStrokeLogAtom, get(undoStrokeLogAtom).slice(0, -1));
-  set(drawerNumOfStrokeAtom, get(drawerNumOfStrokeAtom)+1);
+  set(undoableCountAtom, get(undoableCountAtom)+1);
 })
 
 
