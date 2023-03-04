@@ -19,3 +19,20 @@
   display: flex;
   justify-content: end;
 }
+
+.log-image-container {
+  background-color: #{variables.$dark-blue-color}+"BB";
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 50vh;
+  display: flex;
+  align-items: center;
+  .log-image-wrapper {
+    margin: 0 20px;
+    .log-image {
+      width: 25vw;
+    }
+  }
+}
