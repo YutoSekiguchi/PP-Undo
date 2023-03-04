@@ -49,6 +49,7 @@ export interface StrokeType {
 }
 
 export interface StrokeDataType {
-  image: string | null;
+  image?: string;
+  createTime: string;
   strokes: StrokeType[];
 }
