@@ -3,9 +3,7 @@
 @use "./variables.scss";
 
 .canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
+  @include mixins.tl-static-position($position: absolute);
 }
 
 .center {

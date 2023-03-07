@@ -7,3 +7,21 @@
 @mixin rounded {
   border-radius: 9999px;
 }
+
+@mixin tl-static-position($position: fixed, $top: 0, $left: 0) {
+  position: $position;
+  top: $top;
+  left: $left;
+}
+
+@mixin tr-static-position($position: fixed, $top: 0, $right: 0) {
+  position: $position;
+  top: $top;
+  right: $right;
+}
+
+@mixin bl-static-position($position: fixed, $bottom: 0, $left: 0) {
+  position: $position;
+  bottom: $bottom;
+  left: $left;
+}

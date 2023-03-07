@@ -22,17 +22,37 @@
 
 .log-image-container {
   background-color: #{variables.$dark-blue-color}+"BB";
-  position: fixed;
-  bottom: 0;
-  left: 0;
   width: 100vw;
   height: 50vh;
   display: flex;
   align-items: center;
+  @include mixins.bl-static-position();
+  .log-image-total {
+    @include mixins.tl-static-position($position: absolute, $left: 20px);
+    font-size: large;
+    font-weight: bold;
+  }
   .log-image-wrapper {
-    margin: 0 20px;
+    margin: 0 4vw;
     .log-image {
       width: 25vw;
+      max-height: 40vh;
     }
   }
+}
+
+.dialog-image-container {
+  background-color: #{variables.$dark-blue-color}+"BB";
+  width: 100vw;
+  height: 100vh;
+  @include mixins.tl-static-position();
+  @include mixins.center();
+  .dialog-image {
+    width: 70%;
+  }
+}
+
+.close-button {
+  @include mixins.tr-static-position($top: 20px, $right: 20px);
+  color: #fff;
 }
