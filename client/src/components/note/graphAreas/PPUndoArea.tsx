@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAtom } from 'jotai'
-import { avgPressureOfStrokeAtom, drawerAtom, getAvgPressureOfStrokeCountAtom, sliderValueAtom } from "@/infrastructures/jotai/drawer";
+import { addLogOfBeforePPUndoAtom, avgPressureOfStrokeAtom, drawerAtom, getAvgPressureOfStrokeCountAtom, sliderValueAtom } from "@/infrastructures/jotai/drawer";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -18,8 +18,9 @@ import {
   Box,
 } from "@mui/material";
 import Spacer from "@/components/common/Spacer";
-import { PPUndoGraphDatasetsConfigType } from "@/@types/note";
+import { PPUndoGraphDatasetsConfigType, Point2Type, StrokeDataType } from "@/@types/note";
 import { PrettoSlider, datasetsConfig, options, xLabels } from "@/configs/PPUndoGraphConifig";
+import { getJaStringTime } from "@/modules/common/getJaStringTime";
 
 
 export const PPUndoArea: React.FC = () => {
@@ -35,7 +36,6 @@ export const PPUndoArea: React.FC = () => {
     ArcElement
   )
   ChartJS.defaults.scales.linear.min = 0;
-
 
   interface dataType {
     data: number[];
@@ -57,7 +57,10 @@ export const PPUndoArea: React.FC = () => {
   const [sliderValue, setSliderValue] = useAtom(sliderValueAtom);
   const [drawer, setDrawer] = useAtom(drawerAtom);
   const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom);
+  const [, setAddLogOfBeforePPUndo] = useAtom(addLogOfBeforePPUndoAtom);
+  
   const [lowerPressureIndexList, setLowerPressureIndexList] = useState<number[]>([]);
+  const [logData, setLogData] = useState<StrokeDataType | null>(null);
 
   const changeValue = (event: Event, newValue: number | number[]) => {
     let tmp: number[] = [];
@@ -70,15 +73,17 @@ export const PPUndoArea: React.FC = () => {
     if (tmp.length == lowerPressureIndexList.length) {
       return;
     }
-    
+    // FIXME: 色変更の関数を別で実装しよう！もっとしっかりとした条件分岐で
     tmp.map(val => {
-      if(drawer.currentFigure.strokes[val].color.length == 7) {
-        drawer.currentFigure.strokes[val].color += "22";
+      const color = drawer.currentFigure.strokes[val].color;
+      if(color.length == 7) {
+        drawer.currentFigure.strokes[val].color = color + "22";
       }
     })
     lowerPressureIndexList.map(val => {
-      if (!tmp.includes(val) && drawer.currentFigure.strokes[val].color.length == 9 && drawer.currentFigure.strokes[val].color.slice(-2) != "00") {
-        drawer.currentFigure.strokes[val].color = drawer.currentFigure.strokes[val].color.slice(0, -2);
+      const color = drawer.currentFigure.strokes[val].color;
+      if (!tmp.includes(val) && color.length == 9 && color.slice(-2) != "00") {
+        drawer.currentFigure.strokes[val].color = color.slice(0, -2);
       }
     })
     setLowerPressureIndexList(tmp);
@@ -88,24 +93,54 @@ export const PPUndoArea: React.FC = () => {
     }, 100);
   }
 
-  const actionStart = () => {
+  const actionStart = async () => {
     console.log("PPUndo操作開始");
+    const numOfStroke = drawer.numOfStroke;
+    if(numOfStroke <= 0) return
+    const figure = drawer.currentFigure;
+    figure.calculateRect();
+    figure.normalize();
+    figure.adapt();
+    const res: string = await drawer.getBase64PngImage().catch((e: unknown) => {
+      console.log(e);
+    });
+    const now = await getJaStringTime();
+    const strokeData: StrokeDataType = {
+      image: res? res : undefined,
+      createTime: now,
+      strokes: figure.strokes.map((stroke: any, i: number) => ({
+        points: stroke.points.map((point: Point2Type, _j: number) => ({
+          x: point.x,
+          y: point.y,
+          z: point.z,
+        })),
+        color: stroke!.color,
+        strokeWidth: stroke!.strokeWidth,
+        strokeAvgPressure: avgPressureOfStroke[i]
+      })),
+    };
+    setLogData(strokeData);
   }
 
   const actionFinish = () => {
     console.log("PPUndo操作終了")
+    console.log(drawer);
     lowerPressureIndexList.map(val => {
-      if (drawer.currentFigure.strokes[val].color.length == 9) {
-        drawer.currentFigure.strokes[val].color = drawer.currentFigure.strokes[val].color.slice(0, -2) + "00";
-      } else if (drawer.currentFigure.strokes[val].color.length == 7) {
-        drawer.currentFigure.strokes[val].color += "00";
+      const color = drawer.currentFigure.strokes[val].color;
+      if (color.length == 9) {
+        drawer.currentFigure.strokes[val].color = color.slice(0, -2) + "00";
+      } else if (color.length == 7) {
+        drawer.currentFigure.strokes[val].color = color + "00";
       }
     })
     setDrawer(drawer);
+    setAddLogOfBeforePPUndo(logData!);
+    
     setTimeout(() => {
       drawer.reDraw();
     }, 100);
   }
+
 
 	return (
     <>
