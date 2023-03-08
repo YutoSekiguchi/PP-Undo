@@ -5,6 +5,7 @@ import {
   Box 
 } from "@mui/material";
 import { PPUndoArea } from "./PPUndoArea";
+import { LogRedo } from "./LogRedo";
 
 export const NoteGraphAreas: React.FC = () => {
   // const {buttonColor, isChoice, colorChange, index} = props;
@@ -24,6 +25,7 @@ export const NoteGraphAreas: React.FC = () => {
 	return (
     <Box className="graph-area">
       <PPUndoArea />
+      <LogRedo />
     </Box>
 	);
 }

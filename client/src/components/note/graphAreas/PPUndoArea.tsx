@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { useAtom } from 'jotai'
-import { addLogOfBeforePPUndoAtom, avgPressureOfStrokeAtom, drawerAtom, getAvgPressureOfStrokeCountAtom, sliderValueAtom } from "@/infrastructures/jotai/drawer";
+import {
+  addLogOfBeforePPUndoAtom,
+  avgPressureOfStrokeAtom,
+  drawerAtom,
+  getAvgPressureOfStrokeCountAtom,
+  sliderValueAtom,
+  logNotifierCountAtom,
+} from "@/infrastructures/jotai/drawer";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -58,6 +65,7 @@ export const PPUndoArea: React.FC = () => {
   const [drawer, setDrawer] = useAtom(drawerAtom);
   const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom);
   const [, setAddLogOfBeforePPUndo] = useAtom(addLogOfBeforePPUndoAtom);
+  const [logNotifierCount, setLogNotifierCount] = useAtom(logNotifierCountAtom);
   
   const [lowerPressureIndexList, setLowerPressureIndexList] = useState<number[]>([]);
   const [logData, setLogData] = useState<StrokeDataType | null>(null);
@@ -135,6 +143,7 @@ export const PPUndoArea: React.FC = () => {
     })
     setDrawer(drawer);
     setAddLogOfBeforePPUndo(logData!);
+    setLogNotifierCount(logNotifierCount + 1);
     
     setTimeout(() => {
       drawer.reDraw();

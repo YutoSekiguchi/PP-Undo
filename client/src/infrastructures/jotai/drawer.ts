@@ -116,3 +116,9 @@ export const logOfBeforePPUndoAtom = atom<StrokeDataType[]>([])
 export const addLogOfBeforePPUndoAtom = atom(null, (get, set, strokeData: StrokeDataType) => {
   set(logOfBeforePPUndoAtom, get(logOfBeforePPUndoAtom).concat([strokeData]));
 })
+
+/**
+ * @description
+ * 新規ログの件数通知
+ */
+export const logNotifierCountAtom = atom<number>(0);

@@ -12,7 +12,7 @@ import { sum } from "@/modules/note/SumPressure";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 
 export const Note:React.FC =() => {
-  const [noteSize, setNoteSize] = useState<NoteSizeType>({width: "70%", height: "800px"}); // ノートサイズ(svgのサイズ)
+  const [noteSize, setNoteSize] = useState<NoteSizeType>({width: "70%", height: "1000px"}); // ノートサイズ(svgのサイズ)
   const [isDraw, setIsDraw] = useState<boolean>(false); // 書いているかどうか
   const [drawMode, ] = useAtom(drawModeAtom); // penか消しゴムか
   const [drawer, setDrawer] = useAtom(drawerAtom); // drawerの情報
