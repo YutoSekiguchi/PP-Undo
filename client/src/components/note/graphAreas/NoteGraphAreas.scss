@@ -29,7 +29,7 @@
 .log-image-container {
   background-color: #{variables.$dark-blue-color}+"BB";
   width: 100vw;
-  height: 50vh;
+  height: 70vh;
   display: flex;
   align-items: center;
   @include mixins.bl-static-position();
