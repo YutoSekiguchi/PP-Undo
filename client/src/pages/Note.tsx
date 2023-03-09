@@ -129,7 +129,7 @@ export const Note:React.FC =() => {
   }
 
   return (
-    <Box className="width100">
+    <Box className="width100 note">
       <NoteHeader />
       <Box sx={{ display: "flex" }} className="width100">
         <Box className="canvasWrapper" id="canvasWrapper" sx={{ width: noteSize['width'], height: noteSize["height"], position: "relative" }}>
