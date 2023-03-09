@@ -3,11 +3,9 @@ import Logo from '@/assets/logo.png'
 import { ColorButton } from "./ColorButton";
 import { UndoButton } from "./UndoButton";
 import { StrokeEraseButton } from "./StrokeEraseButton";
-import { Link } from "react-router-dom";
 import { 
   Box,
   Toolbar,
-  Button,
   Typography,
   Paper
 } from "@mui/material";
