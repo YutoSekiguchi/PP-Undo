@@ -13,10 +13,11 @@ import { logNotifierCountAtom } from "@/infrastructures/jotai/drawer";
 
 export const LogRedo: React.FC = () => {
   const DisplayLogButton = styled(Button) ({
-    backgroundColor: '#1A2939',
-    color: '#fff',
+    backgroundColor:'#fff',
+    color: '#1A2939',
     '&:hover': {
       backgroundColor: cyan[700],
+      color: '#fff',
     },
   })
   const [logNotifierCount, setLogNotifierCount] = useAtom(logNotifierCountAtom);

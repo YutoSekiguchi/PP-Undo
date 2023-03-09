@@ -42,6 +42,17 @@ export const redoableAtom = atom((get) => {
   return get(undoStrokeLogAtom).length > 0 ? true: false;
 })
 
+/**
+ * @description
+ * 1ストロークの筆圧を保持
+ */
+export const pressureOfOneStrokeAtom = atom<number[]>([]);
+export const addPressureOfOneStrokeAtom = atom(null, (get, set, val: number) => {
+  set(pressureOfOneStrokeAtom, get(pressureOfOneStrokeAtom).concat([val]));
+})
+export const clearPressureOfOneStrokeAtom = atom(null, (_get, set) => {
+  set(pressureOfOneStrokeAtom, []);
+})
 
 /**
  * @description

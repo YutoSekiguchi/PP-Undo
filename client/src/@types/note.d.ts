@@ -45,6 +45,8 @@ export interface PPUndoGraphDatasetsConfigType {
   fill?: boolean | string;
   smooth?: boolean;
   tension?: number;
+  radius?: number;
+  borderWidth?: number;
 }
 
 export interface PointType {

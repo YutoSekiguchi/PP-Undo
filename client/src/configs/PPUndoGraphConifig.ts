@@ -6,8 +6,8 @@ export const xLabels: number[] = [...Array(21)].map((_, i) => Math.round((i*0.05
 
 export const datasetsConfig: PPUndoGraphDatasetsConfigType = {
   label: "ストローク数",
-  borderColor: "#30CFD0",
-  backgroundColor: "#30CFD033",
+  borderColor: "#36A2EB",
+  backgroundColor: "#FFF5",
   fill: true,
   smooth: true,
   tension: 0.3,
@@ -28,6 +28,7 @@ export const options: {} = {
       },
     },
     y: {
+      beginAtZero: true,
       title: {
         display: true,
         text: "ストローク数",

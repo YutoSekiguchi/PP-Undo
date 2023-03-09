@@ -7,7 +7,7 @@ import {
   Box 
 } from "@mui/material";
 import { useAtom } from 'jotai'
-import { addAvgPressureOfStrokeAtom, avgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawModeAtom, drawerAtom, undoableCountAtom, removeAvgPressureOfStrokeAtom, setUndoStrokeLogAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, avgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawModeAtom, drawerAtom, undoableCountAtom, removeAvgPressureOfStrokeAtom, setUndoStrokeLogAtom, addPressureOfOneStrokeAtom, clearPressureOfOneStrokeAtom } from "@/infrastructures/jotai/drawer";
 import { sum } from "@/modules/note/SumPressure";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 
@@ -22,6 +22,8 @@ export const Note:React.FC =() => {
   const [, addLog] = useAtom(setUndoStrokeLogAtom); // undoしたストロークのログの追加
   const [, removeAvgPressureOfStroke] = useAtom(removeAvgPressureOfStrokeAtom); // ストロークの平均筆圧を削除(消しゴム時やundo時)
   const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom); // ストロークの筆圧平均のリストの取得
+  const [, addPressureOfOneStroke] = useAtom(addPressureOfOneStrokeAtom);
+  const [, clearPressureOfOneStroke] = useAtom(clearPressureOfOneStrokeAtom);
   let strokePressureList: number[] = [];
   let countPoints: number = 0;
   const drawers: any = {};
@@ -46,6 +48,7 @@ export const Note:React.FC =() => {
   }
 
   const startDraw = () => {
+    clearPressureOfOneStroke();
     setIsDraw(true);
   }
 
@@ -54,6 +57,8 @@ export const Note:React.FC =() => {
       return;
     }
     strokePressureList.push(e.pressure);
+    const roundStrokePressure =  e.pointerType=="mouse"? Math.random(): Math.round(e.pressure * 100) / 100;
+    addPressureOfOneStroke(roundStrokePressure);
     countPoints += 1;
   }
 

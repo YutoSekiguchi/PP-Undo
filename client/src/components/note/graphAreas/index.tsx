@@ -6,6 +6,8 @@ import {
 } from "@mui/material";
 import { PPUndoArea } from "./PPUndoArea";
 import { LogRedo } from "./LogRedo";
+import { NowPressureGraphArea } from "./NowPressureGraphArea";
+import { AvgPressureGraphArea } from "./AvgPressureGraphArea";
 
 export const NoteGraphAreas: React.FC = () => {
   // const {buttonColor, isChoice, colorChange, index} = props;
@@ -26,6 +28,10 @@ export const NoteGraphAreas: React.FC = () => {
     <Box className="graph-area">
       <PPUndoArea />
       <LogRedo />
+      <Box className="graph-wrapper graph-wrapper-height">
+        <NowPressureGraphArea />
+        <AvgPressureGraphArea />
+      </Box>
     </Box>
 	);
 }
