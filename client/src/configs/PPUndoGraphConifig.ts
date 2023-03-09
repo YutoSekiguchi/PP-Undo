@@ -5,7 +5,7 @@ import { Slider } from "@mui/material";
 export const xLabels: number[] = [...Array(21)].map((_, i) => Math.round((i*0.05)*100)/100);
 
 export const datasetsConfig: PPUndoGraphDatasetsConfigType = {
-  label: "筆圧",
+  label: "ストローク数",
   borderColor: "#30CFD0",
   backgroundColor: "#30CFD033",
   fill: true,
