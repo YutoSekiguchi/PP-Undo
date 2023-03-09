@@ -32,6 +32,7 @@
   height: 70vh;
   display: flex;
   align-items: center;
+  z-index: 1;
   @include mixins.bl-static-position();
   .log-image-total {
     @include mixins.tl-static-position($position: absolute, $left: 20px);
@@ -61,6 +62,7 @@
   }
   .dialog-image {
     width: 70%;
+    max-height: 80vh;
   }
 }
 
