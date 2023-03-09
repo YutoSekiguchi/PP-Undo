@@ -10,6 +10,12 @@ $mode-button-size: $undo-redo-button-size;
 $no-mode-button-size: 28px;
 $button-border: 1px solid gray;
 
+.note-header {
+  @include mixins.tl-static-position();
+  z-index: 999;
+  width: 100vw;
+}
+
 .undo-redo-button {
   width: $undo-redo-button-size;
   height: $undo-redo-button-size;
