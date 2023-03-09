@@ -33,8 +33,8 @@ export const NoteHeader:React.FC =() => {
 
   return (
     <>
-      <Box sx={{ flexGrow: 1 }}>
-        <Paper sx={{ background: "#37474f", borderBottom: '1px solid #57676f' }} elevation={0}  >
+      <Box className="note-header">
+        <Paper sx={{ background: "#37474f", borderBottom: '1px solid #57676f'}} elevation={0}  >
           <Toolbar sx={{ justifyContent: "space-between" }}>
             <Box className="align-center">
               <img 
