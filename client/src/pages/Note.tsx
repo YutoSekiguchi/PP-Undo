@@ -1,6 +1,6 @@
 import React, { useState, useEffect, PointerEvent } from "react";
 import { NoteSizeType, Point2Type } from "@/@types/note";
-import { Drawer, Figure, Stroke } from "@nkmr-lab/average-figure-drawer";
+import { Drawer } from "@nkmr-lab/average-figure-drawer";
 import { DrawerConfig } from "@/configs/DrawerConfig";
 import { NoteHeader } from "@/components/note/header";
 import {
