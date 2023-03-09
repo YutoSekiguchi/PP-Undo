@@ -16,13 +16,14 @@ import { CancelButton } from "./CancelButton";
 
 export const LogImageList: React.FC<LogImageListProps> = (props) => {
   const { closeLog } = props;
+  const displayLogCount = 3;
   const [dialogIndex, setDialogIndex] = useState<number>(-1); // -1は表示しない
   const insideRef = useRef<HTMLDivElement>(null);
   
   const [logOfBeforePPUndo, ] = useAtom(logOfBeforePPUndoAtom);
   const [logNotifierCount, ] = useAtom(logNotifierCountAtom);
   const [activeStep, setActiveStep] = useState<number>(0);
-  const [maxSteps, setMaxSteps] = useState<number>(Math.ceil(logOfBeforePPUndo.length/3));
+  const [maxSteps, setMaxSteps] = useState<number>(Math.ceil(logOfBeforePPUndo.length/displayLogCount));
   const theme = useTheme();
 
   const LogImageStepper = styled(MobileStepper)({
@@ -59,6 +60,20 @@ export const LogImageList: React.FC<LogImageListProps> = (props) => {
   useEffect(() => {
     setMaxSteps(Math.ceil(logOfBeforePPUndo.length/3));
   }, [logOfBeforePPUndo])
+
+  const LogImage = (logImageProps: { i: number }) => {
+    const { i } = logImageProps;
+    return (
+      <img className="log-image" src={logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].image}></img>
+    );
+  }
+
+  const LogTimeText = (logTimeTextProps: { i: number }) => {
+    const { i } = logTimeTextProps;
+    return (
+      <p>{logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].createTime}</p>
+    );
+  }
 
 
   return (
@@ -112,23 +127,23 @@ export const LogImageList: React.FC<LogImageListProps> = (props) => {
           />
         }
         {
-          [...Array(3)].map((_, i) => (
+          [...Array(displayLogCount)].map((_, i) => (
             <Box key={i}>
             { logOfBeforePPUndo.length > activeStep*3+i &&
               <Box
                 className="log-image-wrapper"
-                onClick={() => openDialog(logOfBeforePPUndo.length - (activeStep*3+i) - 1)}
+                onClick={() => openDialog(logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1)}
               >
                 { activeStep*3+i < logNotifierCount
                   ? <>
                       <Badge badgeContent={"New"} color="error"> 
-                        <img className="log-image" src={logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*3+i) - 1].image}></img>
+                        <LogImage i={i} />
                       </Badge>
-                      <p>{logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*3+i) - 1].createTime}</p>
+                      <LogTimeText i={i} />
                     </>
                   : <>
-                      <img className="log-image" src={logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*3+i) - 1].image}></img>
-                      <p>{logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*3+i) - 1].createTime}</p>
+                      <LogImage i={i} />
+                      <LogTimeText i={i} />
                     </> 
                 }
               </Box>
