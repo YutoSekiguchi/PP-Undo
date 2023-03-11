@@ -49,6 +49,12 @@ export interface PPUndoGraphDatasetsConfigType {
   borderWidth?: number;
 }
 
+export interface DoughnutGraphConfigType {
+  backgroundColor?: string | string[];
+  borderColor?: string;
+
+}
+
 export interface PointType {
   x: number;
   y: number;
@@ -66,4 +72,11 @@ export interface StrokeDataType {
   image?: string;
   createTime: string;
   strokes: StrokeType[];
+}
+
+export interface DoughnutPressureGraphPropsType {
+  pressureValue: number;
+  title: string;
+  graphLabel: string[];
+  datasetsConfig: DoughnutGraphConfigType;
 }
