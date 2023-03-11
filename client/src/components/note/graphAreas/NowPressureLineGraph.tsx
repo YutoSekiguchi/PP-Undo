@@ -14,7 +14,7 @@ import {
 import { Line } from "react-chartjs-2";
 import { Box } from "@mui/material";
 import { PPUndoGraphDatasetsConfigType } from "@/@types/note";
-import { datasetsConfig, options } from "@/configs/NowPressureGraphConfig";
+import { datasetsConfig, options } from "@/configs/NowPressureLineGraphConfig";
 import { useAtom } from "jotai";
 import { pressureOfOneStrokeAtom } from "@/infrastructures/jotai/drawer";
 
@@ -57,7 +57,7 @@ export const NowPressureGraphArea: React.FC = () => {
       <Box className="center">
         <Line
           className="graph"
-          height={150}
+          height={125}
           data={graphData}
           options={options}
           id="chart-key"
