@@ -13,6 +13,7 @@ import { useTheme } from '@mui/material/styles';
 import { styled } from '@mui/system';
 import { DoughnutPressureGraph } from "./DoughnutPressureGraph";
 import { avgDatasetsConfig, avgGraphLabel, nowDatasetsConfig, nowGraphLabel } from "@/configs/DoughnutPressureGraphConfig";
+import { averagePressure } from "@/modules/note/AveragePressure";
 
 export const NoteGraphAreas: React.FC = () => {
   const theme = useTheme();
@@ -82,7 +83,7 @@ export const NoteGraphAreas: React.FC = () => {
               datasetsConfig={nowDatasetsConfig}
             />
             <DoughnutPressureGraph
-              pressureValue={1}
+              pressureValue={averagePressure(avgPressureOfStroke)}
               title="Average"
               graphLabel={avgGraphLabel}
               datasetsConfig={avgDatasetsConfig}
