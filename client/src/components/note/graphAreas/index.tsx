@@ -14,6 +14,7 @@ import { styled } from '@mui/system';
 import { DoughnutPressureGraph } from "./DoughnutPressureGraph";
 import { avgDatasetsConfig, avgGraphLabel, nowDatasetsConfig, nowGraphLabel } from "@/configs/DoughnutPressureGraphConfig";
 import { averagePressure } from "@/modules/note/AveragePressure";
+import { NowPressure } from "@/modules/note/NowPressure";
 
 export const NoteGraphAreas: React.FC = () => {
   const theme = useTheme();
@@ -77,7 +78,7 @@ export const NoteGraphAreas: React.FC = () => {
           activeStep == 1 && 
           <Box sx={{width: "100%", height: "100%", display: "flex", justifyContent: "space-around", alignItems: "center"}}>
             <DoughnutPressureGraph
-              pressureValue={avgPressureOfStroke[avgPressureOfStroke.length-1]}
+              pressureValue={NowPressure(avgPressureOfStroke)}
               title="Now"
               graphLabel={nowGraphLabel}
               datasetsConfig={nowDatasetsConfig}
