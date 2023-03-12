@@ -60,3 +60,7 @@
   font-size: small;
   @include text-color();
 }
+
+.pointer {
+  @include mixins.pointer();
+}

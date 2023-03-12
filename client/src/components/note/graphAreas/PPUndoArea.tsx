@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 import {
   addLogOfBeforePPUndoAtom,
   avgPressureOfStrokeAtom,
@@ -63,7 +63,7 @@ export const PPUndoArea: React.FC = () => {
 
   const [sliderValue, setSliderValue] = useAtom(sliderValueAtom);
   const [drawer, setDrawer] = useAtom(drawerAtom);
-  const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom);
+  const avgPressureOfStroke = useAtomValue(avgPressureOfStrokeAtom);
   const [, setAddLogOfBeforePPUndo] = useAtom(addLogOfBeforePPUndoAtom);
   const [logNotifierCount, setLogNotifierCount] = useAtom(logNotifierCountAtom);
   

@@ -19,7 +19,9 @@ export const Header:React.FC =() => {
         <Box sx={{ flexGrow: 1 }}>
           <Paper sx={{ background: "#37474f", borderBottom: '1px solid #57676f' }} elevation={0}  >
             <Toolbar sx={{ justifyContent: "space-between" }}>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box
+                className="center"
+              >
                 <img 
                   src={Logo}
                   style={{ width: "60px", height: "60px", marginRight: "10px" }}

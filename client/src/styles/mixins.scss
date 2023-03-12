@@ -8,6 +8,10 @@
   border-radius: 9999px;
 }
 
+@mixin pointer {
+  cursor: pointer;
+}
+
 @mixin tl-static-position($position: fixed, $top: 0, $left: 0) {
   position: $position;
   top: $top;
