@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import Logo from '@/assets/logo.png'
 import { ColorButton } from "./ColorButton";
 import { UndoButton } from "./UndoButton";
@@ -18,6 +19,7 @@ import { ChangePenWidthButton } from "./ChangePenWidthButton";
 
 export const NoteHeader:React.FC =() => {
   const [colorList, setColorList] = useState<PenColorType[]>(penColorList);
+  const navigate = useNavigate();
 
   const colorChange = (index: number) => {
     let tmp = colorList.slice(0, colorList.length); ;
@@ -31,12 +33,19 @@ export const NoteHeader:React.FC =() => {
     setColorList(tmp);
   }
 
+  const backToHome = () => {
+    navigate('/');
+  }
+
   return (
     <>
       <Box className="note-header">
         <Paper sx={{ background: "#37474f", borderBottom: '1px solid #57676f'}} elevation={0}  >
           <Toolbar sx={{ justifyContent: "space-between" }}>
-            <Box className="align-center">
+            <Box 
+              className="center pointer"
+              onClick={backToHome}
+            >
               <img 
                 src={Logo}
                 style={{ width: "60px", height: "60px", marginRight: "10px" }}
