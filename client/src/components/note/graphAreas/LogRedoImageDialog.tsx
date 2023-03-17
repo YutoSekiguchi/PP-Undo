@@ -8,7 +8,7 @@ import { CancelButton } from "./CancelButton";
 
 
 export const LogRedoImageDialog: React.FC<LogRedoImageDialogProps> = (props) => {
-  const { dialogIndex, closeDialog } = props;
+  const { dialogIndex, closeDialog, closeLog } = props;
   const [drawer, ] = useAtom(drawerAtom);
   const [logOfBeforePPUndo, ] = useAtom(logOfBeforePPUndoAtom);
   const [, setClearAvgPressureOfStroke] = useAtom(clearAvgPressureOfStrokeAtom);
@@ -38,6 +38,7 @@ export const LogRedoImageDialog: React.FC<LogRedoImageDialogProps> = (props) => 
     setClearUndoStrokeLog();
     setUndoableCount(0);
     closeDialog();
+    closeLog();
   }
 
   return (

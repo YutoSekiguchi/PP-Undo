@@ -83,6 +83,7 @@ export const LogImageList: React.FC<LogImageListProps> = (props) => {
         <LogRedoImageDialog
           dialogIndex={dialogIndex}
           closeDialog={closeDialog}
+          closeLog={closeLog}
         />
       }
       <Box className="log-image-container" ref={insideRef}>
