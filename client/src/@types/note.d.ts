@@ -10,6 +10,7 @@ export interface LogImageListProps {
 export interface LogRedoImageDialogProps {
   dialogIndex: number;
   closeDialog: () => void;
+  closeLog: () => void;
 }
 export interface CancelButtonProps {
   half?: boolean;
