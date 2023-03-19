@@ -4,19 +4,23 @@ export interface ColorButtonProps {
   colorChange: (index: number) => void;
   index: number;
 }
+
 export interface LogImageListProps {
   closeLog: () => void;
 }
+
 export interface LogRedoImageDialogProps {
   dialogIndex: number;
   closeDialog: () => void;
   closeLog: () => void;
 }
+
 export interface CancelButtonProps {
   half?: boolean;
   fontSize?: number;
   close: () => void;
 }
+
 export interface NoteSizeType {
   width: number | string;
   height: number | string;
