@@ -109,12 +109,13 @@ export const PPUndoArea: React.FC = () => {
     figure.calculateRect();
     figure.normalize();
     figure.adapt();
-    const res: string = await drawer.getBase64PngImage().catch((e: unknown) => {
-      console.log(e);
+    const res: string = await drawer.getBase64PngImage().catch((error: unknown) => {
+      console.log(error);
     });
     const now = await getJaStringTime();
     const strokeData: StrokeDataType = {
       image: res? res : undefined,
+      sliderValue: sliderValue,
       createTime: now,
       strokes: figure.strokes.map((stroke: any, i: number) => ({
         points: stroke.points.map((point: Point2Type, _j: number) => ({
@@ -132,7 +133,6 @@ export const PPUndoArea: React.FC = () => {
 
   const actionFinish = () => {
     console.log("PPUndo操作終了")
-    console.log(drawer);
     lowerPressureIndexList.map(val => {
       const color = drawer.currentFigure.strokes[val].color;
       if (color.length == 9) {
@@ -144,7 +144,6 @@ export const PPUndoArea: React.FC = () => {
     setDrawer(drawer);
     setAddLogOfBeforePPUndo(logData!);
     setLogNotifierCount(logNotifierCount + 1);
-    
     setTimeout(() => {
       drawer.reDraw();
     }, 100);
