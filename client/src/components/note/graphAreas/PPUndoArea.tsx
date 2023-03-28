@@ -28,6 +28,7 @@ import Spacer from "@/components/common/Spacer";
 import { PPUndoGraphDatasetsConfigType, Point2Type, StrokeDataType } from "@/@types/note";
 import { PrettoSlider, datasetsConfig, options, xLabels } from "@/configs/PPUndoGraphConifig";
 import { getJaStringTime } from "@/modules/common/getJaStringTime";
+import { getStrokesIndexWithLowPressure, hideLowPressureStrokes, increaseStrokeColorOpacity, reduceStrokeColorOpacity } from "@/modules/note/PPUndo";
 
 
 export const PPUndoArea: React.FC = () => {
@@ -71,30 +72,24 @@ export const PPUndoArea: React.FC = () => {
   const [logData, setLogData] = useState<StrokeDataType | null>(null);
 
   const changeValue = (event: Event, newValue: number | number[]) => {
-    let tmp: number[] = [];
-    avgPressureOfStroke.map((pressure, i) => {
-      if(typeof newValue == "number" && Math.round(pressure*100)/100 <= newValue) {
-        tmp.push(i);
-      }
-    })
+    const newLowerPressureIndexList: number[] = getStrokesIndexWithLowPressure(avgPressureOfStroke, newValue);
     setSliderValue(newValue);
-    if (tmp.length == lowerPressureIndexList.length) {
+    if (newLowerPressureIndexList.length == lowerPressureIndexList.length) {
       return;
     }
     // FIXME: 色変更の関数を別で実装しよう！もっとしっかりとした条件分岐で
-    tmp.map(val => {
-      const color = drawer.currentFigure.strokes[val].color;
-      if(color.length == 7) {
-        drawer.currentFigure.strokes[val].color = color + "22";
-      }
-    })
-    lowerPressureIndexList.map(val => {
-      const color = drawer.currentFigure.strokes[val].color;
-      if (!tmp.includes(val) && color.length == 9 && color.slice(-2) != "00") {
-        drawer.currentFigure.strokes[val].color = color.slice(0, -2);
-      }
-    })
-    setLowerPressureIndexList(tmp);
+    // 色を薄く
+    reduceStrokeColorOpacity(
+      newLowerPressureIndexList,
+      drawer.currentFigure.strokes
+    );
+    // 色を元に戻す
+    increaseStrokeColorOpacity(
+      lowerPressureIndexList,
+      newLowerPressureIndexList,
+      drawer.currentFigure.strokes
+    );
+    setLowerPressureIndexList(newLowerPressureIndexList);
     setDrawer(drawer);
     setTimeout(() => {
       drawer.reDraw();
@@ -133,14 +128,10 @@ export const PPUndoArea: React.FC = () => {
 
   const actionFinish = () => {
     console.log("PPUndo操作終了")
-    lowerPressureIndexList.map(val => {
-      const color = drawer.currentFigure.strokes[val].color;
-      if (color.length == 9) {
-        drawer.currentFigure.strokes[val].color = color.slice(0, -2) + "00";
-      } else if (color.length == 7) {
-        drawer.currentFigure.strokes[val].color = color + "00";
-      }
-    })
+    hideLowPressureStrokes(
+      lowerPressureIndexList,
+      drawer.currentFigure.strokes
+    )
     setDrawer(drawer);
     setAddLogOfBeforePPUndo(logData!);
     setLogNotifierCount(logNotifierCount + 1);
