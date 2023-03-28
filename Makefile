@@ -1,8 +1,8 @@
 # 開発環境用コマンド
 start-dev:
 	docker-compose up --build -d
-start-dev-api:
-	docker-compose up -d mysql phpmyadmin api
+start-dev-backend:
+	docker-compose up -d mysql phpmyadmin backend
 down-dev:
 	docker-compose down --rmi all
 
