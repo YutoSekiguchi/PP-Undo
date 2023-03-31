@@ -6,6 +6,10 @@
   align-items: center;
 }
 
+@mixin medium-rounded {
+  border-radius: 10%;
+}
+
 @mixin rounded {
   border-radius: 9999px;
 }
