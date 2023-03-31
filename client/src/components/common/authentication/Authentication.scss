@@ -1,0 +1,38 @@
+@use '../../../styles/mixins.scss';
+@use '../../../styles/variables.scss';
+
+.login-dialog-container {
+  @include mixins.dialog-container();
+  @include mixins.tl-static-position();
+  @include mixins.center();
+  .login-dialog-wrapper {
+    text-align: center;
+    display: block;
+    @include mixins.center();
+    .login-dialog {
+      background-color: variables.$dark-blue-color;
+      width: 40%;
+      height: 500px;
+      border: 2px solid white;
+      position: relative;
+      @include mixins.medium-rounded();
+      .login-dialog-title {
+        color: variables.$p-text-color;
+        font-size: 2rem;
+        margin-top: 20px;
+        font-weight: bold;
+      }
+      .text-field {
+        width: 80%;
+        margin-top: 80px;
+      }
+      .buttons {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        position: absolute;
+        bottom: 40px;
+      }
+    }
+  }
+}
