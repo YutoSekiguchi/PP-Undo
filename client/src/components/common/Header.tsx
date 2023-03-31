@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Logo from '@/assets/logo.png'
 import { Link, useLocation, Location } from "react-router-dom";
 import { notShowPathList } from "@/configs/NotShowPath";
@@ -9,9 +9,19 @@ import {
   Typography,
   Paper
 } from "@mui/material";
+import { LoginDialog } from "./authentication/LoginDialog";
 
 export const Header:React.FC =() => {
   const location: Location = useLocation();
+  const [isLoginDialog, setIsLoginDialog] = useState<boolean>(false);
+
+  const openLoginDialog = () => {
+    setIsLoginDialog(true);
+  }
+
+  const closeLoginDialog = () => {
+    setIsLoginDialog(false);
+  }
 
   return (
     <>
@@ -37,9 +47,22 @@ export const Header:React.FC =() => {
                 </Typography>
               </Box>
               
-              <Button variant="outlined" color="inherit">Login</Button>
+              <Button 
+                variant="outlined"
+                color="inherit"
+                onClick={openLoginDialog}
+              >
+                Login
+              </Button>
             </Toolbar>
           </Paper>
+          {isLoginDialog &&
+            <>
+              <LoginDialog
+                closeLoginDialog={closeLoginDialog}
+              />
+            </>
+          }
         </Box>
       }
     </>
