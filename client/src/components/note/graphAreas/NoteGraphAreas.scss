@@ -34,12 +34,9 @@
 }
 
 .log-image-container {
-  background-color: #{variables.$dark-blue-color}+"BB";
-  width: 100vw;
-  height: 70vh;
+  @include mixins.dialog-container($height: 70vh, $z-index: 1);
   display: flex;
   align-items: center;
-  z-index: 1;
   @include mixins.bl-static-position();
   .log-image-total {
     @include mixins.tl-static-position($position: absolute, $left: 20px);
@@ -57,10 +54,7 @@
 }
 
 .dialog-image-container {
-  background-color: #{variables.$dark-blue-color}+"BB";
-  width: 100vw;
-  height: 100vh;
-  z-index: 999;
+  @include mixins.dialog-container();
   @include mixins.tl-static-position();
   @include mixins.center();
   .dialog-image-wrapper {

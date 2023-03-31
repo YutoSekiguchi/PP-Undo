@@ -1,3 +1,5 @@
+@use 'variables.scss';
+
 @mixin center {
   display: flex;
   justify-content: center;
@@ -28,4 +30,16 @@
   position: $position;
   bottom: $bottom;
   left: $left;
+}
+
+@mixin dialog-container(
+  $background-color: variables.$dark-blue-color,
+  $width: 100vw,
+  $height: 100vh,
+  $z-index: 999,
+  ) {
+  background-color: #{$background-color}+"BB";
+  width: $width;
+  height: $height;
+  z-index: $z-index;
 }
