@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useAtom } from "jotai";
 import Logo from '@/assets/logo.png'
 import { Link, useLocation, Location } from "react-router-dom";
 import { notShowPathList } from "@/configs/NotShowPath";
@@ -7,13 +8,16 @@ import {
   Toolbar,
   Button,
   Typography,
-  Paper
+  Paper,
 } from "@mui/material";
 import { LoginDialog } from "./authentication/LoginDialog";
+import { userDataAtom } from "@/infrastructures/jotai/authentication";
+import { Person } from "@mui/icons-material";
 
 export const Header:React.FC =() => {
   const location: Location = useLocation();
   const [isLoginDialog, setIsLoginDialog] = useState<boolean>(false);
+  const [userData, ] = useAtom(userDataAtom);
 
   const openLoginDialog = () => {
     setIsLoginDialog(true);
@@ -47,13 +51,20 @@ export const Header:React.FC =() => {
                 </Typography>
               </Box>
               
-              <Button 
-                variant="outlined"
-                color="inherit"
-                onClick={openLoginDialog}
-              >
-                Login
-              </Button>
+              {
+                userData == null
+                  ? <Button 
+                      variant="outlined"
+                      color="inherit"
+                      onClick={openLoginDialog}
+                    >
+                      Login
+                    </Button>
+                  : <Box className="align-center pointer">
+                    <Person />
+                    <p className="text">{userData.Name}<span className="small-text">さん</span></p>
+                  </Box>
+              }
             </Toolbar>
           </Paper>
           {isLoginDialog &&
