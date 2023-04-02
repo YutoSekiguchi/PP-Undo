@@ -53,7 +53,7 @@ export const SideBar:React.FC =() => {
                 <ListItemIcon>
                   { menu.icon }
                 </ListItemIcon>
-                <ListItemText primary={menu.label} />
+                <ListItemText className="text pointer" primary={menu.label} />
               </ListItemButton>
             </Link>
           </ListItem>
