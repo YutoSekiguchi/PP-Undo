@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import Logo from '@/assets/logo.png'
 import { Link, useLocation, Location } from "react-router-dom";
@@ -13,11 +13,15 @@ import {
 import { LoginDialog } from "./authentication/LoginDialog";
 import { userDataAtom } from "@/infrastructures/jotai/authentication";
 import { Person } from "@mui/icons-material";
+import { UserDataType } from "@/@types/authentication";
+import lscache from "lscache";
 
 export const Header:React.FC =() => {
   const location: Location = useLocation();
+
   const [isLoginDialog, setIsLoginDialog] = useState<boolean>(false);
-  const [userData, ] = useAtom(userDataAtom);
+  const [userData, setUserData] = useState<UserDataType | null>(null);
+  const [loginUserData, ] = useAtom(userDataAtom);
 
   const openLoginDialog = () => {
     setIsLoginDialog(true);
@@ -26,6 +30,19 @@ export const Header:React.FC =() => {
   const closeLoginDialog = () => {
     setIsLoginDialog(false);
   }
+
+  useEffect(() => {
+    lscache.flushExpired();
+    if (lscache.get('loginUserData') && userData == null) {
+      setUserData(lscache.get('loginUserData'));
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (loginUserData != null) {
+      setUserData(loginUserData);
+    }
+  }, [loginUserData])
 
   return (
     <>
