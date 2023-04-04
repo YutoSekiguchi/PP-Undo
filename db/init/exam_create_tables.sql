@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS notes (
   log_redo_count INT NOT NULL,
   ppundo_count INT NOT NULL,
   slider_value FLOAT NOT NULL,
-  background_image TEXT NOT NULL,
+  background_image TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
