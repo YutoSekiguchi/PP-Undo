@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS notes (
   avg_pressure_list TEXT NOT NULL,
   all_avg_pressure_list TEXT NOT NULL,
   is_show_stroke_list TEXT NOT NULL,
-  all_stroke_coount INT NOT NULL,
+  all_stroke_count INT NOT NULL,
   stroke_count INT NOT NULL,
   undo_count INT NOT NULL,
   redo_count INT NOT NULL,
