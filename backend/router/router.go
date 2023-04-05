@@ -32,7 +32,6 @@ func InitRouter(db *gorm.DB) {
 		examUser.POST("", ctrl.HandlePostExamUser)
 	}
 
-
 	// NoteFolders
 	noteFolder := e.Group("/notefolders")
 	{
