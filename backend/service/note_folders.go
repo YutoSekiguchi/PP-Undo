@@ -54,7 +54,7 @@ func (s NoteFoldersService) GetNoteFoldersByUIDAndParentNFID(db *gorm.DB, c echo
 
 // POST
 // フォルダの追加
-func (s NoteFoldersService) PostNoteFolders(db *gorm.DB, c echo.Context) (NoteFolders, error) {
+func (s NoteFoldersService) PostNoteFolder(db *gorm.DB, c echo.Context) (NoteFolders, error) {
 	var noteFolders NoteFolders
 	c.Bind(&noteFolders)
 
