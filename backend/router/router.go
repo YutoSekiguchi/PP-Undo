@@ -43,6 +43,16 @@ func InitRouter(db *gorm.DB) {
 		noteFolder.PUT("/:id", ctrl.HandleUpdateNoteFolderByID)
 		noteFolder.DELETE("/:id", ctrl.HandleDeleteNoteFolderByID)
 	}
+
+	// Notes
+	note := e.Group("/notes")
+	{
+		note.GET("", ctrl.HandleGetAllNotes)
+		note.POST("", ctrl.HandlePostNote)
+		note.PUT("/:id", ctrl.HandleUpdateNoteByID)
+		note.GET("/:id", ctrl.HandleGetNoteByID)
+		note.GET("/in/:nfid", ctrl.HandleGetNotesByNFID)
+	}
 	
 	// Routing
 	e.GET("/", func(c echo.Context) error {
