@@ -5,6 +5,7 @@ import { SideBar } from '@/components/common/SideBar'
 import { Box } from '@mui/material'
 import { Home } from "@/pages/Home";
 import { Note } from "@/pages/Note";
+import { Notefolders } from "@/pages/NoteFolders";
 
 export const RouterConfig:React.FC =() => {
   return (
@@ -15,6 +16,7 @@ export const RouterConfig:React.FC =() => {
           <SideBar />
           <Routes>
             <Route index element={<Home />} />
+            <Route path="/notefolders/:pnfid" element={<Notefolders />} />
             <Route path='/note' element={<Note />} />
           </Routes>
         </Box>
