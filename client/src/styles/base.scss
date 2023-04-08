@@ -66,6 +66,12 @@
   display: flex;
 }
 
+.flex-start {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+
 .small-text {
   margin: 0;
   font-size: small;
