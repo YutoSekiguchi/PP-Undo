@@ -52,6 +52,15 @@ func (s NoteFoldersService) GetNoteFoldersByUIDAndParentNFID(db *gorm.DB, c echo
 	return nf, nil
 }
 
+
+func reverse(slice []NoteFolders) []NoteFolders {
+	for i := 0; i < len(slice)/2; i++ {
+			j := len(slice) - i - 1
+			slice[i], slice[j] = slice[j], slice[i]
+	}
+	return slice
+}
+
 // idから構造を取得
 func (s NoteFoldersService) GetNoteFoldersTree(db *gorm.DB, c echo.Context) ([]NoteFolders, error) {
 	var nf []NoteFolders
@@ -73,7 +82,8 @@ func (s NoteFoldersService) GetNoteFoldersTree(db *gorm.DB, c echo.Context) ([]N
 		i = tmp[0].ParentNFID
 		nf = append(nf, tmp[0])
 	}
-	return nf, nil
+	res := reverse(nf);
+	return res, nil
 }
 
 // POST
