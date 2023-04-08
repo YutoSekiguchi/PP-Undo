@@ -37,6 +37,13 @@ func (ctrl Controller) HandleGetNoteFoldersByUIDAndParentNFID(c echo.Context) er
 	return Res(c, p, err)
 }
 
+// idから構造取得
+func (ctrl Controller) HandleGetNoteFoldersTree(c echo.Context) error {
+	var s service.NoteFoldersService
+	p, err := s.GetNoteFoldersTree(ctrl.Db, c)
+
+	return Res(c, p, err)
+}
 
 // フォルダの追加
 func (ctrl Controller) HandlePostNoteFolder(c echo.Context) error {

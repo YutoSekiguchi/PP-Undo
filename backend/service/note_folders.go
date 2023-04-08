@@ -46,8 +46,32 @@ func (s NoteFoldersService) GetNoteFoldersByUIDAndParentNFID(db *gorm.DB, c echo
 	uid := c.Param("uid")
 	pnfid := c.Param("pnfid")
 
-	if err := db.Raw("SELECT * FROM `note_folders` WHERE uid = ? AND pnfid = ?", uid, pnfid).Scan(&nf).Error; err != nil {
+	if err := db.Raw("SELECT * FROM `note_folders` WHERE uid = ? AND parent_nfid = ?", uid, pnfid).Scan(&nf).Error; err != nil {
 		return nil, err
+	}
+	return nf, nil
+}
+
+// idから構造を取得
+func (s NoteFoldersService) GetNoteFoldersTree(db *gorm.DB, c echo.Context) ([]NoteFolders, error) {
+	var nf []NoteFolders
+	var tmp []NoteFolders
+	id := c.Param("id")
+
+	
+	if err := db.Raw("SELECT * FROM `note_folders` WHERE id = ?", id).Scan(&tmp).Error; err != nil {
+		return nil, err
+	}
+
+	nf = append(nf, tmp[0])
+
+	i := tmp[0].ParentNFID
+	for i != 0 {
+		if err := db.Raw("SELECT * FROM `note_folders` WHERE id = ?", tmp[0].ParentNFID).Scan(&tmp).Error; err != nil {
+			return nil, err
+		}
+		i = tmp[0].ParentNFID
+		nf = append(nf, tmp[0])
 	}
 	return nf, nil
 }
