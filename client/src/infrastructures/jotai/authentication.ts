@@ -1,7 +1,5 @@
-import { API_URL } from '@/configs/settings';
 import { atom } from 'jotai';
-import axios from 'axios';
-import { addUser, fetchUserDataByNameAndPassword } from '@/modules/authentication/Auth';
+import { addUser, fetchUserDataByNameAndPassword } from '@/infrastructures/services/authentication/Auth';
 import lscache from 'lscache';
 
 /**
