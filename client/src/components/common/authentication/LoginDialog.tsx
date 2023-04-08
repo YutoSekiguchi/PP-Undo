@@ -4,6 +4,7 @@ import { Alert, Box, Button, TextField, Typography } from "@mui/material";
 import { LoginDialogPropsType } from "@/@types/authentication";
 import { userDataAtom, loginAtom, signinAtom } from "@/infrastructures/jotai/authentication";
 import Spacer from "../Spacer";
+import { useNavigate } from "react-router-dom";
 
 
 export const LoginDialog: React.FC<LoginDialogPropsType> = (props) => {
@@ -15,6 +16,7 @@ export const LoginDialog: React.FC<LoginDialogPropsType> = (props) => {
   const [userName, setUserName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const navigate = useNavigate();
   
   const closeDialog = () => {
     closeLoginDialog();
@@ -46,6 +48,7 @@ export const LoginDialog: React.FC<LoginDialogPropsType> = (props) => {
       setErrorMessage("このユーザは既に存在します");
     } else {
       closeDialog();
+      navigate('/notefolders/0');
     }
   }
 
@@ -59,6 +62,7 @@ export const LoginDialog: React.FC<LoginDialogPropsType> = (props) => {
       setErrorMessage("このユーザは存在しません。")
     } else {
       closeDialog();
+      navigate('/notefolders/0');
     }
   }
 
