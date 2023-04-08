@@ -1,4 +1,4 @@
-import { PostNoteFolderType } from "@/@types/home";
+import { PostNoteFolderType } from "@/@types/notefolders";
 import { API_URL } from "@/configs/settings";
 import axios from "axios";
 
@@ -10,11 +10,26 @@ export const fetchNoteFoldersByUIDAndParentNFID = async (uid: number, pnfid: num
       return res.data;
     } else {
       console.log(res);
-      return null;
+      return [];
     }
   } catch (error) {
     throw(error);
-    return null;
+  }
+}
+
+// フォルダの木構造を取得
+export const fetchNoteFoldersTree = async (nfid: number) => {
+  const url = `${API_URL}/notefolders/tree/${nfid}`;
+  try {
+    const res = await axios.get(url);
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      console.log(res);
+      return [];
+    }
+  } catch (error) {
+    throw(error);
   }
 }
 
@@ -30,6 +45,5 @@ export const addNoteFolder = async (data: PostNoteFolderType) => {
     }
   } catch (error) {
     throw(error);
-    return null;
   }
 }
