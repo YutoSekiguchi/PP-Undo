@@ -5,8 +5,8 @@ import { useAtom } from "jotai";
 import React, { useEffect, useState } from "react";
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import { styled } from '@mui/system';
-import { AddFolderDialog } from "@/components/notefolder/AddFolderDialog";
-import { NoteFoldersDataType } from "@/@types/notefolders";
+import { AddNoteOrFolderDialog } from "@/components/notefolder/AddNoteOrFolderDialog";
+import { NoteDataType, NoteFoldersDataType } from "@/@types/notefolders";
 import { Params, useNavigate, useParams } from "react-router-dom";
 import { getFoldersAtom } from "@/infrastructures/jotai/noteFolders";
 import lscache from "lscache";
@@ -14,14 +14,19 @@ import FolderIcon from '@mui/icons-material/Folder';
 import Spacer from "@/components/common/Spacer";
 import { fetchNoteFoldersTree } from "@/infrastructures/services/noteFolders";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import { getNotesByNFIDAtom } from "@/infrastructures/jotai/notes";
+import DescriptionTwoToneIcon from '@mui/icons-material/DescriptionTwoTone';
 
 export const Notefolders: React.FC = () => {
   const [isNewFolderDialog, setIsNewFolderDialog] = useState<boolean>(false);
+  const [isNewNoteDialog, setIsNewNoteDialog] = useState<boolean>(false);
   const params: Params<string> = useParams();
   const [noteFoldersData, setNoteFoldersData] = useState<NoteFoldersDataType[]>([]);
+  const [notesData, setNotesData] = useState<NoteDataType[]>([]);
   const [treeData, setTreeData] = useState<NoteFoldersDataType[]>([]);
   const [loginUserData, ] = useAtom(userDataAtom);
   const [, getFolders] = useAtom(getFoldersAtom);
+  const [, getNotesByNFID] = useAtom(getNotesByNFIDAtom);
   const navigate = useNavigate();
 
   const NewButton = styled(Button)({
@@ -35,9 +40,15 @@ export const Notefolders: React.FC = () => {
   const closeNewFolderDialog = () => {
     setIsNewFolderDialog(false);
   }
-
   const openAddFolder = () => {
     setIsNewFolderDialog(true);
+  }
+
+  const closeNewNoteDialog = () => {
+    setIsNewNoteDialog(false);
+  }
+  const openNewNoteDialog = () => {
+    setIsNewNoteDialog(true);
   }
 
   useEffect(() => {
@@ -46,13 +57,13 @@ export const Notefolders: React.FC = () => {
         UID: uid,
         PNFID: pnfid
       }));
-      setTreeData(await fetchNoteFoldersTree(pnfid));
+      setNotesData(await getNotesByNFID(pnfid));
+      if (pnfid != 0) { setTreeData(await fetchNoteFoldersTree(pnfid)); } 
     }
     const userData = lscache.get('loginUserData');
     const uid = Number(userData.ID);
     const pnfid = Number(params.pnfid);
     func(uid, pnfid);
-    console.log(noteFoldersData);
   }, [params])
 
   return (
@@ -60,10 +71,17 @@ export const Notefolders: React.FC = () => {
       {
         isAuth() || loginUserData != null
         ? <>
-          <AddFolderDialog 
+          <AddNoteOrFolderDialog 
+            type="folder"
             open={isNewFolderDialog}
             closeDialog={closeNewFolderDialog}
             setNoteFoldersData={setNoteFoldersData}
+          />
+          <AddNoteOrFolderDialog 
+            type="note"
+            open={isNewNoteDialog}
+            closeDialog={closeNewNoteDialog}
+            setNotesData={setNotesData}
           />
 
           <Box className="note-folders-page-body width100">
@@ -128,16 +146,38 @@ export const Notefolders: React.FC = () => {
               }
             </Box>
 
-            <Spacer size={15}  />
+            <Spacer size={40}  />
 
             <Box className="flex-start">
               <h3>ノート一覧</h3>
               <NewButton
                 size="small"
                 startIcon={<AddRoundedIcon />}
+                onClick={openNewNoteDialog}
               >
                 新規ノート
               </NewButton>
+            </Box>
+            <Box className="folder-list">
+              {
+                notesData?.length > 0
+                ? <>
+                  {
+                    notesData.map((noteData, i) => {
+                      return (
+                        <Box key={i} className="text-center folder-box pointer" onClick={() => navigate(`/notefolders/${noteData.ID}`)}>
+                          <DescriptionTwoToneIcon sx={{ fontSize: 200 }} className="folder-icon" />
+                          <p className="text">{noteData.Title}</p>
+                        </Box>
+                      );
+                    })
+                  }
+                </>
+                : 
+                <Box className="text-center width100">
+                  <h4>該当フォルダ無し</h4>
+                </Box>
+              }
             </Box>
           </Box>
 
