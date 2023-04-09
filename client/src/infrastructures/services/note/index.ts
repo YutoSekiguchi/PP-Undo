@@ -1,4 +1,4 @@
-import { PostNoteType } from "@/@types/notefolders";
+import { NoteDataType, PostNoteType } from "@/@types/notefolders";
 import { API_URL } from "@/configs/settings";
 import axios from "axios";
 
@@ -46,6 +46,21 @@ export const addNote = async (data: PostNoteType) => {
       console.log(res);
       return null;
     } 
+  } catch (error) {
+    throw(error);
+  }
+}
+
+export const updateNote = async (data: NoteDataType) => {
+  const url = `${API_URL}/notes/${data.ID}`;
+  try {
+    const res = await axios.put(url, data);
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      console.log(res);
+      return null;
+    }
   } catch (error) {
     throw(error);
   }
