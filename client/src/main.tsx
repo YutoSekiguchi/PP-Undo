@@ -13,7 +13,7 @@ const darkTheme = createTheme({
     primary: blueGrey,
     divider: blueGrey[700],
     background: {
-      default: blueGrey[800],
+      default: blueGrey[900],
     },
     text: {
       primary: '#fff',
