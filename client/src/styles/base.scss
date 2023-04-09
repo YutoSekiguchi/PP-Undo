@@ -81,3 +81,16 @@
 .pointer {
   @include mixins.pointer();
 }
+
+.height100 {
+  height: 100%;
+}
+
+.sidebar {
+  height: calc(100vh - 65px);
+  border-right: 2px solid variables.$folder-back-dolor;
+  margin-right: 20px;
+  .sidebar-link {
+    text-decoration: none;
+  }
+}

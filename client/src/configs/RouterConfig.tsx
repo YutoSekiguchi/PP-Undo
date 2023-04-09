@@ -12,12 +12,12 @@ export const RouterConfig:React.FC =() => {
     <>
       <BrowserRouter>
         <Header />
-        <Box sx={{ display: 'flex' }}>
+        <Box className="flex">
           <SideBar />
           <Routes>
             <Route index element={<Home />} />
             <Route path="/notefolders/:pnfid" element={<Notefolders />} />
-            <Route path='/note' element={<Note />} />
+            <Route path='/note/:id' element={<Note />} />
           </Routes>
         </Box>
       </BrowserRouter>

@@ -22,7 +22,7 @@
 
 .folder-box {
   margin-right: 30px;
-  background-color: #3a3a3a;
+  background-color: variables.$folder-back-dolor;
   padding: 0 10px;
   border-radius: 10%;
   &:hover {

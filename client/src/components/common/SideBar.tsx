@@ -16,39 +16,55 @@ import {
   CreateOutlined,
   SettingsOutlined
 } from "@mui/icons-material"
+import lscache from "lscache";
 
 export const SideBar:React.FC =() => {
   const location: Location = useLocation();
   const menuList: SideBarMenuType[] = [
     {
       label: "Home",
-      icon: <HomeOutlined />
+      icon: <HomeOutlined />,
+      path: lscache.get('loginUserData')? '/notefolders/0': '/',
     },
     {
       label: "Create Note",
-      icon: <NoteAddOutlined />
+      icon: <NoteAddOutlined />,
+      path: '/',
     },
     {
       label: "Try Demo",
-      icon: <CreateOutlined />
+      icon: <CreateOutlined />,
+      path: '/',
     },
     {
       label: "Settings",
-      icon: <SettingsOutlined />
+      icon: <SettingsOutlined />,
+      path: '/',
     }
   ];
 
+  const checkDisplayPath = (path: string) => {
+    var tmp: boolean = true;
+    notShowPathList.map((notShowPath, _) => {
+      if (path.indexOf(notShowPath) > -1) {
+        tmp = false;
+      }
+    })
+    return tmp;
+  }
+
   return (
     <>
-    {!notShowPathList.includes(location.pathname) &&
+    {checkDisplayPath(location.pathname) &&
       <Box
         sx={{ width: 250 }}
         // role="presentation"
+        className="sidebar"
       >
       <List>
         {menuList.map((menu, index) => (
           <ListItem key={index} disablePadding sx={{width: "100%"}}>
-            <Link to="/note" className="width100 sidebar-link">
+            <Link to={ menu.path } className="width100 sidebar-link">
               <ListItemButton>
                 <ListItemIcon>
                   { menu.icon }
