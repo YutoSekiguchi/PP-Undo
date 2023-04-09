@@ -47,8 +47,8 @@ export const SideBar:React.FC =() => {
       >
       <List>
         {menuList.map((menu, index) => (
-          <ListItem key={index} disablePadding>
-            <Link to="/note">
+          <ListItem key={index} disablePadding sx={{width: "100%"}}>
+            <Link to="/note" className="width100 sidebar-link">
               <ListItemButton>
                 <ListItemIcon>
                   { menu.icon }
