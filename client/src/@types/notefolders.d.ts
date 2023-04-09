@@ -15,9 +15,11 @@ export interface NoteFoldersDataType {
 }
 
 export interface AddFolderDialogProps {
+  type: "folder" | "note";
   open: boolean;
   closeDialog: () => void;
-  setNoteFoldersData: React.Dispatch<React.SetStateAction<NoteFoldersDataType[]>>
+  setNoteFoldersData?: React.Dispatch<React.SetStateAction<NoteFoldersDataType[]>>;
+  setNotesData?: React.Dispatch<React.SetStateAction<NoteDataType[]>>;
 }
 
 export interface PostNoteType {
