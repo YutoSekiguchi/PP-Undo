@@ -22,10 +22,13 @@
 
 .folder-box {
   margin-right: 30px;
-  background-color: #555;
+  background-color: #3a3a3a;
   padding: 0 10px;
   border-radius: 10%;
-  .folder-icon {
+  &:hover {
+    background-color: #999;
+  }
+  .folder-icon .note-icon {
     font-size: 3;
     color: whitesmoke;
   }
