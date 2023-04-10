@@ -1,11 +1,12 @@
 import React from "react";
 import { useAtom } from 'jotai'
-import { drawerAtom, redoAtom, redoableAtom } from "@/infrastructures/jotai/drawer";
+import { drawerAtom, plusRedoCountAtom, redoAtom, redoableAtom } from "@/infrastructures/jotai/drawer";
 import { ButtonStyleType } from "@/@types/note";
 
 export const RedoButton: React.FC = () => {
   const [drawer, setDrawer] = useAtom(drawerAtom);
   const [, redo] = useAtom(redoAtom);
+  const [, plusRedoCount] = useAtom(plusRedoCountAtom);
   const redoable = useAtom(redoableAtom);
 
   const buttonStyle: ButtonStyleType = {
@@ -21,6 +22,7 @@ export const RedoButton: React.FC = () => {
     redo();
     drawer.numOfStroke = drawer.numOfStroke + 1;
     setDrawer(drawer);
+    plusRedoCount();
     drawer.reDraw();
   }
 

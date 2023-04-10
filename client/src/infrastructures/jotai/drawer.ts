@@ -1,5 +1,7 @@
 import { StrokeDataType } from '@/@types/note';
 import { atom } from 'jotai';
+import { fetchNoteByID } from '../services/note';
+import { notesAtom } from './notes';
 
 
 /**
@@ -133,3 +135,23 @@ export const addLogOfBeforePPUndoAtom = atom(null, (get, set, strokeData: Stroke
  * 新規ログの件数通知
  */
 export const logNotifierCountAtom = atom<number>(0);
+
+/**
+ * @description
+ * undo回数
+ */
+export const undoCountAtom = atom<number>(0);
+
+export const plusUndoCountAtom = atom(null, (get, set) => {
+  set(undoCountAtom, get(undoCountAtom) + 1);
+});
+
+/**
+ * @description
+ * redo回数
+ */
+export const redoCountAtom = atom<number>(0);
+
+export const plusRedoCountAtom = atom(null, (get, set) => {
+  set(redoCountAtom, get(redoCountAtom) + 1);
+});
