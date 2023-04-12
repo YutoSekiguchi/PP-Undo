@@ -29,7 +29,7 @@ export interface PostNoteType {
   Width: number;
   Height: number;
   NoteImage: string;
-  StrokeData: string;
+  StrokeData: any;
   AvgPressure: number;
   AvgPressureList: string;
   AllAvgPressureList: string;
@@ -52,7 +52,7 @@ export interface NoteDataType {
   Width: number;
   Height: number;
   NoteImage: string;
-  StrokeData: string;
+  StrokeData: any;
   AvgPressure: number;
   AvgPressureList: string;
   AllAvgPressureList: string;
