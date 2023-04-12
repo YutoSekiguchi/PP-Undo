@@ -1,6 +1,8 @@
 package service
 
 import (
+	"fmt"
+
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
@@ -54,14 +56,15 @@ func (s NotesService) PostNote(db *gorm.DB, c echo.Context) (Notes, error) {
 // PUT
 // ノートの編集
 func (s NotesService) UpdateNoteByID(db *gorm.DB, c echo.Context) (*Notes, error) {
-	var n *Notes
+	n := new(Notes)
 	id := c.Param("id")
-	if err := db.Raw("SELECT * FROM `notes` WHERE id = ? LIMIT 1", id).Scan(&n).Error; err != nil {
+	if err := db.Where("id = ?", id).First(&n).Error; err != nil {
 		return nil, err
 	}
 	if err := c.Bind(&n); err != nil {
-		return nil, err
+		return n, err
 	}
+	fmt.Println(&n)
 	db.Save(&n)
 
 	return n, nil

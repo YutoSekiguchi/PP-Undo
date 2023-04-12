@@ -1,6 +1,11 @@
 package model
 
-import "time"
+import (
+	"database/sql/driver"
+	"encoding/json"
+	"fmt"
+	"time"
+)
 
 type Notes struct {
 	ID                 int       `gorm:"primary_key;not null;autoIncrement:true"`
@@ -10,7 +15,7 @@ type Notes struct {
 	Width              float64   `gorm:"not null;column:width"`
 	Height             float64   `gorm:"not null;column:height"`
 	NoteImage          string    `gorm:"not null;column:note_image"`
-	StrokeData         string    `gorm:"not null;column:stroke_data"`
+	StrokeData         StrokeData     `gorm:"not null;"`
 	AvgPressure        float64   `gorm:"not null;column:avg_pressure"`
 	AvgPressureList    string    `gorm:"not null;column:avg_pressure_list"`
 	AllAvgPressureList string    `gorm:"not null;column:all_avg_pressure_list"`
@@ -24,4 +29,27 @@ type Notes struct {
 	SliderValue        float64   `gorm:"not null;column:slider_value"`
 	BackgroundImage    string    `gorm:"column:background_image"`
 	CreatedAt          time.Time `sql:"DEFALUT:current_timestamp;column:created_at"`
+}
+
+type StrokeData struct {
+	Strokes []interface{} `json:"strokes" gorm:"not null;"`
+}
+
+func (s StrokeData) Value() (driver.Value, error) {
+	bytes, err := json.Marshal(s)
+	if err != nil {
+		return nil, err
+	}
+	return string(bytes), nil
+}
+
+func (s *StrokeData) Scan(value interface{}) error {
+	switch v := value.(type) {
+	case string:
+		return json.Unmarshal([]byte(v), s)
+	case []byte:
+		return json.Unmarshal(v, s)
+	default:
+		return fmt.Errorf("unsupported type: %T",value)
+	}
 }
