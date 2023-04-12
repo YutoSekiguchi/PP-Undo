@@ -56,7 +56,7 @@ export const AddNoteOrFolderDialog: React.FC<AddFolderDialogProps> = (props) => 
       Width: 0,
       Height: 0,
       NoteImage: "",
-      StrokeData: "",
+      StrokeData: {},
       AvgPressure: 0,
       AvgPressureList: "",
       AllAvgPressureList: "",
