@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS notes (
   width FLOAT NOT NULL,
   height FLOAT NOT NULL,
   note_image LONGTEXT NOT NULL,
-  stroke_data LONGTEXT NOT NULL,
+  stroke_data JSON NOT NULL,
   avg_pressure FLOAT NOT NULL,
   avg_pressure_list TEXT NOT NULL,
   all_avg_pressure_list TEXT NOT NULL,
