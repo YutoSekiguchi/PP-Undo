@@ -1,8 +1,6 @@
 package service
 
 import (
-	"fmt"
-
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
@@ -64,7 +62,6 @@ func (s NotesService) UpdateNoteByID(db *gorm.DB, c echo.Context) (*Notes, error
 	if err := c.Bind(&n); err != nil {
 		return n, err
 	}
-	fmt.Println(&n)
 	db.Save(&n)
 
 	return n, nil
