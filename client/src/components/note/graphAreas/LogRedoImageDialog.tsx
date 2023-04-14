@@ -2,7 +2,7 @@ import React from "react";
 import { LogRedoImageDialogProps } from "@/@types/note";
 import { useAtom } from "jotai";
 import { Stroke, Point } from "@nkmr-lab/average-figure-drawer";
-import { addAvgPressureOfStrokeAtom, clearAvgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawerAtom, logOfBeforePPUndoAtom, sliderValueAtom, undoableCountAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, clearAvgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawerAtom, logOfBeforePPUndoAtom, logRedoCountAtom, sliderValueAtom, undoableCountAtom } from "@/infrastructures/jotai/drawer";
 import { Box, Button } from "@mui/material";
 import { CancelButton } from "./CancelButton";
 
@@ -16,6 +16,7 @@ export const LogRedoImageDialog: React.FC<LogRedoImageDialogProps> = (props) => 
   const [, setAddAvgPressureOfStroke] = useAtom(addAvgPressureOfStrokeAtom);
   const [, setClearUndoStrokeLog] = useAtom(clearUndoStrokeLogAtom);
   const [, setUndoableCount] = useAtom(undoableCountAtom);
+  const [logRedoCount, setLogRedoCount] = useAtom(logRedoCountAtom);
 
   const ppRedo = () => {
     setClearAvgPressureOfStroke();
@@ -39,6 +40,7 @@ export const LogRedoImageDialog: React.FC<LogRedoImageDialogProps> = (props) => 
     setClearUndoStrokeLog();
     setUndoableCount(0);
     setSliderValue(logOfBeforePPUndo[dialogIndex].sliderValue!);
+    setLogRedoCount(logRedoCount + 1);
     closeDialog();
     closeLog();
   }
