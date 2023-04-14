@@ -9,6 +9,10 @@
   @include mixins.tl-static-position($position: absolute);
 }
 
+.fixed {
+  position: fixed;
+}
+
 .center {
   @include mixins.center();
 }
@@ -88,5 +92,13 @@
   margin-right: 20px;
   .sidebar-link {
     text-decoration: none;
+  }
+}
+
+.loading-screen {
+  z-index: 9999;
+  background-color: rgba(255, 255, 255, 0.8);
+  .text {
+    color: #000000;
   }
 }
