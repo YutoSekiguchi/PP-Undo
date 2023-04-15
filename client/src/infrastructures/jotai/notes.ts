@@ -9,4 +9,4 @@ export const getNotesByNFIDAtom = atom(null, async (_get, set, nfid: number) => 
   const notesData: NoteDataType[] = await fetchNotesByNFID(nfid);
   set(notesAtom, notesData);
   return notesData;
-})
+});
