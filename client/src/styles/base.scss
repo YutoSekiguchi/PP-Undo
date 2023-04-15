@@ -106,4 +106,15 @@
 .timeout-screen {
   z-index: 9999;
   background-color: rgba(0, 0, 0, 0.6);
+  @include mixins.dialog-container();
+  @include mixins.tl-static-position();
+  @include mixins.center();
+  .dialog {
+    width: 40%;
+    height: 400px;
+    background-color: variables.$dark-blue-color;
+    @include mixins.medium-rounded();
+    border: 2px solid white;
+    @include mixins.center();
+  }
 }
