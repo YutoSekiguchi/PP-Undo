@@ -7,6 +7,7 @@ import {
   getAvgPressureOfStrokeCountAtom,
   sliderValueAtom,
   logNotifierCountAtom,
+  ppUndoCountAtom,
 } from "@/infrastructures/jotai/drawer";
 import {
   Chart as ChartJS,
@@ -67,6 +68,7 @@ export const PPUndoArea: React.FC = () => {
   const avgPressureOfStroke = useAtomValue(avgPressureOfStrokeAtom);
   const [, setAddLogOfBeforePPUndo] = useAtom(addLogOfBeforePPUndoAtom);
   const [logNotifierCount, setLogNotifierCount] = useAtom(logNotifierCountAtom);
+  const [ppUndoCount, setPPUndoCount] = useAtom(ppUndoCountAtom)
   
   const [lowerPressureIndexList, setLowerPressureIndexList] = useState<number[]>([]);
   const [logData, setLogData] = useState<StrokeDataType | null>(null);
@@ -135,6 +137,7 @@ export const PPUndoArea: React.FC = () => {
     setDrawer(drawer);
     setAddLogOfBeforePPUndo(logData!);
     setLogNotifierCount(logNotifierCount + 1);
+    setPPUndoCount(ppUndoCount + 1);
     setTimeout(() => {
       drawer.reDraw();
     }, 100);
