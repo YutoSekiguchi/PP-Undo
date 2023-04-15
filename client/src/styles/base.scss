@@ -102,3 +102,8 @@
     color: #000000;
   }
 }
+
+.timeout-screen {
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.6);
+}
