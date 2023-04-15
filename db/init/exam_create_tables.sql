@@ -135,3 +135,5 @@ CREATE TABLE IF NOT EXISTS ppundo_counts (
   after_ppundo_stroke_count INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+-- 消しゴム使ったタイミング
