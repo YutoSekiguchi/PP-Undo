@@ -40,7 +40,7 @@ export interface PostNoteType {
   RedoCount: number;
   LogRedoCount: number;
   PPUndoCount: number;
-  SliderValue: number;
+  SliderValue: number | number[];
   BackgroundImage: string;
 }
 
@@ -63,7 +63,7 @@ export interface NoteDataType {
   RedoCount: number;
   LogRedoCount: number;
   PPUndoCount: number;
-  SliderValue: number;
+  SliderValue: number | number[];
   BackgroundImage: string;
   CreatedAt: string;
 }
