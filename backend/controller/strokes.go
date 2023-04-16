@@ -29,3 +29,21 @@ func (ctrl Controller) HandlePostStrokes(c echo.Context) error {
 
 	return Res(c, p, err)
 }
+
+// PUT
+// 保存済にする
+func (ctrl Controller) HandleUpdateStrokes(c echo.Context) error {
+	var s service.StrokesService
+	p, err := s.UpdateStrokes(ctrl.Db, c)
+
+	return Res(c, p, err)
+}
+
+// DELETE 
+// 保存済以外の削除
+func (ctrl Controller) HandleDeleteNotSaveStrokes(c echo.Context) error {
+	var s service.StrokesService
+	p, err := s.DeleteNotSaveStrokes(ctrl.Db, c)
+
+	return Res(c, p, err)
+}

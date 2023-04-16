@@ -41,3 +41,27 @@ func (s StrokesService) PostStrokes(db *gorm.DB, c echo.Context) (Strokes, error
 	}
 	return strokes, nil
 }
+
+// PUT 保存済にする
+func (s StrokesService) UpdateStrokes(db *gorm.DB, c echo.Context) ([]Strokes, error) {
+	var st []Strokes
+	nid := c.Param("nid")
+	
+	if err := db.Table("strokes").Where("nid = ?", nid).Updates(map[string]interface{}{"save": 1}).Scan(&st).Error; err != nil {
+		return nil, err
+	}
+
+	return st, nil
+}
+
+// DELETE
+// 保存してないストロークの削除
+func (s StrokesService) DeleteNotSaveStrokes(db *gorm.DB, c echo.Context) ([]Strokes, error) {
+	var st []Strokes
+	nid := c.Param("nid")
+
+	if err := db.Where("nid = ?", nid).Where("save = 0").Delete(&st).Error; err != nil {
+		return st, err
+	}
+	return st, nil
+}
