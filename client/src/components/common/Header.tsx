@@ -15,6 +15,7 @@ import { userDataAtom } from "@/infrastructures/jotai/authentication";
 import { Person } from "@mui/icons-material";
 import { UserDataType } from "@/@types/authentication";
 import lscache from "lscache";
+import { isAuth } from "@/modules/common/isAuth";
 
 export const Header:React.FC =() => {
   const location: Location = useLocation();
@@ -69,18 +70,18 @@ export const Header:React.FC =() => {
               </Box>
               
               {
-                userData == null
-                  ? <Button 
+                isAuth()
+                  ? <Box className="align-center pointer">
+                    <Person />
+                    <p className="text">{userData!=null? userData.Name: ''}<span className="small-text">さん</span></p>
+                  </Box>
+                  : <Button 
                       variant="outlined"
                       color="inherit"
                       onClick={openLoginDialog}
                     >
                       Login
                     </Button>
-                  : <Box className="align-center pointer">
-                    <Person />
-                    <p className="text">{userData.Name}<span className="small-text">さん</span></p>
-                  </Box>
               }
             </Toolbar>
           </Paper>
