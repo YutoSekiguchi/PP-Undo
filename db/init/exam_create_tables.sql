@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS strokes (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   uid INT NOT NULL,
   nid INT NOT NULL,
-  stroke_data LONGTEXT NOT NULL,
+  stroke_data JSON NOT NULL,
   avg_pressure FLOAT NOT NULL,
   pressure_list TEXT NOT NULL,
   time FLOAT,
