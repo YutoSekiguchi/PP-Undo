@@ -54,6 +54,14 @@ func InitRouter(db *gorm.DB) {
 		note.GET("/:id", ctrl.HandleGetNoteByID)
 		note.GET("/in/:nfid", ctrl.HandleGetNotesByNFID)
 	}
+
+	// Strokes
+	strokes := e.Group("/strokes")
+	{
+		strokes.GET("/:id", ctrl.HandleGetStrokeByID)
+		strokes.GET("/in/note/:nid", ctrl.HandleGetStrokesByNID)
+		strokes.POST("", ctrl.HandlePostStrokes)
+	}
 	
 	// Routing
 	e.GET("/", func(c echo.Context) error {
