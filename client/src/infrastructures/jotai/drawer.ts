@@ -16,6 +16,10 @@ drawerを保持
 **/
 export const drawerAtom = atom<any>({});
 
+export const clearDrawerAtom = atom(null, (_get, set) => {
+  set(drawerAtom, {});
+})
+
 /**
 @description
 undo出来る本数
@@ -60,10 +64,14 @@ export const clearPressureOfOneStrokeAtom = atom(null, (_get, set) => {
  * @description
  * ストロークごとの筆圧を保持
  */
+// 表示されているストロークの筆圧
 export const avgPressureOfStrokeAtom = atom<number[]>([]);
+// 削除したものも含めた筆圧
+export const allAvgPressureOfStrokeAtom = atom<number[]>([]);
 // 追加処理
 export const addAvgPressureOfStrokeAtom = atom(null, (get, set, val: number) => {
   set(avgPressureOfStrokeAtom, get(avgPressureOfStrokeAtom).concat([val]));
+  set(allAvgPressureOfStrokeAtom, get(allAvgPressureOfStrokeAtom).concat([val]));
 })
 // 削除処理
 export const removeAvgPressureOfStrokeAtom = atom(null, (get, set, values: number | number[]) => {
@@ -129,6 +137,24 @@ export const logOfBeforePPUndoAtom = atom<StrokeDataType[]>([])
 export const addLogOfBeforePPUndoAtom = atom(null, (get, set, strokeData: StrokeDataType) => {
   set(logOfBeforePPUndoAtom, get(logOfBeforePPUndoAtom).concat([strokeData]));
 })
+
+/**
+ * @description
+ * 全てのストローク量
+ */
+export const allStrokeCountAtom = atom<number>(0);
+
+/**
+ * @description
+ * ログRedo系統のAtom
+ */
+export const logRedoCountAtom = atom<number>(0);
+
+/**
+ * @description
+ * PP-Undoをした回数を保持
+ */
+export const ppUndoCountAtom = atom<number>(0);
 
 /**
  * @description
