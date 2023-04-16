@@ -86,3 +86,27 @@ export interface DoughnutPressureGraphPropsType {
   graphLabel: string[];
   datasetsConfig: DoughnutGraphConfigType;
 }
+
+export interface PostStrokeDataType {
+  UID: number;
+  NID: number;
+  StrokeData: any;
+  AvgPressure: number;
+  PressureList: string;
+  Time?: number;
+  Mode: string;
+  Save: number;
+}
+
+export interface StrokeDataType {
+  ID: number;
+  UID: number;
+  NID: number;
+  StrokeData: any;
+  AvgPressure: number;
+  PressureList: string;
+  Time?: number;
+  Mode: string;
+  Save: number;
+  CreatedAt: string;
+}
