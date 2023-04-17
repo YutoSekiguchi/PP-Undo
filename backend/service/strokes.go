@@ -43,7 +43,7 @@ func (s StrokesService) PostStrokes(db *gorm.DB, c echo.Context) (Strokes, error
 }
 
 // PUT 保存済にする
-func (s StrokesService) UpdateStrokes(db *gorm.DB, c echo.Context) ([]Strokes, error) {
+func (s StrokesService) UpdateNotSaveStrokes(db *gorm.DB, c echo.Context) ([]Strokes, error) {
 	var st []Strokes
 	nid := c.Param("nid")
 	

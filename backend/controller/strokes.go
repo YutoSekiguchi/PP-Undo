@@ -32,9 +32,9 @@ func (ctrl Controller) HandlePostStrokes(c echo.Context) error {
 
 // PUT
 // 保存済にする
-func (ctrl Controller) HandleUpdateStrokes(c echo.Context) error {
+func (ctrl Controller) HandleUpdateNotSaveStrokes(c echo.Context) error {
 	var s service.StrokesService
-	p, err := s.UpdateStrokes(ctrl.Db, c)
+	p, err := s.UpdateNotSaveStrokes(ctrl.Db, c)
 
 	return Res(c, p, err)
 }
