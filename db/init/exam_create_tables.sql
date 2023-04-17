@@ -66,9 +66,9 @@ CREATE TABLE IF NOT EXISTS undo_counts (
   uid INT NOT NULL,
   nid INT NOT NULL,
   before_undo_note_image LONGTEXT NOT NULL,
-  before_undo_stroke_data LONGTEXT NOT NULL,
+  before_undo_stroke_data JSON NOT NULL,
   after_undo_note_image LONGTEXT NOT NULL,
-  after_undo_stroke_data LONGTEXT NOT NULL,
+  after_undo_stroke_data JSON NOT NULL,
   left_stroke_count INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
