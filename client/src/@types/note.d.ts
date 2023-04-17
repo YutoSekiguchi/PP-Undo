@@ -110,3 +110,13 @@ export interface StrokeDataType {
   Save: number;
   CreatedAt: string;
 }
+
+export interface PostUndoCountDataType {
+  UID: number;
+  NID: number;
+  BeforeUndoNoteImage: string;
+  BeforeUndoStrokeData: any;
+  AfterUndoNoteImage: string;
+  AfterUndoStrokeData: any;
+  LeftStrokeCount: number;
+}
