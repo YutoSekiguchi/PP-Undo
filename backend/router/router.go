@@ -64,6 +64,14 @@ func InitRouter(db *gorm.DB) {
 		strokes.PUT("/save/:nid", ctrl.HandleUpdateNotSaveStrokes)
 		strokes.DELETE("/notsave/:nid", ctrl.HandleDeleteNotSaveStrokes)
 	}
+
+	// UndoCounts
+	undoCounts := e.Group("/undocounts")
+	{
+		undoCounts.GET("/note/:nid", ctrl.HandleGetUndoCountsByNID)
+		undoCounts.GET("/user/:uid", ctrl.HandleGetUndoCountsByUID)
+		undoCounts.POST("", ctrl.HandlePostUndoCounts)
+	}
 	
 	// Routing
 	e.GET("/", func(c echo.Context) error {
