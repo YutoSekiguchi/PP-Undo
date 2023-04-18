@@ -6,7 +6,7 @@ type Logs struct {
 	ID                       int       `gorm:"primary_key;not null;autoIncrement:true"`
 	UID                      int       `gorm:"not null;column:uid"`
 	NID                      int       `gorm:"not null;column:nid"`
-	StrokeData               string    `gorm:"not null;column:stroke_data"`
+	StrokeData               StrokeData    `gorm:"not null;column:stroke_data"`
 	LogImage                 string    `gorm:"not null;column:log_image"`
 	AvgPressureList          string    `gorm:"not null;column:avg_pressure_list"`
 	Save                     int       `gorm:"not null;column:save"`
