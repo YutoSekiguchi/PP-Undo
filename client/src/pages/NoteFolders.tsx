@@ -16,6 +16,7 @@ import { fetchNoteFoldersTree } from "@/infrastructures/services/noteFolders";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import { getNotesByNFIDAtom } from "@/infrastructures/jotai/notes";
 import DescriptionTwoToneIcon from '@mui/icons-material/DescriptionTwoTone';
+import { truncateString } from "@/modules/common/truncateString";
 
 export const Notefolders: React.FC = () => {
   const [isNewFolderDialog, setIsNewFolderDialog] = useState<boolean>(false);
@@ -84,7 +85,7 @@ export const Notefolders: React.FC = () => {
             setNotesData={setNotesData}
           />
 
-          <Box className="note-folders-page-body width100">
+          <Box className="note-folders-page-body">
             <Box className="flex tree">
               <Box 
                 className="center pointer"
@@ -104,7 +105,7 @@ export const Notefolders: React.FC = () => {
                           key={i}
                           onClick={() => navigate(`/notefolders/${tree.ID}`)}
                         >
-                          <p className="tree-text">{tree.Name}</p>
+                          <p className="tree-text">{truncateString(tree.Name)}</p>
                           <KeyboardArrowRightIcon />
                         </Box>
                       );
@@ -132,8 +133,8 @@ export const Notefolders: React.FC = () => {
                     noteFoldersData.map((noteFolderData, i) => {
                       return (
                         <Box key={i} className="text-center folder-box pointer" onClick={() => navigate(`/notefolders/${noteFolderData.ID}`)}>
-                          <FolderIcon sx={{ fontSize: 120 }} className="folder-icon" />
-                          <p className="text">{noteFolderData.Name}</p>
+                          <FolderIcon sx={{ fontSize: 24 }} className="folder-icon" />
+                          <p className="folder-text">{truncateString(noteFolderData.Name)}</p>
                         </Box>
                       );
                     })
@@ -158,16 +159,16 @@ export const Notefolders: React.FC = () => {
                 新規ノート
               </NewButton>
             </Box>
-            <Box className="folder-list">
+            <Box className="file-list">
               {
                 notesData?.length > 0
                 ? <>
                   {
                     notesData.map((noteData, i) => {
                       return (
-                        <Box key={i} className="text-center folder-box pointer" onClick={() => navigate(`/note/${noteData.ID}`)}>
-                          <DescriptionTwoToneIcon sx={{ fontSize: 200 }} className="folder-icon" />
-                          <p className="text">{noteData.Title}</p>
+                        <Box key={i} className="text-center file-box pointer" onClick={() => navigate(`/note/${noteData.ID}`)}>
+                          <DescriptionTwoToneIcon sx={{ fontSize: 200 }} className="note-icon" />
+                          <p className="note-text">{noteData.Title}</p>
                         </Box>
                       );
                     })
@@ -175,7 +176,7 @@ export const Notefolders: React.FC = () => {
                 </>
                 : 
                 <Box className="text-center width100">
-                  <h4>該当フォルダ無し</h4>
+                  <h4>該当ファイル無し</h4>
                 </Box>
               }
             </Box>
