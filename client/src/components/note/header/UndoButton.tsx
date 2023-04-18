@@ -2,6 +2,9 @@ import React from "react";
 import { useAtom } from 'jotai'
 import { avgPressureOfStrokeAtom, drawerAtom, undoableCountAtom, removeAvgPressureOfStrokeAtom, setUndoStrokeLogAtom, plusUndoCountAtom } from "@/infrastructures/jotai/drawer";
 import { ButtonStyleType } from "@/@types/note";
+import { addUndoCount } from "@/infrastructures/services/undoCounts";
+import { myNoteAtom } from "@/infrastructures/jotai/notes";
+import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
 
 export const UndoButton: React.FC = () => {
   const [drawer, setDrawer] = useAtom(drawerAtom);
@@ -10,16 +13,19 @@ export const UndoButton: React.FC = () => {
   const [, removeAvgPressureOfStroke] = useAtom(removeAvgPressureOfStrokeAtom);
   const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom);
   const [, plusUndoCount] = useAtom(plusUndoCountAtom);
+  const [myNote, ] = useAtom(myNoteAtom); // ノート情報の保持
 
   const buttonStyle: ButtonStyleType = {
     backgroundColor: `${undoableCount<=0 || drawer.numOfStroke<=0 ?"#eee": "rgb(96, 165, 250)"}`,
     cursor: `${undoableCount<=0 || drawer.numOfStroke<=0 ?"not-allowed" :"pointer"}`,
   }
 
-  const undo = () => {
+  const undo = async () => {
     if (undoableCount <= 0 || drawer.numOfStroke<=0) {
       return;
     }
+    const beforeUndoNoteImage = await getCurrentNoteImage();
+    const beforeUndoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
     addLog({
       stroke: drawer.currentFigure.strokes[drawer.currentFigure.strokes.length-1],
       pressure: avgPressureOfStroke[drawer.currentFigure.strokes.length-1]
@@ -30,6 +36,29 @@ export const UndoButton: React.FC = () => {
     setDrawer(drawer);
     setUndoableCount(undoableCount-1);
     drawer.reDraw();
+    if (myNote != null) {
+      myNote.StrokeData = drawer.currentFigure.strokes.concat();
+    }
+    const afterUndoNoteImage = await getCurrentNoteImage();
+    const afterUndoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
+    await addUndoCount(
+      {
+        UID: myNote!.UID,
+        NID: myNote!.ID,
+        BeforeUndoNoteImage: beforeUndoNoteImage,
+        BeforeUndoStrokeData: beforeUndoStrokeData,
+        AfterUndoNoteImage: afterUndoNoteImage,
+        AfterUndoStrokeData: afterUndoStrokeData,
+        LeftStrokeCount: drawer.currentFigure.strokes.length,
+      }
+    )
+  }
+
+  const getCurrentNoteImage  = async () => {
+    const image: string = await drawer.getBase64PngImage().catch((error: unknown) => {
+      console.log(error);
+    });
+    return image? image: "";
   }
 
   const undoIcon = (
