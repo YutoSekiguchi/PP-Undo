@@ -72,6 +72,14 @@ func InitRouter(db *gorm.DB) {
 		undoCounts.GET("/user/:uid", ctrl.HandleGetUndoCountsByUID)
 		undoCounts.POST("", ctrl.HandlePostUndoCounts)
 	}
+
+	// RedoCounts
+	redoCounts := e.Group("/redocounts")
+	{
+		redoCounts.GET("/note/:nid", ctrl.HandleGetRedoCountsByNID)
+		redoCounts.GET("/user/:uid", ctrl.HandleGetRedoCountsByUID)
+		redoCounts.POST("", ctrl.HandlePostRedoCounts)
+	}
 	
 	// Routing
 	e.GET("/", func(c echo.Context) error {
