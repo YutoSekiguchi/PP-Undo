@@ -2,28 +2,57 @@ import React from "react";
 import { useAtom } from 'jotai'
 import { drawerAtom, plusRedoCountAtom, redoAtom, redoableAtom } from "@/infrastructures/jotai/drawer";
 import { ButtonStyleType } from "@/@types/note";
+import { myNoteAtom } from "@/infrastructures/jotai/notes";
+import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
+import { addRedoCount } from "@/infrastructures/services/redoCounts";
 
 export const RedoButton: React.FC = () => {
   const [drawer, setDrawer] = useAtom(drawerAtom);
   const [, redo] = useAtom(redoAtom);
   const [, plusRedoCount] = useAtom(plusRedoCountAtom);
   const redoable = useAtom(redoableAtom);
+  const [myNote, ] = useAtom(myNoteAtom); // ノート情報の保持
 
   const buttonStyle: ButtonStyleType = {
     backgroundColor: `${redoable[0]? "rgb(96, 165, 250)": "#eee"}`,
     cursor: `${redoable[0]? "pointer": "not-allowed"}`,
   }
 
-  const clickRedoButton = () => {
+  const clickRedoButton = async () => {
     if (redoable[0] == false) {
       return;
     }
+    const beforeRedoNoteImage = await getCurrentNoteImage();
+    const beforeRedoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
     console.log(drawer);
     redo();
     drawer.numOfStroke = drawer.numOfStroke + 1;
     setDrawer(drawer);
     plusRedoCount();
     drawer.reDraw();
+    if (myNote != null) {
+      myNote.StrokeData = drawer.currentFigure.strokes.concat();
+    }
+    const afterRedoNoteImage = await getCurrentNoteImage();
+    const afterRedoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
+    await addRedoCount(
+      {
+        UID: myNote!.UID,
+        NID: myNote!.ID,
+        BeforeRedoNoteImage: beforeRedoNoteImage,
+        BeforeRedoStrokeData: beforeRedoStrokeData,
+        AfterRedoNoteImage: afterRedoNoteImage,
+        AfterRedoStrokeData: afterRedoStrokeData,
+        LeftStrokeCount: drawer.currentFigure.strokes.length,
+      }
+    )
+  }
+
+  const getCurrentNoteImage  = async () => {
+    const image: string = await drawer.getBase64PngImage().catch((error: unknown) => {
+      console.log(error);
+    });
+    return image? image: "";
   }
 
   const redoIcon = (
