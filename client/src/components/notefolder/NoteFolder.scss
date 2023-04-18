@@ -5,6 +5,10 @@
   margin-top: 10px;
 }
 
+.note-folders-page-body {
+  width: 100vw;
+}
+
 .tree {
   margin: 20px 0 10px 0;
 }
@@ -15,24 +19,54 @@
   margin: 0 10px;
 }
 
-.folder-list {
-  display: flex;
+@mixin display-list($width: 200px) {
+  margin: 0 20px;
+  display: grid;
+  grid-gap: 24px;
+  grid-template-columns: repeat(auto-fill,minmax($width,1fr));
   background-color: variables.$base-color;
 }
 
+.folder-list {
+  @include display-list();
+}
+
+.file-list {
+  @include display-list();
+}
+
 .folder-box {
-  margin-right: 30px;
+  display: flex;
+  align-items: center;
   background-color: variables.$folder-back-dolor;
-  padding: 0 10px;
-  border-radius: 10%;
+  border-radius: var(--dt-corner-card,.375rem);
+  font-size: 14px;
+  transition: box-shadow .2s cubic-bezier(.4,0,.2,1);
   &:hover {
-    background-color: #999;
+    background-color: #ddd;
   }
-  .folder-icon .note-icon {
+  .folder-icon {
+    margin: 16px 20px;
+    color: variables.$folder-text-color;
+  }
+  p {
+    color: variables.$folder-text-color;
+  }
+}
+
+.file-box {
+  background-color: variables.$folder-back-dolor;
+  border-radius: var(--dt-corner-card,1rem);
+  transition: box-shadow .2s cubic-bezier(.4,0,.2,1);
+  &:hover {
+    background-color: #ddd;
+  }
+  .note-icon {
     font-size: 3;
-    color: whitesmoke;
+    color: variables.$folder-text-color;
   }
   p {
     margin-top: 0;
+    color: variables.$folder-text-color;
   }
 }
