@@ -6,7 +6,6 @@ import { Box } from '@mui/material'
 import { Home } from "@/pages/Home";
 import { Note } from "@/pages/Note";
 import { Notefolders } from "@/pages/NoteFolders";
-import Spacer from "@/components/common/Spacer";
 
 export const RouterConfig:React.FC =() => {
   return (
@@ -15,7 +14,6 @@ export const RouterConfig:React.FC =() => {
         <Header />
         <Box className="flex main">
           <SideBar />
-          <Spacer size={250} />
             <Routes>
               <Route index element={<Home />} />
               <Route path="/notefolders/:pnfid" element={<Notefolders />} />

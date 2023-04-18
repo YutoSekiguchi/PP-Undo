@@ -17,6 +17,7 @@ import {
   SettingsOutlined
 } from "@mui/icons-material"
 import lscache from "lscache";
+import Spacer from "@/components/common/Spacer";
 
 export const SideBar:React.FC =() => {
   const location: Location = useLocation();
@@ -56,25 +57,28 @@ export const SideBar:React.FC =() => {
   return (
     <>
     {checkDisplayPath(location.pathname) &&
+    <>
       <Box
         sx={{ width: 225 }} 
         className="sidebar"
       >
-      <List>
-        {menuList.map((menu, index) => (
-          <ListItem key={index} disablePadding sx={{width: "100%"}}>
-            <Link to={ menu.path } className="width100 sidebar-link">
-              <ListItemButton>
-                <ListItemIcon>
-                  { menu.icon }
-                </ListItemIcon>
-                <ListItemText className="text pointer" primary={menu.label} />
-              </ListItemButton>
-            </Link>
-          </ListItem>
-        ))}
-      </List>
-    </Box>
+        <List>
+          {menuList.map((menu, index) => (
+            <ListItem key={index} disablePadding sx={{width: "100%"}}>
+              <Link to={ menu.path } className="width100 sidebar-link">
+                <ListItemButton>
+                  <ListItemIcon>
+                    { menu.icon }
+                  </ListItemIcon>
+                  <ListItemText className="text pointer" primary={menu.label} />
+                </ListItemButton>
+              </Link>
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+      <Spacer size={250} />
+    </>
     }
     </>
   );
