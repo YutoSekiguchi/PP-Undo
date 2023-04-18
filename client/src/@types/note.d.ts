@@ -120,3 +120,13 @@ export interface PostUndoCountDataType {
   AfterUndoStrokeData: any;
   LeftStrokeCount: number;
 }
+
+export interface PostRedoCountDataType {
+  UID: number;
+  NID: number;
+  BeforeRedoNoteImage: string;
+  BeforeRedoStrokeData: any;
+  AfterRedoNoteImage: string;
+  AfterRedoStrokeData: any;
+  LeftStrokeCount: number;
+}
