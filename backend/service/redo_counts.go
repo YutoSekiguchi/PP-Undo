@@ -13,10 +13,10 @@ func (s RedoCountsService) GetRedoCountsByNID(db *gorm.DB, c echo.Context) ([]Re
 	var rc []RedoCounts
 	nid := c.Param("nid")
 
-	if err := db.Raw("SELECT * FROM `redo_counts` WHERE nid = ?", nid).Scan(&uc).Error; err != nil {
+	if err := db.Raw("SELECT * FROM `redo_counts` WHERE nid = ?", nid).Scan(&rc).Error; err != nil {
 		return nil, err
 	}
-	return uc, nil
+	return rc, nil
 }
 
 // uidからノートごとのRedo回数を取得
@@ -24,10 +24,10 @@ func (s RedoCountsService) GetRedoCountsByUID(db *gorm.DB, c echo.Context) ([]Re
 	var rc []RedoCounts
 	uid := c.Param("uid")
 
-	if err := db.Raw("SELECT * FROM `redo_counts` WHERE uid = ?", uid).Scan(&uc).Error; err != nil {
+	if err := db.Raw("SELECT * FROM `redo_counts` WHERE uid = ?", uid).Scan(&rc).Error; err != nil {
 		return nil, err
 	}
-	return uc, nil
+	return rc, nil
 }
 
 // POST
