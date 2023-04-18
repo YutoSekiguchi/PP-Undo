@@ -86,14 +86,28 @@
   height: 100%;
 }
 
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 9999;
+}
+
+.main {
+  margin-top: 65px;
+}
+
 .sidebar {
+  position: fixed;
   height: calc(100vh - 65px);
   border-right: 2px solid variables.$folder-back-dolor;
-  margin-right: 20px;
   .sidebar-link {
     text-decoration: none;
   }
 }
+
 
 .loading-screen {
   z-index: 9999;

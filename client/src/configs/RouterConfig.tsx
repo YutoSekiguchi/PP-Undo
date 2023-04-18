@@ -6,20 +6,22 @@ import { Box } from '@mui/material'
 import { Home } from "@/pages/Home";
 import { Note } from "@/pages/Note";
 import { Notefolders } from "@/pages/NoteFolders";
+import Spacer from "@/components/common/Spacer";
 
 export const RouterConfig:React.FC =() => {
   return (
     <>
       <BrowserRouter>
         <Header />
-        <Box className="flex">
+        <Box className="flex main">
           <SideBar />
-          <Routes>
-            <Route index element={<Home />} />
-            <Route path="/notefolders/:pnfid" element={<Notefolders />} />
-            <Route path='/note/:id' element={<Note />} />
-          </Routes>
-        </Box>
+          <Spacer size={250} />
+            <Routes>
+              <Route index element={<Home />} />
+              <Route path="/notefolders/:pnfid" element={<Notefolders />} />
+              <Route path='/note/:id' element={<Note />} />
+            </Routes>
+          </Box>
       </BrowserRouter>
     </>
   );

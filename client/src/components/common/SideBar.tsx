@@ -57,8 +57,7 @@ export const SideBar:React.FC =() => {
     <>
     {checkDisplayPath(location.pathname) &&
       <Box
-        sx={{ width: 250 }}
-        // role="presentation"
+        sx={{ width: 225 }} 
         className="sidebar"
       >
       <List>

@@ -48,7 +48,7 @@ export const Header:React.FC =() => {
   return (
     <>
       {!notShowPathList.includes(location.pathname) &&
-        <Box sx={{ flexGrow: 1 }}>
+        <Box className="header">
           <Paper sx={{ background: "#37474f", borderBottom: '1px solid #57676f' }} elevation={0}  >
             <Toolbar sx={{ justifyContent: "space-between" }}>
               <Box
