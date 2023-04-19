@@ -73,7 +73,7 @@ export interface StrokeType {
   strokeAvgPressure: number;
 }
 
-export interface StrokeDataType {
+export interface LogStrokeDataType {
   image?: string;
   createTime: string;
   sliderValue?: number | number[];
@@ -87,6 +87,11 @@ export interface DoughnutPressureGraphPropsType {
   datasetsConfig: DoughnutGraphConfigType;
 }
 
+interface IDAndCreatedAtType {
+  ID: number;
+  CreatedAt: string;
+}
+
 export interface PostStrokeDataType {
   UID: number;
   NID: number;
@@ -98,18 +103,7 @@ export interface PostStrokeDataType {
   Save: number;
 }
 
-export interface StrokeDataType {
-  ID: number;
-  UID: number;
-  NID: number;
-  StrokeData: any;
-  AvgPressure: number;
-  PressureList: string;
-  Time?: number;
-  Mode: string;
-  Save: number;
-  CreatedAt: string;
-}
+export interface StrokeDataType extends PostStrokeDataType, IDAndCreatedAtType {}
 
 export interface PostUndoCountDataType {
   UID: number;
@@ -130,3 +124,16 @@ export interface PostRedoCountDataType {
   AfterRedoStrokeData: any;
   LeftStrokeCount: number;
 }
+
+export interface PostLogDataType {
+  UID: number;
+  NID: number;
+  StrokeData: any;
+  LogImage: string;
+  AvgPressureList: string;
+  Save: number;
+  SliderValue: number;
+  BeforeLogRedoSliderValue: number;
+}
+
+export interface LogDataType extends PostLogDataType, IDAndCreatedAtType {}
