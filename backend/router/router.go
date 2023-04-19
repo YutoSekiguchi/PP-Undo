@@ -65,6 +65,14 @@ func InitRouter(db *gorm.DB) {
 		strokes.DELETE("/notsave/:nid", ctrl.HandleDeleteNotSaveStrokes)
 	}
 
+	// logs
+	logs := e.Group("/logs")
+	{
+		logs.GET("/:id", ctrl.HandleGetLogByID)
+		logs.GET("/in/:nid", ctrl.HandleGetLogsByNID)
+		logs.POST("", ctrl.HandlePostLog)
+	}
+
 	// UndoCounts
 	undoCounts := e.Group("/undocounts")
 	{
