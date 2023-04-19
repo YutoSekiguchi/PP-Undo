@@ -26,10 +26,13 @@ import {
   Box,
 } from "@mui/material";
 import Spacer from "@/components/common/Spacer";
-import { PPUndoGraphDatasetsConfigType, Point2Type, StrokeDataType } from "@/@types/note";
+import { PPUndoGraphDatasetsConfigType, Point2Type, LogStrokeDataType, PostLogDataType } from "@/@types/note";
 import { PrettoSlider, datasetsConfig, options, xLabels } from "@/configs/PPUndoGraphConifig";
 import { getJaStringTime } from "@/modules/common/getJaStringTime";
 import { getStrokesIndexWithLowPressure, hideLowPressureStrokes, increaseStrokeColorOpacity, reduceStrokeColorOpacity } from "@/modules/note/PPUndo";
+import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
+import { myNoteAtom } from "@/infrastructures/jotai/notes";
+import { addLog } from "@/infrastructures/services/logs";
 
 
 export const PPUndoArea: React.FC = () => {
@@ -69,9 +72,12 @@ export const PPUndoArea: React.FC = () => {
   const [, setAddLogOfBeforePPUndo] = useAtom(addLogOfBeforePPUndoAtom);
   const [logNotifierCount, setLogNotifierCount] = useAtom(logNotifierCountAtom);
   const [ppUndoCount, setPPUndoCount] = useAtom(ppUndoCountAtom)
+  const [myNote, ] = useAtom(myNoteAtom);
   
   const [lowerPressureIndexList, setLowerPressureIndexList] = useState<number[]>([]);
-  const [logData, setLogData] = useState<StrokeDataType | null>(null);
+  const [logData, setLogData] = useState<LogStrokeDataType | null>(null);
+  const [prevSliderValue, setPrevSliderValue] = useState<number | number[]>(0);
+  const [logStrokeData, setLogStrokeData] = useState<any>({})
 
   const changeValue = (event: Event, newValue: number | number[]) => {
     const newLowerPressureIndexList: number[] = getStrokesIndexWithLowPressure(avgPressureOfStroke, newValue);
@@ -110,7 +116,7 @@ export const PPUndoArea: React.FC = () => {
       console.log(error);
     });
     const now = await getJaStringTime();
-    const strokeData: StrokeDataType = {
+    const strokeData: LogStrokeDataType = {
       image: res? res : undefined,
       sliderValue: sliderValue,
       createTime: now,
@@ -125,10 +131,13 @@ export const PPUndoArea: React.FC = () => {
         strokeAvgPressure: avgPressureOfStroke[i]
       })),
     };
+    setPrevSliderValue(sliderValue);
+    const _logStrokeData = await getCurrentStrokeData(figure.strokes);
+    setLogStrokeData(_logStrokeData);
     setLogData(strokeData);
   }
 
-  const actionFinish = () => {
+  const actionFinish = async () => {
     console.log("PPUndo操作終了")
     hideLowPressureStrokes(
       lowerPressureIndexList,
@@ -138,6 +147,17 @@ export const PPUndoArea: React.FC = () => {
     setAddLogOfBeforePPUndo(logData!);
     setLogNotifierCount(logNotifierCount + 1);
     setPPUndoCount(ppUndoCount + 1);
+    const postLogData: PostLogDataType = {
+      UID: myNote?.UID? myNote?.UID: 0,
+      NID: myNote?.ID? myNote?.ID: 0,
+      StrokeData: logStrokeData,
+      LogImage: logData!.image? logData!.image: "",
+      AvgPressureList: avgPressureOfStroke.join(','),
+      Save: 0,
+      SliderValue: sliderValue,
+      BeforeLogRedoSliderValue: prevSliderValue,
+    }
+    await addLog(postLogData);
     setTimeout(() => {
       drawer.reDraw();
     }, 100);
