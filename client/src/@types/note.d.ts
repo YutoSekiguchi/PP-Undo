@@ -132,8 +132,8 @@ export interface PostLogDataType {
   LogImage: string;
   AvgPressureList: string;
   Save: number;
-  SliderValue: number;
-  BeforeLogRedoSliderValue: number;
+  SliderValue: number | number[];
+  BeforeLogRedoSliderValue: number | number[];
 }
 
 export interface LogDataType extends PostLogDataType, IDAndCreatedAtType {}
