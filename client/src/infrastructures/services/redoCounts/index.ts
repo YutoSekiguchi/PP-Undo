@@ -1,4 +1,4 @@
-import { PostRedoCountDataType } from "@/types/note";
+import { PostRedoCountDataType } from "@/@types/note";
 import { API_URL } from "@/configs/settings";
 import axios from "axios";
 
