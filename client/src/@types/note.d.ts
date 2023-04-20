@@ -137,3 +137,10 @@ export interface PostLogDataType {
 }
 
 export interface LogDataType extends PostLogDataType, IDAndCreatedAtType {}
+
+export interface PostClientLogDataType {
+  NID: number;
+  Data: any;
+}
+
+export interface ClientLogDataType extends PostClientLogDataType, IDAndCreatedAtType {}
