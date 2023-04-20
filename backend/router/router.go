@@ -73,6 +73,13 @@ func InitRouter(db *gorm.DB) {
 		logs.POST("", ctrl.HandlePostLog)
 	}
 
+	// client_logs
+	clientLogs := e.Group("/clientlogs")
+	{
+		clientLogs.GET("/in/:nid", ctrl.HandleGetClientLogsByNID)
+		clientLogs.POST("", ctrl.HandlePostClientLog)
+	}
+
 	// UndoCounts
 	undoCounts := e.Group("/undocounts")
 	{
