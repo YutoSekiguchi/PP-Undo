@@ -28,3 +28,29 @@ func (s *StrokeData) Scan(value interface{}) error {
 		return fmt.Errorf("unsupported type: %T",value)
 	}
 }
+
+type ClientLogData struct {
+	CreateTime string `json:"createTime" gorm:"not null;"`
+	Image string `json:"image" gorm:"not null;"`
+	SliderValue float64 `json:"sliderValue" gorm:"not null;"`
+	Strokes []interface{} `json:"strokes" gorm:"not null;"`
+}
+
+func (s ClientLogData) Value() (driver.Value, error) {
+	bytes, err := json.Marshal(s)
+	if err != nil {
+		return nil, err
+	}
+	return string(bytes), nil
+}
+
+func (s *ClientLogData) Scan(value interface{}) error {
+	switch v := value.(type) {
+	case string:
+		return json.Unmarshal([]byte(v), s)
+	case []byte:
+		return json.Unmarshal(v, s)
+	default:
+		return fmt.Errorf("unsupported type: %T",value)
+	}
+}
