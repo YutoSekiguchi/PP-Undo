@@ -13,8 +13,7 @@ export const fetchUserDataByNameAndPassword = async(name: string, password: stri
       return null;
     }
   } catch(e) {
-    console.log(e);
-    return null;
+    throw(e);
   }
 }
 
@@ -29,7 +28,6 @@ export const addUser = async (data: PostUserType) => {
       return null;
     }
   } catch(e) {
-    console.log(e);
-    return null;
+    throw(e);
   }
 }
