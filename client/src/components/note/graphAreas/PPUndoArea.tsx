@@ -23,7 +23,7 @@ import {
 } from 'chart.js'
 import { Line } from "react-chartjs-2";
 import {
-  Box,
+  Box, Typography,
 } from "@mui/material";
 import Spacer from "@/components/common/Spacer";
 import { PPUndoGraphDatasetsConfigType, Point2Type, LogStrokeDataType, PostLogDataType } from "@/@types/note";
@@ -32,7 +32,7 @@ import { getJaStringTime } from "@/modules/common/getJaStringTime";
 import { getStrokesIndexWithLowPressure, hideLowPressureStrokes, increaseStrokeColorOpacity, reduceStrokeColorOpacity } from "@/modules/note/PPUndo";
 import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
-import { addLog } from "@/infrastructures/services/logs";
+import { addClientLog, addLog } from "@/infrastructures/services/ppUndoLogs";
 
 
 export const PPUndoArea: React.FC = () => {
@@ -115,7 +115,7 @@ export const PPUndoArea: React.FC = () => {
     const res: string = await drawer.getBase64PngImage().catch((error: unknown) => {
       console.log(error);
     });
-    const now = await getJaStringTime();
+    const now = getJaStringTime();
     const strokeData: LogStrokeDataType = {
       image: res? res : undefined,
       sliderValue: sliderValue,
@@ -132,6 +132,12 @@ export const PPUndoArea: React.FC = () => {
       })),
     };
     setPrevSliderValue(sliderValue);
+    await addClientLog(
+      {
+        NID: myNote?.ID? myNote?.ID: 0,
+        Data: strokeData,
+      }
+    );
     const _logStrokeData = await getCurrentStrokeData(figure.strokes);
     setLogStrokeData(_logStrokeData);
     setLogData(strokeData);
@@ -167,7 +173,9 @@ export const PPUndoArea: React.FC = () => {
 	return (
     <>
       <Box className="graph-wrapper">
-        <p className="big-text center">PPUndo</p>
+        <Typography component="div">
+          <Box className="big-text center">PPUndo</Box>
+        </Typography>
         <Spacer size={6} />
         <Box className="slider-wrapper">
           <PrettoSlider
@@ -175,8 +183,6 @@ export const PPUndoArea: React.FC = () => {
             aria-label="PenPressure"
             defaultValue={0}
             value={sliderValue}
-            // getAriaValueText={valuetext}
-            // valueLabelDisplay="auto"
             step={0.0001}
             min={0}
             max={1}
