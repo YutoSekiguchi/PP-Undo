@@ -21,7 +21,6 @@ export const addLog = async (data: PostLogDataType) => {
 // クライアント用のLogを追加
 export const addClientLog = async (data: PostClientLogDataType) => {
   const url = `${API_URL}/clientlogs`;
-  console.log(data)
   try {
     const res = await axios.post(url, data);
     if (res.status == 200) {
