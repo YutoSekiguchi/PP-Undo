@@ -95,6 +95,13 @@ func InitRouter(db *gorm.DB) {
 		redoCounts.GET("/user/:uid", ctrl.HandleGetRedoCountsByUID)
 		redoCounts.POST("", ctrl.HandlePostRedoCounts)
 	}
+
+	// LogRedoCounts
+	logRedoCounts := e.Group("/logredocounts")
+	{
+		logRedoCounts.GET("/note/:nid", ctrl.HandleGetLogRedoCountsByNID)
+		logRedoCounts.POST("", ctrl.HandlePostLogRedoCount)
+	}
 	
 	// Routing
 	e.GET("/", func(c echo.Context) error {
