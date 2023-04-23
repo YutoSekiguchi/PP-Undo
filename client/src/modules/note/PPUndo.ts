@@ -9,21 +9,27 @@ export const getStrokesIndexWithLowPressure = (avgPressureOfStroke: number[], ne
 }
 
 export const reduceStrokeColorOpacity = (newLowerPressureIndexList: number[], strokes: any[]) => {
+  let isChange = false;
   newLowerPressureIndexList.map(val => {
     const color = strokes[val].color;
     if(color.length == 7) {
       strokes[val].color = color + "22";
+      isChange = true;
     }
   })
+  return isChange;
 }
 
 export const increaseStrokeColorOpacity = (lowerPressureIndexList: number[], newLowerPressureIndexList: number[], strokes: any[]) => {
+  let isChange = false;
   lowerPressureIndexList.map(val => {
     const color = strokes[val].color;
     if (!newLowerPressureIndexList.includes(val) && color.length == 9 && color.slice(-2) != "00") {
       strokes[val].color = color.slice(0, -2);
+      isChange = true;
     }
   })
+  return isChange;
 }
 
 export const hideLowPressureStrokes = (lowerPressureIndexList: number[], strokes: any[]) => {
