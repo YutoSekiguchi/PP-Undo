@@ -144,3 +144,14 @@ export interface PostClientLogDataType {
 }
 
 export interface ClientLogDataType extends PostClientLogDataType, IDAndCreatedAtType {}
+
+export interface PostLogRedoCountsDataType {
+  UID: number;
+  NID: number;
+  BeforeLogRedoNoteImage: string;
+  BeforeLogRedoStrokeData: any;
+  AfterLogRedoNoteImage: string;
+  AfterLogRedoStrokeData: any;
+  BeforeLogRedoStrokeCount: number;
+  AfterLogRedoStrokeCount: number;
+}
