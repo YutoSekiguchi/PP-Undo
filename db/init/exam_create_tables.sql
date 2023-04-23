@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS watch_logs_counts (
 );
 
 -- ppundoの回数
-CREATE TABLE IF NOT EXISTS ppundo_counts (
+CREATE TABLE IF NOT EXISTS pp_undo_counts (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   uid INT NOT NULL,
   nid INT NOT NULL,
