@@ -96,13 +96,20 @@ func InitRouter(db *gorm.DB) {
 		redoCounts.POST("", ctrl.HandlePostRedoCounts)
 	}
 
+	// PPUndoCounts
+	ppUndoCounts := e.Group("/ppundocoounts")
+	{
+		ppUndoCounts.GET("/note/:nid", ctrl.HandleGetPPUndoCountsByNID)
+		ppUndoCounts.POST("", ctrl.HandlePostPPUndoCount)
+	}
+
 	// LogRedoCounts
 	logRedoCounts := e.Group("/logredocounts")
 	{
 		logRedoCounts.GET("/note/:nid", ctrl.HandleGetLogRedoCountsByNID)
 		logRedoCounts.POST("", ctrl.HandlePostLogRedoCount)
 	}
-	
+
 	// Routing
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, Echo!!")
