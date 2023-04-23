@@ -1,4 +1,4 @@
-import { StrokeDataType } from '@/@types/note';
+import { LogStrokeDataType } from '@/@types/note';
 import { atom } from 'jotai';
 import { fetchNoteByID } from '../services/note';
 import { notesAtom } from './notes';
@@ -132,9 +132,9 @@ export const redoAtom = atom((get) => {get(undoStrokeLogAtom)}, (get, set) => {
  * @description
  * PP-Undo前の状態のログ
  */
-export const logOfBeforePPUndoAtom = atom<StrokeDataType[]>([])
+export const logOfBeforePPUndoAtom = atom<LogStrokeDataType[]>([])
 
-export const addLogOfBeforePPUndoAtom = atom(null, (get, set, strokeData: StrokeDataType) => {
+export const addLogOfBeforePPUndoAtom = atom(null, (get, set, strokeData: LogStrokeDataType) => {
   set(logOfBeforePPUndoAtom, get(logOfBeforePPUndoAtom).concat([strokeData]));
 })
 
