@@ -87,7 +87,7 @@ $button-border: 1px solid gray;
 }
 
 .width-button-circle {
-  background-color: #fff;
+  background-color: variables.$dark-blue-color;
   margin: 0 auto;
   @include mixins.rounded();
 }

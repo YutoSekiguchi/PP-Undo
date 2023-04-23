@@ -61,7 +61,7 @@ export const ChangePenWidthButton: React.FC = () => {
                 <Box>
                   <Box width={size + 2} height={size + 2} className="width-button-circle"></Box>
                   <Spacer size={3 + size/20} axis="vertical" />
-                  <p className="small-text">{size}px</p>
+                  <p className="small-text white-text">{size}px</p>
                 </Box>
               </Box>
             ))}

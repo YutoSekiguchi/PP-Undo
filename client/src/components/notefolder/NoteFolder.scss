@@ -7,6 +7,10 @@
 
 .note-folders-page-body {
   width: 100vw;
+  // min-height: calc(100vh - 65px);
+  padding: 0 20px;
+  background-color: #fff;
+  border-radius: 30px;
 }
 
 .tree {
@@ -20,16 +24,16 @@
   padding: 3px 10px;
   border-radius: var(--dt-corner-card,.5rem);
   &:hover {
-    background-color: #ffffff44;
+    background-color: #00000011;
   }
 }
 
-@mixin display-list($width: 200px) {
+@mixin display-list($width: 220px) {
   margin: 0 20px;
   display: grid;
   grid-gap: 24px;
   grid-template-columns: repeat(auto-fill,minmax($width,1fr));
-  background-color: variables.$base-color;
+  // background-color: variables.$base-dark-color;
 }
 
 .folder-list {
@@ -52,10 +56,10 @@
   }
   .folder-icon {
     margin: 16px 20px;
-    color: variables.$folder-text-color;
+    color: variables.$folder-note-color;
   }
   p {
-    color: variables.$folder-text-color;
+    color: variables.$text-color;
   }
 }
 
@@ -63,15 +67,28 @@
   background-color: variables.$folder-back-dolor;
   border-radius: var(--dt-corner-card,1rem);
   transition: box-shadow .2s cubic-bezier(.4,0,.2,1);
+  height: 260px;
   &:hover {
-    background-color: #ddd;
+    background-color: variables.$note-hover-color;
   }
-  .note-icon {
-    font-size: 3;
-    color: variables.$folder-text-color;
+  img {
+    width: 90%;
+    overflow: hidden;
   }
-  p {
-    margin-top: 0;
-    color: variables.$folder-text-color;
+  .note-background {
+    width: 90%;
+    height: 210px;
+    margin: 0 auto;
+    background-color: #fff;
+    .note-icon {
+      color: variables.$folder-note-color;
+    }
+  }
+  .note-title-icon {
+    color: variables.$note-icon-color;
+    margin: 12px 16px;
+  }
+  .note-text {
+    color: variables.$text-color;
   }
 }

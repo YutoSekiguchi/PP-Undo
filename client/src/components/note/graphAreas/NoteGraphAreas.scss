@@ -2,8 +2,9 @@
 @use '../../../styles/variables.scss';
 
 .graph-area {
-  background-color: variables.$base-color;
+  background-color: variables.$base-dark-color;
   width: 30%;
+  min-height: calc(100vh - 65px);
   position: fixed;
   right: 0;
 }
