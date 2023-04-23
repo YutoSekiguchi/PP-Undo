@@ -13,7 +13,7 @@ func (s PPUndoCountsService) GetPPUndoCountsByNID(db *gorm.DB, c echo.Context) (
 	var puc []PPUndoCounts
 	nid := c.Param("nid")
 
-	if err := db.Raw("SELECT * FROM `ppundo_counts` WHERE nid = ?", nid).Scan(&puc).Error; err != nil {
+	if err := db.Raw("SELECT * FROM `pp_undo_counts` WHERE nid = ?", nid).Scan(&puc).Error; err != nil {
 		return nil, err
 	}
 	return puc, nil

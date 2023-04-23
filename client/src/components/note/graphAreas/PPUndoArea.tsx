@@ -26,13 +26,15 @@ import {
   Box, Typography,
 } from "@mui/material";
 import Spacer from "@/components/common/Spacer";
-import { PPUndoGraphDatasetsConfigType, Point2Type, LogStrokeDataType, PostLogDataType } from "@/@types/note";
+import { PPUndoGraphDatasetsConfigType, Point2Type, LogStrokeDataType, PostLogDataType, PostPPUndoCountsDataType } from "@/@types/note";
 import { PrettoSlider, datasetsConfig, options, xLabels } from "@/configs/PPUndoGraphConifig";
 import { getJaStringTime } from "@/modules/common/getJaStringTime";
 import { getStrokesIndexWithLowPressure, hideLowPressureStrokes, increaseStrokeColorOpacity, reduceStrokeColorOpacity } from "@/modules/note/PPUndo";
 import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { addClientLog, addLog } from "@/infrastructures/services/ppUndoLogs";
+import { calcIsShowStrokeCount } from "@/modules/note/CalcIsShowStroke";
+import { addPPUndoCount } from "@/infrastructures/services/ppUndoCounts";
 
 
 export const PPUndoArea: React.FC = () => {
@@ -164,8 +166,24 @@ export const PPUndoArea: React.FC = () => {
       BeforeLogRedoSliderValue: prevSliderValue,
     }
     await addLog(postLogData);
-    setTimeout(() => {
-      drawer.reDraw();
+    setTimeout(async() => {
+      await drawer.reDraw();
+      const reqStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
+      const img: string = await drawer.getBase64PngImage().catch((error: unknown) => {
+        console.log(error);
+      });
+      const beforePPUndoStrokeCount: number = calcIsShowStrokeCount(logStrokeData.Strokes);
+      const afterPPUndoStrokeCount: number = calcIsShowStrokeCount(drawer.currentFigure.strokes);
+      const postPPUndoCountsData: PostPPUndoCountsDataType = {
+        UID: myNote?.UID? myNote?.UID: 0,
+        NID: myNote?.ID? myNote?.ID: 0,
+        AfterPPUndoStrokeData: reqStrokeData,
+        AfterPPUndoImageData: img,
+        BeforePPUndoStrokeCount: beforePPUndoStrokeCount,
+        AfterPPUndoStrokeCount: afterPPUndoStrokeCount,
+      }
+      await addPPUndoCount(postPPUndoCountsData);
+      console.log(postPPUndoCountsData);
     }, 100);
   }
 
