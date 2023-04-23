@@ -155,3 +155,12 @@ export interface PostLogRedoCountsDataType {
   BeforeLogRedoStrokeCount: number;
   AfterLogRedoStrokeCount: number;
 }
+
+export interface PostPPUndoCountsDataType {
+  UID: number;
+  NID: number;
+  AfterPPUndoStrokeData: any;
+  AfterPPUndoImageData: string;
+  BeforePPUndoStrokeCount: number;
+  AfterPPUndoStrokeCount: number;
+}
