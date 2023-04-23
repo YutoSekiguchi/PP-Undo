@@ -9,6 +9,7 @@ import {
   MobileStepper,
   Button,
   Badge,
+  Typography,
 } from "@mui/material";
 import { LogRedoImageDialog } from "./LogRedoImageDialog";
 import { LogImageListProps } from "@/@types/note";
@@ -71,7 +72,9 @@ export const LogImageList: React.FC<LogImageListProps> = (props) => {
   const LogTimeText = (logTimeTextProps: { i: number }) => {
     const { i } = logTimeTextProps;
     return (
-      <p>{logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].createTime}</p>
+      <Typography>
+        {logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].createTime}
+      </Typography>
     );
   }
 
@@ -91,7 +94,11 @@ export const LogImageList: React.FC<LogImageListProps> = (props) => {
           half
           close={closeLog}
         />
-        <p className="log-image-total">全{logOfBeforePPUndo.length}個のログ</p>
+        <Typography component="div">
+          <Box className="log-image-total">
+            全{logOfBeforePPUndo.length}個のログ
+          </Box>
+        </Typography>
         { maxSteps > 0 &&
           <LogImageStepper
             className="log-image-stepper"
