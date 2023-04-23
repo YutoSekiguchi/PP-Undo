@@ -77,7 +77,7 @@ export const SideBar:React.FC =() => {
           ))}
         </List>
       </Box>
-      <Spacer size={250} />
+      <Spacer size={225} />
     </>
     }
     </>

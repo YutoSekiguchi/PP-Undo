@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAtom, useAtomValue } from 'jotai'
 import {
   addLogOfBeforePPUndoAtom,
@@ -80,8 +80,9 @@ export const PPUndoArea: React.FC = () => {
   const [logData, setLogData] = useState<LogStrokeDataType | null>(null);
   const [prevSliderValue, setPrevSliderValue] = useState<number | number[]>(0);
   const [logStrokeData, setLogStrokeData] = useState<any>({})
+  const [canDraw, setCanDraw] = useState<number>(0);
 
-  const changeValue = (event: Event, newValue: number | number[]) => {
+  const changeValue = async (event: Event, newValue: number | number[]) => {
     const newLowerPressureIndexList: number[] = getStrokesIndexWithLowPressure(avgPressureOfStroke, newValue);
     setSliderValue(newValue);
     if (newLowerPressureIndexList.length == lowerPressureIndexList.length) {
@@ -89,22 +90,29 @@ export const PPUndoArea: React.FC = () => {
     }
     // FIXME: 色変更の関数を別で実装しよう！もっとしっかりとした条件分岐で
     // 色を薄く
-    reduceStrokeColorOpacity(
+    const res1 = reduceStrokeColorOpacity(
       newLowerPressureIndexList,
       drawer.currentFigure.strokes
     );
     // 色を元に戻す
-    increaseStrokeColorOpacity(
+    const res2 = increaseStrokeColorOpacity(
       lowerPressureIndexList,
       newLowerPressureIndexList,
       drawer.currentFigure.strokes
     );
     setLowerPressureIndexList(newLowerPressureIndexList);
     setDrawer(drawer);
+    if(res1 || res2) {
+      setCanDraw((prev) => prev==0? 1: prev*-1);
+    }
+  }
+
+  useEffect(() => {
+    if(canDraw == 0) {return;}
     setTimeout(() => {
       drawer.reDraw();
-    }, 100);
-  }
+    }, 100)
+  }, [canDraw])
 
   const actionStart = async () => {
     console.log("PPUndo操作開始");
@@ -192,7 +200,7 @@ export const PPUndoArea: React.FC = () => {
     <>
       <Box className="graph-wrapper">
         <Typography component="div">
-          <Box className="big-text center">PPUndo</Box>
+          <Box className="big-white-text center">PPUndo</Box>
         </Typography>
         <Spacer size={6} />
         <Box className="slider-wrapper">

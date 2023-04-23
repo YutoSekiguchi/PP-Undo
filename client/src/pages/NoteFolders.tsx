@@ -1,6 +1,6 @@
 import { userDataAtom } from "@/infrastructures/jotai/authentication";
 import { isAuth } from "@/modules/common/isAuth";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useAtom } from "jotai";
 import React, { useEffect, useState } from "react";
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
@@ -16,6 +16,7 @@ import { fetchNoteFoldersTree } from "@/infrastructures/services/noteFolders";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import { getNotesByNFIDAtom } from "@/infrastructures/jotai/notes";
 import DescriptionTwoToneIcon from '@mui/icons-material/DescriptionTwoTone';
+import { Description } from "@mui/icons-material";
 import { truncateString } from "@/modules/common/truncateString";
 
 export const Notefolders: React.FC = () => {
@@ -167,8 +168,17 @@ export const Notefolders: React.FC = () => {
                     notesData.map((noteData, i) => {
                       return (
                         <Box key={i} className="text-center file-box pointer" onClick={() => navigate(`/note/${noteData.ID}`)}>
-                          <DescriptionTwoToneIcon sx={{ fontSize: 200 }} className="note-icon" />
-                          <p className="note-text">{noteData.Title}</p>
+                          <Box className="flex-start">
+                            <Description sx={{ fontSize: 16 }} className="note-title-icon" />
+                            <Box className="note-text">{noteData.Title}</Box>
+                          </Box>
+                          {
+                            noteData.NoteImage==""
+                            ? <Box className="center note-background">
+                                <DescriptionTwoToneIcon sx={{ fontSize: 120 }} className="note-icon" />
+                              </Box>
+                            : <img src={noteData.NoteImage} width={250} height={210} />
+                          }
                         </Box>
                       );
                     })

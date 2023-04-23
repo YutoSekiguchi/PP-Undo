@@ -41,8 +41,18 @@
   @include text-color();
 }
 
+.big-white-text {
+  font-size: large;
+  font-weight: bold;
+  color: variables.$base-color;
+}
+
 .text, .icon {
   @include text-color();
+}
+
+.white-text {
+  color: variables.$base-color;
 }
 
 .text-center {
@@ -97,11 +107,15 @@
 
 .main {
   margin-top: 65px;
+  min-height: calc(100vh - 65px);
+  background-color: variables.$base-color;
 }
 
 .sidebar {
   position: fixed;
+  width: 250px;
   height: calc(100vh - 65px);
+  background-color: variables.$base-color;
   border-right: 2px solid variables.$folder-back-dolor;
   .sidebar-link {
     text-decoration: none;

@@ -24,12 +24,12 @@ export const UndoButton: React.FC = () => {
     if (undoableCount <= 0 || drawer.numOfStroke<=0) {
       return;
     }
-    const beforeUndoNoteImage = await getCurrentNoteImage();
-    const beforeUndoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
     addLog({
       stroke: drawer.currentFigure.strokes[drawer.currentFigure.strokes.length-1],
       pressure: avgPressureOfStroke[drawer.currentFigure.strokes.length-1]
     });
+    const beforeUndoNoteImage = await getCurrentNoteImage();
+    const beforeUndoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
     removeAvgPressureOfStroke(drawer.currentFigure.strokes.length-1);
     drawer.undo();
     plusUndoCount();

@@ -55,10 +55,10 @@ export const DoughnutPressureGraph: React.FC<DoughnutPressureGraphPropsType> = (
   return (
     <>
       <Box sx={{ width: "48%" }}>
-        <p className="big-text text-center">{title}</p>
+        <p className="big-white-text text-center">{title}</p>
         <Spacer size={8} axis="vertical" />
         <Box sx={{ position: "relative" }}>
-          <p className="absolute-center-text text text-center">{Math.round(pressureValue*100)/100}</p>
+          <p className="absolute-center-text white-text text-center">{Math.round(pressureValue*100)/100}</p>
           <Doughnut
             data={graphData}
             options={doughnutOptions}

@@ -49,7 +49,7 @@ export const Header:React.FC =() => {
     <>
       {!notShowPathList.includes(location.pathname) &&
         <Box className="header">
-          <Paper sx={{ background: "#37474f", borderBottom: '1px solid #57676f' }} elevation={0}  >
+          <Paper sx={{ background: "#F2F6FC", borderBottom: '1px solid #F2F6FC' }} elevation={0}  >
             <Toolbar sx={{ justifyContent: "space-between" }}>
               <Box
                 className="center"
@@ -65,7 +65,7 @@ export const Header:React.FC =() => {
                   component="div"
                   sx={{ fontWeight: "bold" }}
                 >
-                  PP-Undo
+                  PP-Undo 2.0.0
                 </Typography>
               </Box>
               
