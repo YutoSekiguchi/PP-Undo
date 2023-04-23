@@ -1,10 +1,14 @@
 import React from "react";
-import { LogRedoImageDialogProps } from "@/@types/note";
+import { LogRedoImageDialogProps, PostLogRedoCountsDataType } from "@/@types/note";
 import { useAtom } from "jotai";
 import { Stroke, Point } from "@nkmr-lab/average-figure-drawer";
 import { addAvgPressureOfStrokeAtom, clearAvgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawerAtom, logOfBeforePPUndoAtom, logRedoCountAtom, sliderValueAtom, undoableCountAtom } from "@/infrastructures/jotai/drawer";
 import { Box, Button } from "@mui/material";
 import { CancelButton } from "./CancelButton";
+import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
+import { calcIsShowStrokeCount } from "@/modules/note/CalcIsShowStroke";
+import { myNoteAtom } from "@/infrastructures/jotai/notes";
+import { addLogRedoCount } from "@/infrastructures/services/ppUndoLogs/counts";
 
 
 export const LogRedoImageDialog: React.FC<LogRedoImageDialogProps> = (props) => {
@@ -17,8 +21,14 @@ export const LogRedoImageDialog: React.FC<LogRedoImageDialogProps> = (props) => 
   const [, setClearUndoStrokeLog] = useAtom(clearUndoStrokeLogAtom);
   const [, setUndoableCount] = useAtom(undoableCountAtom);
   const [logRedoCount, setLogRedoCount] = useAtom(logRedoCountAtom);
+  const [myNote, ] = useAtom(myNoteAtom);
 
-  const ppRedo = () => {
+  const ppRedo = async () => {
+    const beforeLogRedoNoteImage: string = await drawer.getBase64PngImage().catch((error: unknown) => {
+      console.log(error);
+    });
+    const beforeLogRedoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
+    const beforeLogRedoStrokeCount = calcIsShowStrokeCount(drawer.currentFigure.strokes);
     setClearAvgPressureOfStroke();
     const numOfStroke = drawer.numOfStroke;
     if(numOfStroke <= 0) return
@@ -41,6 +51,22 @@ export const LogRedoImageDialog: React.FC<LogRedoImageDialogProps> = (props) => 
     setUndoableCount(0);
     setSliderValue(logOfBeforePPUndo[dialogIndex].sliderValue!);
     setLogRedoCount(logRedoCount + 1);
+    const afterLogRedoNoteImage: string = await drawer.getBase64PngImage().catch((error: unknown) => {
+      console.log(error);
+    });
+    const afterLogRedoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
+    const afterLogRedoStrokeCount = calcIsShowStrokeCount(drawer.currentFigure.strokes);
+    const postLogRedoCountData: PostLogRedoCountsDataType = {
+      UID: myNote?.UID? myNote?.UID: 0,
+      NID: myNote?.ID? myNote?.ID: 0,
+      BeforeLogRedoNoteImage: beforeLogRedoNoteImage,
+      BeforeLogRedoStrokeData: beforeLogRedoStrokeData,
+      AfterLogRedoNoteImage: afterLogRedoNoteImage,
+      AfterLogRedoStrokeData: afterLogRedoStrokeData,
+      BeforeLogRedoStrokeCount: beforeLogRedoStrokeCount,
+      AfterLogRedoStrokeCount: afterLogRedoStrokeCount,
+    };
+    await addLogRedoCount(postLogRedoCountData);
     closeDialog();
     closeLog();
   }
