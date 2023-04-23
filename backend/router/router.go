@@ -97,7 +97,7 @@ func InitRouter(db *gorm.DB) {
 	}
 
 	// PPUndoCounts
-	ppUndoCounts := e.Group("/ppundocoounts")
+	ppUndoCounts := e.Group("/ppundocounts")
 	{
 		ppUndoCounts.GET("/note/:nid", ctrl.HandleGetPPUndoCountsByNID)
 		ppUndoCounts.POST("", ctrl.HandlePostPPUndoCount)
