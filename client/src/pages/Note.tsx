@@ -1,5 +1,5 @@
 import React, { useState, useEffect, PointerEvent } from "react";
-import { NoteSizeType, Point2Type } from "@/@types/note";
+import { ClientLogDataType, NoteSizeType, Point2Type, PostStrokeDataType } from "@/@types/note";
 import { Drawer, Point, Stroke } from "@nkmr-lab/average-figure-drawer";
 import { DrawerConfig } from "@/configs/DrawerConfig";
 import { NoteHeader } from "@/components/note/header";
@@ -7,7 +7,7 @@ import {
   Box, Button 
 } from "@mui/material";
 import { useAtom } from 'jotai'
-import { addAvgPressureOfStrokeAtom, avgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawModeAtom, drawerAtom, undoableCountAtom, removeAvgPressureOfStrokeAtom, setUndoStrokeLogAtom, addPressureOfOneStrokeAtom, clearPressureOfOneStrokeAtom, undoCountAtom, redoCountAtom, logRedoCountAtom, ppUndoCountAtom, allStrokeCountAtom, allAvgPressureOfStrokeAtom, sliderValueAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, avgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawModeAtom, drawerAtom, undoableCountAtom, removeAvgPressureOfStrokeAtom, setUndoStrokeLogAtom, addPressureOfOneStrokeAtom, clearPressureOfOneStrokeAtom, undoCountAtom, redoCountAtom, logRedoCountAtom, ppUndoCountAtom, allAvgPressureOfStrokeAtom, sliderValueAtom, logOfBeforePPUndoAtom } from "@/infrastructures/jotai/drawer";
 import { sum } from "@/modules/note/SumPressure";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 import { userDataAtom } from "@/infrastructures/jotai/authentication";
@@ -20,7 +20,13 @@ import { confirmNumberArrayFromString } from "@/modules/common/confirmArrayFromS
 import { averagePressure } from "@/modules/note/AveragePressure";
 import { LoadingScreen } from "@/components/common/LoadingScreen";
 import { TimeoutScreen } from "@/components/common/TimeoutScreen";
-import { calcIsShowStrokeList } from "@/modules/note/CalcIsShowStrokeList";
+import { calcIsShowStrokeList } from "@/modules/note/CalcIsShowStroke";
+import { addStroke } from "@/infrastructures/services/strokes";
+import { fetchClientLogsByNID } from "@/infrastructures/services/ppUndoLogs";
+import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
+
+let drawStartTime: number = 0; // 描画時の時刻
+let drawEndTime: number = 0; // 描画終了時の時刻
 
 export const Note:React.FC =() => {
   const params: Params<string> = useParams();
@@ -40,6 +46,7 @@ export const Note:React.FC =() => {
   const [sliderValue, setSliderValue] = useAtom(sliderValueAtom);
   const [, addPressureOfOneStroke] = useAtom(addPressureOfOneStrokeAtom);
   const [, clearPressureOfOneStroke] = useAtom(clearPressureOfOneStrokeAtom);
+  const [, setLogOfBeforePPUndo] = useAtom(logOfBeforePPUndoAtom);
   const [undoCount, setUndoCount] = useAtom(undoCountAtom);
   const [redoCount, setRedoCount] = useAtom(redoCountAtom);
   const [logRedoCount, setLogRedoCount] = useAtom(logRedoCountAtom);
@@ -48,11 +55,19 @@ export const Note:React.FC =() => {
   const [loginUserData, ] = useAtom(userDataAtom);
   let strokePressureList: number[] = [];
   let countPoints: number = 0;
+  let erasePressureList: number[] = [];
+  let countErasePoints: number = 0;
   const drawers: any = {};
-
+  
   const getFirstStrokeData = async () => {
     const data: NoteDataType | null = await fetchNoteByID(Number(params.id));
+    const clientLogData: ClientLogDataType[] | null = await fetchClientLogsByNID(Number(params.id))
     setMyNote(data);
+    const tmp: any[] = [];
+    clientLogData?.map((clientLog: ClientLogDataType, i: number) => {
+      tmp.push(clientLog.Data);
+    });
+    setLogOfBeforePPUndo(tmp);
     return data
   }
 
@@ -64,6 +79,7 @@ export const Note:React.FC =() => {
         drawers["drawer"] = new Drawer("#drawer", DrawerConfig);
         if (noteData == null || noteData.StrokeData.strokes == null) {
           setDrawer(drawers["drawer"]);
+          resetAllData();
           finishLoading(1000);
           return;
         }
@@ -74,7 +90,7 @@ export const Note:React.FC =() => {
         drawers["drawer"].numOfStroke = drawers["drawer"].currentFigure.strokes.length;
         drawers["drawer"].reDraw();
         setDrawer(drawers["drawer"])
-        reseDataCount();
+        resetDataCount();
         console.log(drawer)
       }
       finishLoading(2000);
@@ -89,11 +105,19 @@ export const Note:React.FC =() => {
     }, time);
   }
 
-  const reseDataCount = () => {
+  const resetDataCount = () => {
     setUndoCount(0);
     setRedoCount(0);
     setLogRedoCount(0);
     setPPUndoCount(0);
+  }
+
+  const resetAllData = () => {
+    setSliderValue(0);
+    setAvgPressureOfStroke([]);
+    setAllAvgPressureOfStroke([]);
+    setLogOfBeforePPUndo([]);
+    resetDataCount();
   }
 
   const drawError = (error: unknown) => {
@@ -108,6 +132,7 @@ export const Note:React.FC =() => {
   }
 
   const startDraw = () => {
+    drawStartTime = performance.now();
     clearPressureOfOneStroke();
     setIsDraw(true);
   }
@@ -122,8 +147,9 @@ export const Note:React.FC =() => {
     countPoints += 1;
   }
 
-  const finishDraw = (e: PointerEvent<SVGSVGElement>) => {
-    setTimeout(() => {
+  const finishDraw = async (e: PointerEvent<SVGSVGElement>) => {
+    drawEndTime = performance.now();
+    setTimeout(async() => {
       try {
         const finalStroke = drawer.currentFigure.strokes[drawer.currentFigure.strokes.length-1];
         if ("svg" in finalStroke == false || finalStroke.svg == null) {
@@ -145,11 +171,28 @@ export const Note:React.FC =() => {
         console.log(averagePressure);
         console.log(drawer);
         setAddAvgPressureOfStroke(averagePressure);
-        strokePressureList = [];
         countPoints = 0;
         if (myNote != null) {
-          myNote.StrokeData = drawer.currentFigure.strokes;
+          myNote.StrokeData = drawer.currentFigure.strokes.concat();
         }
+        // ストロークデータを取得してAPIに送信
+        const requestStrokeData = await adaptionRequestStrokeData();
+        const postStrokeData: PostStrokeDataType = {
+          UID: myNote!.UID,
+          NID: myNote!.ID,
+          StrokeData: requestStrokeData,
+          AvgPressure: averagePressure,
+          PressureList: strokePressureList.join(','),
+          Time: drawEndTime - drawStartTime,
+          Mode: "pen",
+          Save: 0,
+        }
+        await addStroke(postStrokeData);
+        console.log(postStrokeData);
+        console.log(drawEndTime);
+        console.log(drawStartTime);
+        strokePressureList = [];
+        // drawer.reDraw();
       } catch (error) {
         drawError(error);
       }
@@ -157,11 +200,14 @@ export const Note:React.FC =() => {
   }
 
   const startEraseDraw = () => {
+    drawStartTime = performance.now();
     setIsDraw(true);
   }
 
   const eraseDraw = (e: PointerEvent<SVGSVGElement>) => {
     if (!isDraw) { return; }
+    erasePressureList.push(e.pressure);
+    countErasePoints += 1;
     if (drawMode == "strokeErase") {
       console.log(e.nativeEvent.offsetX, e.nativeEvent.offsetY)
       const offsetXAbout = Math.round(e.nativeEvent.offsetX);
@@ -192,13 +238,31 @@ export const Note:React.FC =() => {
     }
   }
 
-  const finishEraseDraw = () => {
+  const finishEraseDraw = async() => {
+    drawEndTime = performance.now();
+    const sumPressure = sum(erasePressureList);
+    const averagePressure = sumPressure / countErasePoints;
+    // 消しゴムストロークデータを取得してAPIに送信
+    const requestStrokeData = await adaptionRequestStrokeData();
+    console.log(erasePressureList.join(','))
+    const postStrokeData: PostStrokeDataType = {
+      UID: myNote!.UID,
+      NID: myNote!.ID,
+      StrokeData: requestStrokeData,
+      AvgPressure: averagePressure,
+      PressureList: erasePressureList.join(','),
+      Time: drawEndTime - drawStartTime,
+      Mode: "erase",
+      Save: 0,
+    }
+    await addStroke(postStrokeData);
+    countErasePoints = 0;
     setIsDraw(false);
   }
 
   const makeRequestData = async () => {
     await adaptionRequestNoteImage();
-    await adaptionRequestStrokeData();
+    myNote!.StrokeData = await adaptionRequestStrokeData();
     myNote!.AvgPressure = averagePressure(avgPressureOfStroke);
     adaptionRequestAvgPressureList();
     adaptionRequestAllAvgPressureList();
@@ -220,14 +284,8 @@ export const Note:React.FC =() => {
   }
 
   const adaptionRequestStrokeData = async () => {
-    const tmp: any[] = [];
-    await myNote?.StrokeData.map((stroke: any, i: number) => {
-      stroke.svg = "";
-      stroke.DFT = "";
-      stroke.spline = "";
-      tmp.push(stroke);
-    });
-    myNote!.StrokeData = {"Strokes": tmp};
+    const res = await getCurrentStrokeData(myNote?.StrokeData);
+    return res;
   }
 
   const adaptionResponseStrokeData = (noteData: NoteDataType | null) => {
