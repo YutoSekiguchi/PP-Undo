@@ -11,14 +11,18 @@
 
 .graph-wrapper {
   background-color: variables.$dark-blue-color;
-  height: 280px;
+  min-height: 280px;
+  height: 35vh;
+  max-height: 400px;
   margin: 20px 20px;
   padding: 10px 5px;
   border-radius: 10px;
 }
 
 .graph-wrapper-height {
-  height: 300px;
+  min-height: 280px;
+  height: 35vh;
+  max-height: 400px;
   position: relative;
 }
 
@@ -30,6 +34,7 @@
 
 .display-button-wrapper {
   display: flex;
+  height: 10vh;
   justify-content: space-around;
   align-items: center;
 }
