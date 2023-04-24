@@ -110,6 +110,13 @@ func InitRouter(db *gorm.DB) {
 		logRedoCounts.POST("", ctrl.HandlePostLogRedoCount)
 	}
 
+	// WatchLogsCounts
+	watchLogsCounts := e.Group("/watchlogscounts")
+	{
+		watchLogsCounts.GET("/note/:nid", ctrl.HandleGetWatchLogsCountsByNID)
+		watchLogsCounts.POST("", ctrl.HandlePostWatchLogsCount)
+	}
+
 	// Routing
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, Echo!!")
