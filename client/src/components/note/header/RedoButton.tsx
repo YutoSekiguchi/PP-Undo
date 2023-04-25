@@ -22,7 +22,8 @@ export const RedoButton: React.FC = () => {
     if (redoable[0] == false) {
       return;
     }
-    const beforeRedoNoteImage = await getCurrentNoteImage();
+    const beforeRedoNoteImage = "";
+    // const beforeRedoNoteImage = await getCurrentNoteImage();
     const beforeRedoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
     console.log(drawer);
     redo();
@@ -33,7 +34,8 @@ export const RedoButton: React.FC = () => {
     if (myNote != null) {
       myNote.StrokeData = drawer.currentFigure.strokes.concat();
     }
-    const afterRedoNoteImage = await getCurrentNoteImage();
+    // const afterRedoNoteImage = await getCurrentNoteImage();
+    const afterRedoNoteImage = "";
     const afterRedoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
     await addRedoCount(
       {

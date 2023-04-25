@@ -28,7 +28,8 @@ export const UndoButton: React.FC = () => {
       stroke: drawer.currentFigure.strokes[drawer.currentFigure.strokes.length-1],
       pressure: avgPressureOfStroke[drawer.currentFigure.strokes.length-1]
     });
-    const beforeUndoNoteImage = await getCurrentNoteImage();
+    // const beforeUndoNoteImage = await getCurrentNoteImage();
+    const beforeUndoNoteImage = "";
     const beforeUndoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
     removeAvgPressureOfStroke(drawer.currentFigure.strokes.length-1);
     drawer.undo();
@@ -39,7 +40,8 @@ export const UndoButton: React.FC = () => {
     if (myNote != null) {
       myNote.StrokeData = drawer.currentFigure.strokes.concat();
     }
-    const afterUndoNoteImage = await getCurrentNoteImage();
+    // const afterUndoNoteImage = await getCurrentNoteImage();
+    const afterUndoNoteImage = "";
     const afterUndoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
     await addUndoCount(
       {
