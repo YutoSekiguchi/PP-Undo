@@ -48,7 +48,7 @@ export const NoteHeader:React.FC =() => {
             >
               <img 
                 src={Logo}
-                style={{ width: "60px", height: "60px", marginRight: "10px" }}
+                style={{ width: "40px", height: "40px", marginRight: "10px" }}
                 alt="PP-Undo logo"
               />
               <Typography

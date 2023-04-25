@@ -2,7 +2,7 @@
 @use '../../../styles/variables.scss';
 
 .graph-area {
-  background-color: variables.$base-dark-color;
+  background-color: variables.$dark-blue-color;
   width: 30%;
   min-height: calc(100vh - 65px);
   position: fixed;
@@ -17,12 +17,16 @@
   margin: 20px 20px;
   padding: 10px 5px;
   border-radius: 10px;
+  border: 1px solid;
+  box-shadow:
+    0 0 7px #aaa,
+    0 0 20px #00f,
 }
 
 .graph-wrapper-height {
   min-height: 280px;
   height: 35vh;
-  max-height: 400px;
+  max-height: 350px;
   position: relative;
 }
 
@@ -30,6 +34,7 @@
   margin: 0 15px 0 50px;
   display: flex;
   justify-content: end;
+  
 }
 
 .display-button-wrapper {
@@ -60,6 +65,7 @@
 }
 
 .dialog-image-container {
+  margin-top: 65px;
   @include mixins.dialog-container();
   @include mixins.tl-static-position();
   @include mixins.center();
@@ -74,11 +80,61 @@
 }
 
 .close-button {
-  @include mixins.tr-static-position($top: 20px, $right: 20px);
+  @include mixins.tr-static-position($top: 65px, $right: 20px);
   color: #fff;
   cursor: pointer;
 }
 
 .close-button.half {
   @include mixins.tr-static-position($position: absolute, $top: 20px, $right: 20px);
+}
+
+.doughnut-graph-title {
+  margin-top: 0px;
+  text-shadow:
+    0 0 7px #fff,
+    0 0 10px #fff,
+    0 0 21px #fff,
+    0 0 42px #0fa,
+    0 0 82px #0fa,
+    0 0 92px #0fa,
+    0 0 102px #0fa,
+    0 0 151px #0fa;
+}
+
+input[type="range"] {
+  -webkit-appearance: none; /* 🚩これ無しだとスタイルがほぼ全く反映されないので注意 */
+  appearance: none;
+  cursor: pointer; /* カーソルを分かりやすく */
+  outline: none; /* スライダーのアウトラインは見た目がキツイので消す */
+  height: 16px; /* バーの高さ */
+  width: 100%; /* バーの幅 */
+  background: black;
+  border-radius: 10px; /* バーの両端の丸み */
+}
+/* WebKit向けのつまみ */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; /*  🚩デフォルトのつまみのスタイルを解除 */
+  background: linear-gradient(to bottom right, blue, fuchsia); /* 背景色 */
+  width: 28px; /* 幅 */
+  height: 28px; /* 高さ */
+  border-radius: 50%;
+  box-shadow: 0px 3px 6px 0px rgba(34, 26, 26, 0.15); /* 影 */
+}
+/* Moz向けのつまみ */
+input[type="range"]::-moz-range-thumb {
+  background: linear-gradient(to bottom right, blue, pink); /* 背景色 */
+  width: 28px; /* 幅 */
+  height: 28px; /* 高さ */
+  border-radius: 50%; /* 円形に */
+  box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.15); /* 影 */
+  border: none; /* デフォルトの線を消す */
+}
+/* Firefoxで点線が周りに表示されてしまう問題の解消 */
+input[type="range"]::-moz-focus-outer {
+  border: 0;
+}
+/* つまみをドラッグしているときのスタイル */
+input[type="range"]:active::-webkit-slider-thumb {
+  box-shadow: 0px 5px 10px -2px rgba(0, 0, 0, 0.3);
 }

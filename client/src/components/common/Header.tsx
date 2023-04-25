@@ -56,7 +56,7 @@ export const Header:React.FC =() => {
               >
                 <img 
                   src={Logo}
-                  style={{ width: "60px", height: "60px", marginRight: "10px" }}
+                  style={{ width: "40px", height: "40px", marginRight: "10px" }}
                   alt="PP-Undo logo"
                 />
                 <Typography
@@ -65,7 +65,7 @@ export const Header:React.FC =() => {
                   component="div"
                   sx={{ fontWeight: "bold" }}
                 >
-                  PP-Undo 2.0.0
+                  PP-Undo改
                 </Typography>
               </Box>
               
