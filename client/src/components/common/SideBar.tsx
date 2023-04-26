@@ -11,7 +11,7 @@ import {
   ListItemText
 } from "@mui/material";
 import {
-  HomeOutlined,
+  FolderCopyOutlined,
   NoteAddOutlined,
   CreateOutlined,
   SettingsOutlined
@@ -23,8 +23,8 @@ export const SideBar:React.FC =() => {
   const location: Location = useLocation();
   const menuList: SideBarMenuType[] = [
     {
-      label: "Home",
-      icon: <HomeOutlined />,
+      label: "My Folder",
+      icon: <FolderCopyOutlined />,
       path: lscache.get('loginUserData')? '/notefolders/0': '/',
     },
     {
