@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { LogRedoImageDialogProps, PostLogRedoCountsDataType } from "@/@types/note";
 import { useAtom } from "jotai";
 import { Stroke, Point } from "@nkmr-lab/average-figure-drawer";
@@ -9,6 +9,7 @@ import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
 import { calcIsShowStrokeCount } from "@/modules/note/CalcIsShowStroke";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { addLogRedoCount } from "@/infrastructures/services/ppUndoLogs/counts";
+import { LoadingScreen } from "@/components/common/LoadingScreen";
 
 
 export const LogRedoImageDialog: React.FC<LogRedoImageDialogProps> = (props) => {
@@ -21,9 +22,11 @@ export const LogRedoImageDialog: React.FC<LogRedoImageDialogProps> = (props) => 
   const [, setClearUndoStrokeLog] = useAtom(clearUndoStrokeLogAtom);
   const [, setUndoableCount] = useAtom(undoableCountAtom);
   const [logRedoCount, setLogRedoCount] = useAtom(logRedoCountAtom);
+  const [isLoadingScreen, setIsLoadingScreen] = useState<boolean>(false);
   const [myNote, ] = useAtom(myNoteAtom);
 
   const ppRedo = async () => {
+    setIsLoadingScreen(true);
     const beforeLogRedoNoteImage: string = await drawer.getBase64PngImage().catch((error: unknown) => {
       console.log(error);
     });
@@ -37,7 +40,7 @@ export const LogRedoImageDialog: React.FC<LogRedoImageDialogProps> = (props) => 
       const newStroke = new Stroke(
         stroke.points.map(point => new Point(point.x, point.y, {z: point.z})),
         {
-          color: stroke.color,
+          color: (stroke.color.length == 9 && stroke.color.slice(-2) !== "00")? stroke.color.slice(0, -2): stroke.color,
           strokeWidth: stroke.strokeWidth,
         }
       );
@@ -69,10 +72,16 @@ export const LogRedoImageDialog: React.FC<LogRedoImageDialogProps> = (props) => 
     await addLogRedoCount(postLogRedoCountData);
     closeDialog();
     closeLog();
+    setIsLoadingScreen(false);
   }
 
   return (
     <Box className="dialog-image-container">
+      {
+        isLoadingScreen?
+        <LoadingScreen />
+        :<></>
+      }
       <CancelButton
         close={closeDialog}
       />
