@@ -58,9 +58,10 @@
     margin: 16px 20px;
     color: variables.$folder-note-color;
   }
-  p {
-    color: variables.$text-color;
-  }
+}
+
+.notefolders-subtitle {
+  margin: 15px;
 }
 
 .file-box {
