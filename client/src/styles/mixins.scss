@@ -47,3 +47,11 @@
   height: $height;
   z-index: $z-index;
 }
+
+@mixin common-body {
+  width: 100vw;
+  // min-height: calc(100vh - 65px);
+  padding: 0 20px;
+  background-color: #fff;
+  border-radius: 30px;
+}
