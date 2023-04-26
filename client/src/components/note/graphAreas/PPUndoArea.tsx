@@ -29,7 +29,7 @@ import Spacer from "@/components/common/Spacer";
 import { PPUndoGraphDatasetsConfigType, Point2Type, LogStrokeDataType, PostLogDataType, PostPPUndoCountsDataType } from "@/@types/note";
 import { PrettoSlider, datasetsConfig, options, xLabels } from "@/configs/PPUndoGraphConifig";
 import { getJaStringTime } from "@/modules/common/getJaStringTime";
-import { getStrokesIndexWithLowPressure, hideLowPressureStrokes, increaseStrokeColorOpacity, reduceStrokeColorOpacity } from "@/modules/note/PPUndo";
+import { getStrokesIndexWithLowPressure, hideLowPressureStrokes, increaseStrokeColorOpacity, reduceStrokeColorOpacity, getDiffLowerPressureIndexList } from "@/modules/note/PPUndo";
 import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { addClientLog, addLog } from "@/infrastructures/services/ppUndoLogs";
@@ -80,42 +80,66 @@ export const PPUndoArea: React.FC = () => {
   const [logData, setLogData] = useState<LogStrokeDataType | null>(null);
   const [prevSliderValue, setPrevSliderValue] = useState<number | number[]>(0);
   const [logStrokeData, setLogStrokeData] = useState<any>({})
-  const [canDraw, setCanDraw] = useState<number>(0);
+  const [defaultSliderValue, setDefaultSliderValue] = useState<number | number[] | undefined>(sliderValue);
 
-  const changeValue = async (event: Event, newValue: number | number[]) => {
+  const changeValue = async(event: Event, newValue: number | number[]) => {
     const newLowerPressureIndexList: number[] = getStrokesIndexWithLowPressure(avgPressureOfStroke, newValue);
-    setSliderValue(newValue);
     if (newLowerPressureIndexList.length == lowerPressureIndexList.length) {
       return;
     }
     // FIXME: 色変更の関数を別で実装しよう！もっとしっかりとした条件分岐で
     // 色を薄く
-    const res1 = reduceStrokeColorOpacity(
+    reduceStrokeColorOpacity(
       newLowerPressureIndexList,
       drawer.currentFigure.strokes
     );
     // 色を元に戻す
-    const res2 = increaseStrokeColorOpacity(
+    increaseStrokeColorOpacity(
       lowerPressureIndexList,
       newLowerPressureIndexList,
       drawer.currentFigure.strokes
     );
+    const diff = getDiffLowerPressureIndexList(
+      lowerPressureIndexList,
+      newLowerPressureIndexList,
+    )
     setLowerPressureIndexList(newLowerPressureIndexList);
     setDrawer(drawer);
-    if(res1 || res2) {
-      setCanDraw((prev) => prev==0? 1: prev*-1);
+    // drawer.reDraw();
+    const strokes = drawer.currentFigure.strokes;
+    for(let i=0; i < diff.oldOnly.length; i++) {
+      const stroke = strokes[diff.oldOnly[i]];
+      if (stroke.color.length == 9 && stroke.color.slice(-2) == "00") {continue;}
+      await stroke.DFT.draw(drawer, stroke);
+    }
+    for (let i=0; i < diff.newOnly.length; i++) {
+      const stroke = strokes[diff.newOnly[i]];
+      if (stroke.color.length == 9 && stroke.color.slice(-2) == "00") {
+        continue;
+      }
+      const transparentStroke = {
+        DFT: stroke.DFT,
+        originalLength: 0,
+        points: stroke.points,
+        spline: "",
+        svg: "",
+        stime: 0,
+        strokeWidth: stroke.strokeWidth,
+        color: "#ffffffcc"
+      }
+      await stroke.DFT.draw(drawer, transparentStroke);
     }
   }
 
+
   useEffect(() => {
-    if(canDraw == 0) {return;}
-    setTimeout(() => {
-      drawer.reDraw();
-    }, 100)
-  }, [canDraw])
+    if(defaultSliderValue != undefined) {return;}
+    const getSliderValue = sliderValue? sliderValue: 0;
+    setDefaultSliderValue(getSliderValue);
+    console.log("defaultSliderValueの更新", sliderValue)
+  }, [sliderValue])
 
   const actionStart = async () => {
-    console.log("PPUndo操作開始");
     const numOfStroke = drawer.numOfStroke;
     if(numOfStroke <= 0) return
     const figure = drawer.currentFigure;
@@ -153,8 +177,9 @@ export const PPUndoArea: React.FC = () => {
     setLogData(strokeData);
   }
 
-  const actionFinish = async () => {
-    console.log("PPUndo操作終了")
+  const actionFinish = async (event: any) => {
+    const newSliderValue = Number(event.target.value);
+    setSliderValue(newSliderValue)
     hideLowPressureStrokes(
       lowerPressureIndexList,
       drawer.currentFigure.strokes
@@ -170,7 +195,7 @@ export const PPUndoArea: React.FC = () => {
       LogImage: logData!.image? logData!.image: "",
       AvgPressureList: avgPressureOfStroke.join(','),
       Save: 0,
-      SliderValue: sliderValue,
+      SliderValue: newSliderValue,
       BeforeLogRedoSliderValue: prevSliderValue,
     }
     await addLog(postLogData);
@@ -191,7 +216,6 @@ export const PPUndoArea: React.FC = () => {
         AfterPPUndoStrokeCount: afterPPUndoStrokeCount,
       }
       await addPPUndoCount(postPPUndoCountsData);
-      console.log(postPPUndoCountsData);
     }, 100);
   }
 
@@ -200,15 +224,15 @@ export const PPUndoArea: React.FC = () => {
     <>
       <Box className="graph-wrapper">
         <Typography component="div">
-          <Box className="big-white-text center">PPUndo</Box>
+          <Box className="big-white-text center ppundo-title">PPUndo</Box>
         </Typography>
         <Spacer size={6} />
         <Box className="slider-wrapper">
           <PrettoSlider
             className="slider"
             aria-label="PenPressure"
-            defaultValue={0}
-            value={sliderValue}
+            defaultValue={defaultSliderValue}
+            // value={sliderValue}
             step={0.0001}
             min={0}
             max={1}
@@ -216,6 +240,25 @@ export const PPUndoArea: React.FC = () => {
             onChangeCommitted={actionFinish}
             onPointerDownCapture={actionStart}
           />
+          {/* {
+            (defaultSliderValue!=undefined)?
+              <input 
+                key={defaultSliderValue}
+                id="large-range" 
+                className="slider"
+                type="range"
+                // value={sliderValue}
+                defaultValue={defaultSliderValue}
+                min="0"
+                step="0.001"
+                max="1" 
+                // onChange={changeValue} 
+                onPointerDownCapture={actionStart}
+                onInput={changeValue}
+                onPointerUpCapture={actionFinish}
+              />
+              :<></>
+          } */}
         </Box>
         <Box className="center">
           <Line
