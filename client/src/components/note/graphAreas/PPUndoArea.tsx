@@ -84,6 +84,7 @@ export const PPUndoArea: React.FC = () => {
 
   const changeValue = async(event: Event, newValue: number | number[]) => {
     const newLowerPressureIndexList: number[] = getStrokesIndexWithLowPressure(avgPressureOfStroke, newValue);
+    setSliderValue(newValue)
     if (newLowerPressureIndexList.length == lowerPressureIndexList.length) {
       return;
     }
@@ -178,8 +179,8 @@ export const PPUndoArea: React.FC = () => {
   }
 
   const actionFinish = async (event: any) => {
-    const newSliderValue = Number(event.target.value);
-    setSliderValue(newSliderValue)
+    // const newSliderValue = Number(event.target.value);
+    // setSliderValue(newSliderValue)
     hideLowPressureStrokes(
       lowerPressureIndexList,
       drawer.currentFigure.strokes
@@ -195,7 +196,8 @@ export const PPUndoArea: React.FC = () => {
       LogImage: logData!.image? logData!.image: "",
       AvgPressureList: avgPressureOfStroke.join(','),
       Save: 0,
-      SliderValue: newSliderValue,
+      // SliderValue: newSliderValue,
+      SliderValue: sliderValue,
       BeforeLogRedoSliderValue: prevSliderValue,
     }
     await addLog(postLogData);
@@ -232,7 +234,7 @@ export const PPUndoArea: React.FC = () => {
             className="slider"
             aria-label="PenPressure"
             defaultValue={defaultSliderValue}
-            // value={sliderValue}
+            value={sliderValue}
             step={0.0001}
             min={0}
             max={1}
