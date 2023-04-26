@@ -24,6 +24,7 @@ import { calcIsShowStrokeList } from "@/modules/note/CalcIsShowStroke";
 import { addStroke } from "@/infrastructures/services/strokes";
 import { fetchClientLogsByNID } from "@/infrastructures/services/ppUndoLogs";
 import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
+import { distanceFromPointToLine } from "@/modules/note/DistanceFromPointToLine";
 
 let drawStartTime: number = 0; // 描画時の時刻
 let drawEndTime: number = 0; // 描画終了時の時刻
@@ -51,6 +52,7 @@ export const Note:React.FC =() => {
   const [redoCount, setRedoCount] = useAtom(redoCountAtom);
   const [logRedoCount, setLogRedoCount] = useAtom(logRedoCountAtom);
   const [ppUndoCount, setPPUndoCount] = useAtom(ppUndoCountAtom);
+  const [prevOffset, setPrevOffset] = useState<{x: number, y: number} | null>(null);
   
   const [loginUserData, ] = useAtom(userDataAtom);
   let strokePressureList: number[] = [];
@@ -167,8 +169,6 @@ export const Note:React.FC =() => {
         setUndoableCount(undoableCount+1);
         clearUndoStrokeLog();
         setIsDraw(false);
-        console.log(strokePressureList)
-        console.log(averagePressure);
         console.log(drawer);
         setAddAvgPressureOfStroke(averagePressure);
         countPoints = 0;
@@ -209,33 +209,49 @@ export const Note:React.FC =() => {
     erasePressureList.push(e.pressure);
     countErasePoints += 1;
     if (drawMode == "strokeErase") {
-      console.log(e.nativeEvent.offsetX, e.nativeEvent.offsetY)
       const offsetXAbout = Math.round(e.nativeEvent.offsetX);
       const offsetYAbout = Math.round(e.nativeEvent.offsetY);
       drawer.currentFigure.strokes.map((stroke: any, i: number) => {
-        stroke.points.map((point2: Point2Type, j: number) => {
-          const pointX = Math.round(point2.x);
-          const toleranceRange = drawer.strokeWidth < 10? drawer.strokeWidth + 3: drawer.strokeWidth;
-          if (Math.abs(pointX - offsetXAbout) < toleranceRange) {
+        let isErase = false;
+        if (stroke.color.length != 9) {
+          for(let j=0; j < stroke.DFT.points.length; j++) {
+            if (isErase) {break}
+            const point2: Point2Type = stroke.DFT.points[j];
+            const pointX = Math.round(point2.x);
             const pointY = Math.round(point2.y);
-            if (Math.abs(pointY - offsetYAbout) < toleranceRange) {
-              console.log("クロス！！")
-              console.log(drawer.currentFigure.strokes[i]);
-              addLog({
-                stroke: drawer.currentFigure.strokes[i],
-                pressure: avgPressureOfStroke[i]
-              });
-              removeAvgPressureOfStroke(i);
-              drawer.numOfStroke -= 1;
-              drawer.currentFigure.strokes.splice(i, 1);
-              setDrawer(drawer);
-              setUndoableCount(undoableCount+1);
-              drawer.reDraw();
+            const toleranceRange = 6;
+            if (prevOffset == null) {
+              if (Math.abs(pointX - offsetXAbout) < toleranceRange) {
+                if (Math.abs(pointY - offsetYAbout) < toleranceRange) {
+                  removeStroke(i);
+                  isErase = true;
+                }
+              }
+            } else {
+              const distance = distanceFromPointToLine(pointX, pointY, offsetXAbout, offsetYAbout, prevOffset.x, prevOffset.y);
+              setPrevOffset({"x": offsetXAbout, "y": offsetYAbout})
+              if (distance < toleranceRange) {
+                removeStroke(i);
+                isErase = true;
+              }
             }
           }
-        })
+        }
       })
     }
+  }
+
+  const removeStroke = (i: number) => {
+    addLog({
+      stroke: drawer.currentFigure.strokes[i],
+      pressure: avgPressureOfStroke[i]
+    });
+    removeAvgPressureOfStroke(i);
+    drawer.numOfStroke -= 1;
+    drawer.currentFigure.strokes.splice(i, 1);
+    setDrawer(drawer);
+    setUndoableCount(undoableCount+1);
+    drawer.reDraw();
   }
 
   const finishEraseDraw = async() => {
@@ -244,7 +260,6 @@ export const Note:React.FC =() => {
     const averagePressure = sumPressure / countErasePoints;
     // 消しゴムストロークデータを取得してAPIに送信
     const requestStrokeData = await adaptionRequestStrokeData();
-    console.log(erasePressureList.join(','))
     const postStrokeData: PostStrokeDataType = {
       UID: myNote!.UID,
       NID: myNote!.ID,
@@ -340,7 +355,6 @@ export const Note:React.FC =() => {
 
   const save = async() => {
     await makeRequestData();
-    console.log(myNote);
     await updateNote(myNote!);
     console.log("保存しました");
   }
