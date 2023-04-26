@@ -35,9 +35,9 @@ export const LogRedo: React.FC = () => {
   return (
     <>
       <Box className="display-button-wrapper">
-        <Badge badgeContent={logNotifierCount} color="primary">
+        <Badge badgeContent={logNotifierCount} color="info">
           <DisplayLogButton
-            className="big-text center"
+            className="big-text center display-button"
             onClick={showLog}
           >
             Display Log
