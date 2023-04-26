@@ -8,6 +8,13 @@ export const getStrokesIndexWithLowPressure = (avgPressureOfStroke: number[], ne
   return tmp;
 }
 
+export const getDiffLowerPressureIndexList = (lowerPressureIndexList: number[], newLowerPressureIndexList: number[],) => {
+  const oldOnly = lowerPressureIndexList.filter(num => !newLowerPressureIndexList.includes(num));
+  const newOnly = newLowerPressureIndexList.filter(num => !lowerPressureIndexList.includes(num));
+
+  return {"oldOnly": oldOnly, "newOnly": newOnly}
+}
+
 export const reduceStrokeColorOpacity = (newLowerPressureIndexList: number[], strokes: any[]) => {
   let isChange = false;
   newLowerPressureIndexList.map(val => {
