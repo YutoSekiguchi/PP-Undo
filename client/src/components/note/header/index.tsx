@@ -34,7 +34,7 @@ export const NoteHeader:React.FC =() => {
   }
 
   const backToHome = () => {
-    navigate('/');
+    navigate('/notefolders/0');
   }
 
   return (
