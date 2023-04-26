@@ -1,4 +1,4 @@
-const defaultWidth: number = 2;
+const defaultWidth: number = 1.5;
 
 export const DrawerConfig = {
   "pointRadius": { // 点の半径
