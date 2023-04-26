@@ -50,13 +50,6 @@ export const NoteGraphAreas: React.FC = () => {
       <Box className="graph-wrapper graph-wrapper-height">
         {
           activeStep == 0 && 
-          <>
-            <NowPressureGraphArea />
-            <AvgPressureGraphArea />
-          </>
-        }
-        {
-          activeStep == 1 && 
           <Box sx={{width: "100%", height: "100%", display: "flex", justifyContent: "space-around", alignItems: "center"}}>
             <DoughnutPressureGraph
               pressureValue={NowPressure(avgPressureOfStroke)}
@@ -71,6 +64,13 @@ export const NoteGraphAreas: React.FC = () => {
               datasetsConfig={avgDatasetsConfig}
             />
           </Box>
+        }
+        {
+          activeStep == 1 && 
+          <>
+            <NowPressureGraphArea />
+            <AvgPressureGraphArea />
+          </>
         }
         <GraphStepper
         steps={maxSteps}
