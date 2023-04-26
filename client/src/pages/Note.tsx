@@ -192,7 +192,7 @@ export const Note:React.FC =() => {
         console.log(drawEndTime);
         console.log(drawStartTime);
         strokePressureList = [];
-        // drawer.reDraw();
+        drawer.reDraw();
       } catch (error) {
         drawError(error);
       }
