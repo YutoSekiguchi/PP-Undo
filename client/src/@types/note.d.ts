@@ -47,6 +47,7 @@ export interface PPUndoGraphDatasetsConfigType {
   label: string;
   borderColor: string;
   backgroundColor?: string;
+  pointBackgroundColor?: string;
   fill?: boolean | string;
   smooth?: boolean;
   tension?: number;
