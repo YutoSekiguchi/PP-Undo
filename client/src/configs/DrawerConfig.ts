@@ -32,7 +32,7 @@ export const DrawerConfig = {
         left: 50,
         right: 50
       },
-      strokeWidth: 2,
+      strokeWidth: 1,
       margin: 50
     },
     backgroundColor: "#fff"
