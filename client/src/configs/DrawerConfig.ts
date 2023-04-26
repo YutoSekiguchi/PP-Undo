@@ -1,13 +1,15 @@
+const defaultWidth: number = 2;
+
 export const DrawerConfig = {
   "pointRadius": { // 点の半径
-    "originalPoint": 1.5,
-    "spline": 1.5,
-    "dft": 1.5
+    "originalPoint": defaultWidth,
+    "spline": defaultWidth,
+    "dft": defaultWidth
   },
   "strokeWidth": { // 描線の太さ
-    "originalPath": 1.5,
-    "spline": 1.5,
-    "dft": 1.5
+    "originalPath": defaultWidth,
+    "spline": defaultWidth,
+    "dft": defaultWidth
   },
   "colors": { // 描線の色
     "originalPoint": "#000000",
@@ -21,7 +23,7 @@ export const DrawerConfig = {
     }
   },
   drawer: {
-    type: "plain",
+    type: "lined",
     lines: {
       color: "#C8C8C8",
       padding: {
@@ -31,7 +33,7 @@ export const DrawerConfig = {
         right: 50
       },
       strokeWidth: 2,
-      margin: 120
+      margin: 50
     },
     backgroundColor: "#fff"
   }
