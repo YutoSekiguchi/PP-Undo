@@ -12,7 +12,7 @@ import {
   ArcElement
 } from 'chart.js'
 import { Doughnut } from 'react-chartjs-2'
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { DoughnutGraphConfigType, DoughnutPressureGraphPropsType } from "@/@types/note";
 import { doughnutOptions } from "@/configs/DoughnutPressureGraphConfig";
 import Spacer from "@/components/common/Spacer";
@@ -54,14 +54,23 @@ export const DoughnutPressureGraph: React.FC<DoughnutPressureGraphPropsType> = (
 
   return (
     <>
-      <Box sx={{ width: "48%" }}>
-        <p className="big-white-text text-center">{title}</p>
+      <Box sx={{ width: "48%", height: "30vh" }}>
+        <Typography component="div">
+          <Box className="big-white-text center">
+            {title}
+          </Box>
+        </Typography>
         <Spacer size={8} axis="vertical" />
         <Box sx={{ position: "relative" }}>
-          <p className="absolute-center-text white-text text-center">{Math.round(pressureValue*100)/100}</p>
+          <Typography component="div">
+            <Box className="absolute-center-text white-text text-center doughnut-graph-title">
+              {Math.round(pressureValue*100)/100}
+            </Box>
+          </Typography>
           <Doughnut
             data={graphData}
             options={doughnutOptions}
+            className="doughnats"
             id="chart-key"
           />
         </Box>
