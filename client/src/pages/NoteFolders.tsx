@@ -92,7 +92,11 @@ export const Notefolders: React.FC = () => {
                 className="center pointer"
                 onClick={() => navigate(`/notefolders/0`)}
               >
-                <p className="tree-text">root</p>
+                <Typography component="div">
+                  <Box className="tree-text">
+                    マイフォルダ
+                  </Box>
+                </Typography>
                 <KeyboardArrowRightIcon />
               </Box>
               {
@@ -106,7 +110,11 @@ export const Notefolders: React.FC = () => {
                           key={i}
                           onClick={() => navigate(`/notefolders/${tree.ID}`)}
                         >
-                          <p className="tree-text">{truncateString(tree.Name)}</p>
+                          <Typography component="div">
+                            <Box className="tree-text">
+                              {truncateString(tree.Name)}
+                            </Box>
+                          </Typography>
                           <KeyboardArrowRightIcon />
                         </Box>
                       );
@@ -116,8 +124,8 @@ export const Notefolders: React.FC = () => {
               }
             </Box>
             
-            <Box className="flex-start">
-              <h3>フォルダ一覧</h3>
+            <Box className="flex-start notefolders-subtitle">
+              <Typography variant="body1" fontWeight="bold">フォルダ一覧</Typography>
               <NewButton
                 size="small"
                 startIcon={<AddRoundedIcon />}
@@ -135,7 +143,7 @@ export const Notefolders: React.FC = () => {
                       return (
                         <Box key={i} className="text-center folder-box pointer" onClick={() => navigate(`/notefolders/${noteFolderData.ID}`)}>
                           <FolderIcon sx={{ fontSize: 24 }} className="folder-icon" />
-                          <p className="folder-text">{truncateString(noteFolderData.Name)}</p>
+                          <Typography variant="body2">{truncateString(noteFolderData.Name)}</Typography>
                         </Box>
                       );
                     })
@@ -143,15 +151,15 @@ export const Notefolders: React.FC = () => {
                 </>
                 : 
                 <Box className="text-center width100">
-                  <h4>該当フォルダ無し</h4>
+                  <Typography variant="body1" fontWeight="bold">該当フォルダ無し</Typography>
                 </Box>
               }
             </Box>
 
             <Spacer size={40}  />
 
-            <Box className="flex-start">
-              <h3>ノート一覧</h3>
+            <Box className="flex-start notefolders-subtitle">
+            <Typography variant="body1" fontWeight="bold">ノート一覧</Typography>
               <NewButton
                 size="small"
                 startIcon={<AddRoundedIcon />}
@@ -186,7 +194,7 @@ export const Notefolders: React.FC = () => {
                 </>
                 : 
                 <Box className="text-center width100">
-                  <h4>該当ファイル無し</h4>
+                  <Typography variant="body1" fontWeight="bold">該当ファイル無し</Typography>
                 </Box>
               }
             </Box>
