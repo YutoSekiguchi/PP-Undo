@@ -1,2 +1,24 @@
 @use '../../styles/mixins.scss';
 @use '../../styles/variables.scss';
+
+.home-body {
+  @include mixins.common-body();
+  position: relative;
+  .welcome {
+    width: 100%;
+    text-align: center;
+  }
+  .no-login-welcome {
+    margin-top: 10%;
+  }
+  .my {
+    margin: 60px auto;
+  }
+  .home-footer {
+    height: 100px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    @include mixins.center();
+  }
+}
