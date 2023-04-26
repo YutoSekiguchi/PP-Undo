@@ -14,10 +14,11 @@ import {
 import { LogRedoImageDialog } from "./LogRedoImageDialog";
 import { LogImageListProps } from "@/@types/note";
 import { CancelButton } from "./CancelButton";
+import NoImage from "@/assets/noimage.png"
 
 export const LogImageList: React.FC<LogImageListProps> = (props) => {
   const { closeLog } = props;
-  const displayLogCount = 3;
+  const displayLogCount = 10;
   const [dialogIndex, setDialogIndex] = useState<number>(-1); // -1は表示しない
   const insideRef = useRef<HTMLDivElement>(null);
   
@@ -59,22 +60,33 @@ export const LogImageList: React.FC<LogImageListProps> = (props) => {
   }
 
   useEffect(() => {
-    setMaxSteps(Math.ceil(logOfBeforePPUndo.length/3));
+    setMaxSteps(Math.ceil(logOfBeforePPUndo.length/displayLogCount));
   }, [logOfBeforePPUndo])
 
   const LogImage = (logImageProps: { i: number }) => {
     const { i } = logImageProps;
     return (
-      <img className="log-image" src={logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].image}></img>
+      <>
+        {
+          (logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1] != null) ?
+          <img className="log-image" src={logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].image}></img>
+          :<img className="log-image" src={NoImage}></img>
+        }
+      </>
     );
   }
 
   const LogTimeText = (logTimeTextProps: { i: number }) => {
     const { i } = logTimeTextProps;
     return (
-      <Typography>
-        {logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].createTime}
+      <>
+        {
+          (logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1] != null) &&
+      <Typography component="div">
+        <Box className="white-text">{logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].createTime}</Box>
       </Typography>
+  }
+  </>
     );
   }
 
@@ -95,7 +107,7 @@ export const LogImageList: React.FC<LogImageListProps> = (props) => {
           close={closeLog}
         />
         <Typography component="div">
-          <Box className="log-image-total">
+          <Box className="log-image-total white-text">
             全{logOfBeforePPUndo.length}個のログ
           </Box>
         </Typography>
@@ -134,31 +146,33 @@ export const LogImageList: React.FC<LogImageListProps> = (props) => {
             }
           />
         }
+          <Box className="grid-log">
         {
           [...Array(displayLogCount)].map((_, i) => (
             <Box key={i}>
-            { logOfBeforePPUndo.length > activeStep*3+i &&
+            { logOfBeforePPUndo.length > activeStep*displayLogCount+i &&
               <Box
                 className="log-image-wrapper"
                 onClick={() => openDialog(logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1)}
               >
                 { activeStep*3+i < logNotifierCount
-                  ? <>
+                  ? <Box className="log">
                       <Badge badgeContent={"New"} color="error"> 
                         <LogImage i={i} />
                       </Badge>
                       <LogTimeText i={i} />
-                    </>
-                  : <>
+                    </Box>
+                  : <Box className="log">
                       <LogImage i={i} />
                       <LogTimeText i={i} />
-                    </> 
+                    </Box> 
                 }
               </Box>
             }
             </Box>
           ))
         }
+        </Box>
       </Box>
     </>
   )
