@@ -21,7 +21,7 @@ export const options: {} = {
     },
     title: {
       display: true,
-      text: 'every stroke',
+      text: '    every stroke',
       color: "#fff",
       font: {
         size: 18
@@ -30,7 +30,11 @@ export const options: {} = {
   },
   scales: {
     x: {
+      ticks: {
+        color: "#f9fafa",
+      },
       title: {
+        color: "#f9fafa",
         display: true,
         text: "ストローク数",
       },
@@ -39,8 +43,10 @@ export const options: {} = {
       title: {
         display: true,
         text: "筆圧値",
+        color: "#f9fafa",
       },
       ticks: {
+        color: "#f9fafa",
         min: 0,
         max: 1,
         stepSize: 0.5,

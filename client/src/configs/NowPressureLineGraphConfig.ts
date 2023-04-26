@@ -21,7 +21,7 @@ export const options: {} = {
     },
     title: {
       display: true,
-      text: 'now stroke',
+      text: '     now stroke',
       color: "#fff",
       font: {
         size: 18
@@ -30,13 +30,18 @@ export const options: {} = {
   },
   scales: {
     x: {
+      ticks: {
+        color: "#f9fafa",
+      },
       title: {
+        color: "#f9fafa",
         display: true,
         text: "時間",
       },
     },
     y: {
       title: {
+        color: "#f9fafa",
         display: true,
         text: "筆圧値",
       },
@@ -44,6 +49,7 @@ export const options: {} = {
         min: 0,
         max: 1,
         stepSize: 0.5,
+        color: "#f9fafa",
       },
     }
   },

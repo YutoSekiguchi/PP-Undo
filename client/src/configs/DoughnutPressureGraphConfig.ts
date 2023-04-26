@@ -10,12 +10,13 @@ export const avgGraphLabel: string[] = [
 ]
 
 export const nowDatasetsConfig: DoughnutGraphConfigType = {
-  backgroundColor:  ["rgba(75, 192, 192, 1)", "rgba(0, 0, 0, 0)"],
-  borderColor: "rgba(75, 192, 192, 0.1)",
+  backgroundColor:  ["#7ff", "rgba(0, 0, 0, 0.8)"],
+  borderColor: "#7ff3",
 }
 export const avgDatasetsConfig: DoughnutGraphConfigType = {
-  backgroundColor: ["rgba(192, 75, 192, 1)", "rgba(0, 0, 0, 0)"],
-  borderColor: "rgba(192, 75, 192, 0.1)",
+  backgroundColor: ["#0fa", "rgba(0, 0, 0, 0.8)"],
+  // backgroundColor: ["#e5289e", "rgba(0, 0, 0, 0.8)"],
+  borderColor: "#0fa3",
 }
 
 export const doughnutOptions: {} =
@@ -25,6 +26,10 @@ export const doughnutOptions: {} =
       display:false,
     },
   },
-  cutout: 40,
+  cutout: 45,
+  radius: "90%",
   maintainAspectRatio: false,
+  animation: {
+    animateScale: true,
+  }
 };

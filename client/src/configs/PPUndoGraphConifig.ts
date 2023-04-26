@@ -6,11 +6,12 @@ export const xLabels: number[] = [...Array(21)].map((_, i) => Math.round((i*0.05
 
 export const datasetsConfig: PPUndoGraphDatasetsConfigType = {
   label: "ストローク数",
-  borderColor: "#36A2EB",
-  backgroundColor: "#FFF5",
+  borderColor: "#00b3ff",
+  backgroundColor: "#9e4c9833",
+  pointBackgroundColor: "#f9fafa",
   fill: true,
   smooth: true,
-  tension: 0.3,
+  tension: 0.4,
 }
 
 export const options: {} = {
@@ -22,14 +23,22 @@ export const options: {} = {
   },
   scales: {
     x: {
+      ticks: {
+        color: "#f9fafa",
+      },
       title: {
+        color: "#f9fafa",
         display: true,
         text: "筆圧値",
       },
     },
     y: {
       beginAtZero: true,
+      ticks: {
+        color: "#f9fafa",
+      },
       title: {
+        color: "#f9fafa",
         display: true,
         text: "ストローク数",
       }
@@ -38,7 +47,7 @@ export const options: {} = {
 }
 
 export const PrettoSlider = styled(Slider)({
-  color: '#cc66ff',
+  color: 'rgba(142, 84, 219, 1)',
   height: 12,
   '& .MuiSlider-track': {
     border: 'none',
@@ -50,7 +59,7 @@ export const PrettoSlider = styled(Slider)({
   '& .MuiSlider-thumb': {
     height: 28,
     width: 28,
-    backgroundColor: '#eee',
+    backgroundColor: '#ddd',
     border: '4px solid currentColor',
     '&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
       boxShadow: 'inherit',
@@ -68,6 +77,7 @@ export const PrettoSlider = styled(Slider)({
     height: 32,
     borderRadius: '50% 50% 50% 0',
     backgroundColor: '#ac46df',
+    
     transformOrigin: 'bottom left',
     transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
     '&:before': { display: 'none' },
