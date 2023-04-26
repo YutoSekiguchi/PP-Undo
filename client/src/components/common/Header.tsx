@@ -73,7 +73,9 @@ export const Header:React.FC =() => {
                 isAuth()
                   ? <Box className="align-center pointer">
                     <Person />
-                    <p className="text">{userData!=null? userData.Name: ''}<span className="small-text">さん</span></p>
+                    <Typography>
+                      {userData!=null? userData.Name: ''}<span className="small-text">さん</span>
+                    </Typography>
                   </Box>
                   : <Button 
                       variant="outlined"
