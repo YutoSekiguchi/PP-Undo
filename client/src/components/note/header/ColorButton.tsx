@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAtom } from 'jotai'
 import { drawerAtom } from "@/infrastructures/jotai/drawer";
 import { ColorButtonProps } from "@/@types/note";
@@ -13,8 +13,12 @@ export const ColorButton: React.FC<ColorButtonProps> = (props) => {
   
   const changeColor = (color: string) => {
     colorChange(index);
-    drawer.setStrokeColor(color);
+    // drawer.config.colors.originalPath = color;
+    // drawer.config.colors.point = color;
+    // drawer.config.colors.spline = color;
     drawer.config.colors.originalPoint = color;
+    drawer.config.colors.dft = color;
+    drawer.setStrokeColor(color);
     setDrawer(drawer);
   }
 
