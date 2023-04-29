@@ -3,7 +3,7 @@
 
 $undo-redo-button-size: 40px;
 $undo-redo-svg-size: 2em;
-$choice-color-button-size: 28px;
+$choice-color-button-size: 25px;
 $not-choice-color-button-size: 25px;
 $mode-svg-size: 20px;
 $mode-button-size: $undo-redo-button-size;
@@ -55,6 +55,23 @@ $button-border: 1px solid gray;
   @include color_button();
 }
 
+.color-picker {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: transparent;
+  width: 30px;
+  height: 30px;
+  border: none;
+  cursor: pointer;
+}
+.color-picker::-webkit-color-swatch {
+  border-radius: 50%; 
+}
+.color-picker::-moz-color-swatch {
+  border-radius: 50%;
+}
+
 .mode-svg {
   width: $mode-svg-size;
   height: $mode-svg-size;
@@ -97,7 +114,8 @@ $button-border: 1px solid gray;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: variables.$dark-color;
+  background-color: variables.$base-color;
+  border: 1px solid #aaa;
   border-radius: 20px;
   width: 250px;
   padding: 16px 20px;
@@ -106,6 +124,6 @@ $button-border: 1px solid gray;
 
 .choiced-width {
   padding: 5px;
-  border: 1px solid #fff;
+  border: 1px solid variables.$dark-blue-color;
   @include mixins.rounded();
 }
