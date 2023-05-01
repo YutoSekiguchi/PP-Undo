@@ -1,8 +1,8 @@
 export interface TColorButton {
   buttonColor: string;
   isChoice: boolean;
-  index: number;
   setColor: React.Dispatch<React.SetStateAction<string>>;
+  fabricDrawer: FabricDrawer | null;
 }
 
 export interface TPenColor {
