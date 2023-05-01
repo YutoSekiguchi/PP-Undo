@@ -4,7 +4,7 @@ import { fabric } from "fabric";
 import { FabricJSCanvas, FabricJSEditorHook, useFabricJSEditor } from "fabricjs-react";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 import { Box, Button } from "@mui/material";
-import { NoteGraphAreas } from "@/components/note/graphAreas";
+import { NoteGraphAreas } from "@/components/newnote/graphAreas";
 import { averagePressure } from "@/modules/note/AveragePressure";
 import { NewNoteHeader } from "@/components/newnote/header";
 import { addHistoryAtom, drawModeAtom, historyAtom, historyForRedoAtom } from "@/infrastructures/jotai/drawer";
@@ -89,6 +89,7 @@ export const NewNote: () =>JSX.Element = () => {
       return;
     }
     fabricDrawer?.setDrawingMode();
+    fabricDrawer?.changeColor("#1f1f1f");
     fabricDrawer?.setCanvasSize(noteSize.width, noteSize.height);
     fabricDrawer?.reDraw();
   }, [fabricDrawer]);
@@ -104,7 +105,7 @@ export const NewNote: () =>JSX.Element = () => {
   const togglePoint = () => {
     fabricDrawer?.setPointingMode();
   }
-  
+
   const clear = () => {
     history.splice(0, history.length);
     fabricDrawer?.clear();
@@ -165,21 +166,23 @@ export const NewNote: () =>JSX.Element = () => {
     }
   }
 
-  const handlePointerUp = () => {
+  const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
     drawEndTime = performance.now();
     setIsDraw(false);
-    const resultPressure = averagePressure(strokePressure);
+    const resultPressure: number = event.pointerType=="mouse"?Math.random(): averagePressure(strokePressure);
     setStrokePressure([]);
     setTimeout(() => {
       if (drawMode == "pen") {
         const finalStroke = fabricDrawer?.getFinalStroke();
         if (finalStroke) {
+          fabricDrawer?.setPressureToStroke(resultPressure);
           addHistory({
             type: "pen",
             strokes: [finalStroke]
           })
         }
       }
+      console.log(editor?.canvas._objects);
     }, 100)
   }
 
@@ -276,7 +279,7 @@ export const NewNote: () =>JSX.Element = () => {
             ></svg>
           }
         </Box>
-        {/* <NoteGraphAreas /> */}
+        <NoteGraphAreas fabricDrawer={fabricDrawer} />
       </Box>
       {/* <Button onClick={save}>Save</Button>
       <Button onClick={test}>TEST(出力チェック)</Button> */}
