@@ -140,7 +140,7 @@ export class FabricDrawer {
    * @return {fabric.Object}
    */
   getFinalStroke = (): fabric.Object | undefined => {
-    return this.editor.canvas._objects.pop();
+    return this.editor.canvas._objects[this.editor.canvas._objects.length - 1];
   }
 
   /**
@@ -187,5 +187,69 @@ export class FabricDrawer {
       default:
         return;
     }
+  }
+
+  /**
+   * @param {number[]} [indexList]
+   */
+  changeStrokesColorToLight = (indexList: number[]) => {
+    indexList.map((index: number, _: number) => {
+      switch (this.editor.canvas._objects[index].stroke?.length) {
+        case 4:
+          this.editor.canvas._objects[index].set({stroke: `${this.editor.canvas._objects[index].stroke}2`});
+        case 7:
+          this.editor.canvas._objects[index].set({stroke: `${this.editor.canvas._objects[index].stroke}22`});
+        default:
+          break;
+      }
+    })
+    this.reDraw();
+  }
+
+  /**
+   * @param {number[]} [lowerIndexList]
+   * @param {number[]} [newLowerIndexList]
+   */
+  changeStrokesColorToDark = (
+    lowerIndexList: number[],
+    newLowerIndexList: number[]
+  ) => {
+    lowerIndexList.map(index => {
+      if (!newLowerIndexList.includes(index)) {
+        const color = this.editor.canvas._objects[index].stroke;
+        switch (color?.length) {
+          case 5:
+            if(color.slice(-1) != "0") {
+              this.editor.canvas._objects[index].set({stroke: color.slice(0, -1)});
+            }
+          case 9:
+            if (color.slice(-2) != "00") {
+              this.editor.canvas._objects[index].set({stroke: color.slice(0, -2)});
+            }
+          default:
+            break;
+        }
+      }
+    })
+    this.reDraw();
+  }
+
+  /**
+   * @param {number} pressure
+   * @description これ破壊的変更すぎてやばいからいつか直せたら直して
+   */
+  setPressureToStroke = (pressure: number) => {
+    Object.assign(this.editor.canvas._objects[this.editor.canvas._objects.length - 1], { pressure: pressure });
+  }
+
+  /**
+   * @return {number[]}
+   */
+  getPressureList = (): number[] => {
+    const res: number[] = [];
+    this.editor.canvas._objects.map((object: any, _: number) => {
+      res.push(object.pressure);
+    })
+    return res;
   }
 }
