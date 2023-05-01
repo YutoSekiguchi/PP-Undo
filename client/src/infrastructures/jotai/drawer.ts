@@ -8,7 +8,21 @@ import { notesAtom } from './notes';
  * @description
  * 描画モードを保持
 **/
-export const drawModeAtom = atom<"pen" | "strokeErase">("pen");
+export const drawModeAtom = atom<"pen" | "strokeErase" | "pointer">("pen");
+
+/**
+ * @description
+ * 描画履歴の保持
+**/
+export const historyAtom = atom<any[]>([]);
+// undoしたストロークを追加
+export const addHistoryAtom = atom(null, (get, set, obj: { "type": string, "strokes": any[] }) => {
+  set(historyAtom, get(historyAtom).concat([obj]));
+})
+export const historyForRedoAtom = atom<any[]>([]);
+export const addHistoryForRedoAtom = atom(null, (get, set, obj: { "type": string, "strokes": any[] }) => {
+  set(historyForRedoAtom, get(historyForRedoAtom).concat([obj]));
+})
 
 /**
 @description
