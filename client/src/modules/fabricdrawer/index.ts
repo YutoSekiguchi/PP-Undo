@@ -151,6 +151,25 @@ export class FabricDrawer {
   }
 
   /**
+   * @param {number} [index]
+   */
+  getStroke = (index: number): fabric.Object => {
+    return this.editor.canvas._objects[index];
+  }
+
+  /**
+   * @return {Array}
+   */
+  getObjectPaths = (): any[] => {
+    const obj: any = this.editor.canvas.getObjects();
+    const res = [];
+    for(var i=0; i<obj.length; i++) {
+      res.push(obj[i].path);
+    }
+    return res;
+  }
+
+  /**
    * @param {TAddText} [{}]
    */
   addText = ({mode, text}: TAddText) => {
