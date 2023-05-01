@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/assets/logo.png'
-// import { UndoButton } from "./UndoButton";
 import { 
   Box,
   Toolbar,
@@ -10,7 +9,6 @@ import {
   Button
 } from "@mui/material";
 import { penColorList } from "@/configs/PenColorConfig";
-// import { RedoButton } from "./RedoButton";
 import Spacer from "@/components/common/Spacer";
 import { TPenColor } from "@/@types/newnote";
 import { FabricDrawer } from "@/modules/fabricdrawer";
@@ -21,7 +19,8 @@ import { PenButton } from "./PenButton";
 import { PointerButton } from "./PointerButton";
 import { drawMode } from "@nkmr-lab/average-figure-drawer";
 import { StrokeEraseButton } from "./StrokeEraseButton";
-// import { ChangePenWidthButton } from "./ChangePenWidthButton";
+import { UndoButton } from "./UndoButton";
+import { RedoButton } from "./RedoButton";
 
 export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
   const navigate = useNavigate();
@@ -97,8 +96,8 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fa
                   <ColorButton
                     buttonColor={el.penColor}
                     isChoice={el.useable}
-                    index={index}
                     setColor={setColor}
+                    fabricDrawer={fabricDrawer}
                   />
                 </Box>
               ))}
@@ -114,9 +113,9 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fa
             </Box>
             
             <Box className="align-center">
-              {/* <UndoButton /> */}
+              <UndoButton fabricDrawer={fabricDrawer} />
               <Spacer size={4} axis="horizontal" />
-              {/* <RedoButton /> */}
+              <RedoButton fabricDrawer={fabricDrawer} />
             </Box>
           </Toolbar>
         </Paper>

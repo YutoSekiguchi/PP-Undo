@@ -7,7 +7,7 @@ import { Box, Button } from "@mui/material";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 import { averagePressure } from "@/modules/note/AveragePressure";
 import { NewNoteHeader } from "@/components/newnote/header";
-import { drawModeAtom } from "@/infrastructures/jotai/drawer";
+import { addHistoryAtom, drawModeAtom, historyAtom, historyForRedoAtom } from "@/infrastructures/jotai/drawer";
 import { isLineSegmentIntersecting } from "@/modules/note/IsLineSegmentIntersecting";
 import { distanceFromPointToLine } from "@/modules/note/DistanceFromPointToLine";
 import { getMinimumPoints } from "@/modules/note/GetMinimumPoints";
@@ -18,14 +18,17 @@ let drawEndTime: number = 0; // 描画終了時の時刻
 export const NewNote: () =>JSX.Element = () => {
   const { editor, onReady } = useFabricJSEditor();
 
-  const history: any[] = [];
   const noteSize: {width: number, height: number} = {width: 800, height: 800}
   const [isDraw, setIsDraw] = useState<boolean>(false);
   const [strokePressure, setStrokePressure] = useState<number[]>([]);
   const [prevOffset, setPrevOffset] = useState<{x: number, y: number} | null>(null);
   const [cropImage, setCropImage] = useState(true);
   const [fabricDrawer, setFabricDrawer] = useState<FabricDrawer | null>(null);
+  const [eraseStrokes, setEraseStrokes] = useState<any[]>([]);
   const [drawMode, ] = useAtom(drawModeAtom); // penか消しゴムか
+  const [history, ] = useAtom(historyAtom); // 操作の履歴
+  const [, addHistory] = useAtom(addHistoryAtom);
+  const [, setHistoryForRedo] = useAtom(historyForRedoAtom);
 
   useEffect(() => {
     if (!editor || !fabric || !(fabricDrawer == null && !!editor)) {
@@ -101,18 +104,7 @@ export const NewNote: () =>JSX.Element = () => {
   const togglePoint = () => {
     fabricDrawer?.setPointingMode();
   }
-  const undo = () => {
-    if (fabricDrawer && fabricDrawer?.getStrokeLength() > 0) {
-      history.push(fabricDrawer?.getFinalStroke());
-    }
-    fabricDrawer?.reDraw();
-  };
-  const redo = () => {
-    if (history.length > 0) {
-      fabricDrawer?.addStroke(history.pop());
-    }
-  };
-
+  
   const clear = () => {
     history.splice(0, history.length);
     fabricDrawer?.clear();
@@ -160,6 +152,7 @@ export const NewNote: () =>JSX.Element = () => {
   };
 
   const handlePointerDown = () => {
+    setHistoryForRedo([]);
     drawStartTime = performance.now();
     setIsDraw(true);
   }
@@ -177,6 +170,17 @@ export const NewNote: () =>JSX.Element = () => {
     setIsDraw(false);
     const resultPressure = averagePressure(strokePressure);
     setStrokePressure([]);
+    setTimeout(() => {
+      if (drawMode == "pen") {
+        const finalStroke = fabricDrawer?.getFinalStroke();
+        if (finalStroke) {
+          addHistory({
+            type: "pen",
+            strokes: [finalStroke]
+          })
+        }
+      }
+    }, 100)
   }
 
   const handleEraseDown = () => {
@@ -190,17 +194,22 @@ export const NewNote: () =>JSX.Element = () => {
     const offsetXAbout = Math.round(event.nativeEvent.offsetX);
     const offsetYAbout = Math.round(event.nativeEvent.offsetY);
     const paths = fabricDrawer?.getObjectPaths();
-    const toleranceRange = 2;
     paths?.map((path: any, index: number) => {
       let isErase = false;
       const stroke = fabricDrawer?.getStroke(index);
       const minPoints = getMinimumPoints(path);
+      const diffLeft = stroke?.left!==undefined
+      ? Math.round(stroke.left - minPoints.left)
+      : 0;
+      const diffTop = stroke?.top!==undefined
+      ? Math.round(stroke.top - minPoints.top)
+      : 0;
       for(var j=0; j<path.length; j++) {
         if (isErase) {break}
         const points = path[j];
         if(points.length === 5) {
-          const prevPointX = Math.round(points[1] + stroke?.left - minPoints.left), prevPointY = Math.round(points[2] + stroke?.top - minPoints.top);
-          const pointX = Math.round(points[3] + stroke?.left - minPoints.left), pointY = Math.round(points[4] + stroke?.top - minPoints.top);
+          const prevPointX = Math.round(points[1] + diffLeft), prevPointY = Math.round(points[2] + diffTop);
+          const pointX = Math.round(points[3] + diffLeft), pointY = Math.round(points[4] + diffTop);
           if (prevOffset !== null) {
             const isIntersect = isLineSegmentIntersecting(
               prevOffset.x,
@@ -212,9 +221,9 @@ export const NewNote: () =>JSX.Element = () => {
               pointX,
               pointY,
             );
-            const distance = distanceFromPointToLine(pointX, pointY, offsetXAbout, offsetYAbout, prevOffset.x, prevOffset.y);
-            if ((isIntersect || distance <= toleranceRange) && stroke) {
+            if ((isIntersect ) && stroke) {
               fabricDrawer?.removeStroke(stroke);
+              setEraseStrokes(eraseStrokes.concat([stroke]));
               isErase = true;
             }
           }
@@ -228,6 +237,15 @@ export const NewNote: () =>JSX.Element = () => {
     drawEndTime = performance.now();
     setPrevOffset(null);
     setIsDraw(false);
+    setTimeout(() => {
+      if (eraseStrokes.length > 0) {
+        addHistory({
+          type: "erase",
+          strokes: eraseStrokes
+        })
+      }
+      setEraseStrokes([]);
+    }, 100)
   }
 
   return (
