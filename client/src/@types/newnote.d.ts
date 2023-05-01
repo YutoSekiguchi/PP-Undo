@@ -14,3 +14,10 @@ export interface TChangePenWidthButton {
   strokeWidth: number;
   setStrokeWidth: React.Dispatch<React.SetStateAction<number>>;
 }
+
+export interface TLogStrokeData {
+  image?: string;
+  createTime: string;
+  sliderValue?: number | nubmer[];
+  strokes?: any[];
+}

@@ -35,6 +35,7 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fa
 
   // 今の色表示&カラーピッカー
   const ColorPicker: React.FC = () => {
+
     return (
       <Box className="now-color">
         <input

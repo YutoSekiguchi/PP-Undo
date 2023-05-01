@@ -37,6 +37,7 @@ import { calcIsShowStrokeCount } from "@/modules/note/CalcIsShowStroke";
 import { addPPUndoCount } from "@/infrastructures/services/ppUndoCounts";
 import { drawMode } from "@nkmr-lab/average-figure-drawer";
 import { FabricDrawer } from "@/modules/fabricdrawer";
+import { TLogStrokeData } from "@/@types/newnote";
 
 
 export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
@@ -79,28 +80,34 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
   const [myNote, ] = useAtom(myNoteAtom);
   
   const [lowerPressureIndexList, setLowerPressureIndexList] = useState<number[]>([]);
-  const [logData, setLogData] = useState<LogStrokeDataType | null>(null);
+  const [logData, setLogData] = useState<TLogStrokeData | null>(null);
   const [prevSliderValue, setPrevSliderValue] = useState<number | number[]>(0);
   const [logStrokeData, setLogStrokeData] = useState<any>({})
   const [defaultSliderValue, setDefaultSliderValue] = useState<number | number[] | undefined>(sliderValue);
   const [strokeIndexList, setStrokeIndexList] = useState<number[]>([]);
 
-  useEffect(() => {
+
+  const setGraphData = () => {
     let tmp: number[] = [...Array(21)].fill(0);
     fabricDrawer?.getPressureList().map((pressure, _) => {
       const j = Math.round(pressure*100)/100;
       tmp[Math.ceil(j*20)] += 1
     })
     setData(tmp);
+  }
+
+  useEffect(() => {
+    setGraphData();
   }, [fabricDrawer?.getStrokeLength()])
 
   const changeValue = async(event: Event, newValue: number | number[]) => {
+    setSliderValue(newValue)
+    if (fabricDrawer?.getStrokeLength() == 0) { return; }
     const pressureList: number[] = fabricDrawer? fabricDrawer.getPressureList(): [];
     const newLowerPressureIndexList: number[] = getStrokesIndexWithLowPressure(
       pressureList,
       newValue,
     );
-    setSliderValue(newValue)
     if (newLowerPressureIndexList.length == lowerPressureIndexList.length) {
       return;
     }
@@ -123,32 +130,16 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
   // }, [sliderValue])
 
   const actionStart = async () => {
-    // const numOfStroke = drawer.numOfStroke;
-    // if(numOfStroke <= 0) return
-    // const figure = drawer.currentFigure;
-    // figure.calculateRect();
-    // figure.normalize();
-    // figure.adapt();
-    // const res: string = await drawer.getBase64PngImage().catch((error: unknown) => {
-    //   console.log(error);
-    // });
-    // const now = getJaStringTime();
-    // const strokeData: LogStrokeDataType = {
-    //   image: res? res : undefined,
-    //   sliderValue: sliderValue,
-    //   createTime: now,
-    //   strokes: figure.strokes.map((stroke: any, i: number) => ({
-    //     points: stroke.points.map((point: Point2Type, _j: number) => ({
-    //       x: point.x,
-    //       y: point.y,
-    //       z: point.z,
-    //     })),
-    //     color: stroke!.color,
-    //     strokeWidth: stroke!.strokeWidth,
-    //     strokeAvgPressure: avgPressureOfStroke[i]
-    //   })),
-    // };
-    // setPrevSliderValue(sliderValue);
+    const img = fabricDrawer?.getImg();
+    const now = getJaStringTime();
+    const strokes = fabricDrawer?.getAllStrokes();
+    const strokeData: TLogStrokeData = {
+      image: img,
+      sliderValue: sliderValue,
+      createTime: now,
+      strokes: strokes
+    };
+    setPrevSliderValue(sliderValue);
     // await addClientLog(
     //   {
     //     NID: myNote?.ID? myNote?.ID: 0,
@@ -157,18 +148,15 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
     // );
     // const _logStrokeData = await getCurrentStrokeData(figure.strokes);
     // setLogStrokeData(_logStrokeData);
-    // setLogData(strokeData);
+    setLogData(strokeData);
   }
 
   const actionFinish = async (event: any) => {
     // const newSliderValue = Number(event.target.value);
     // setSliderValue(newSliderValue)
-    // hideLowPressureStrokes(
-    //   lowerPressureIndexList,
-    //   drawer.currentFigure.strokes
-    // )
-    // setDrawer(drawer);
-    // setAddLogOfBeforePPUndo(logData!);
+    fabricDrawer?.clearStrokesColor();
+    setAddLogOfBeforePPUndo(logData!);
+    setGraphData();
     // setLogNotifierCount(logNotifierCount + 1);
     // setPPUndoCount(ppUndoCount + 1);
     // const postLogData: PostLogDataType = {
@@ -224,25 +212,6 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
             onChangeCommitted={actionFinish}
             onPointerDownCapture={actionStart}
           />
-          {/* {
-            (defaultSliderValue!=undefined)?
-              <input 
-                key={defaultSliderValue}
-                id="large-range" 
-                className="slider"
-                type="range"
-                // value={sliderValue}
-                defaultValue={defaultSliderValue}
-                min="0"
-                step="0.001"
-                max="1" 
-                // onChange={changeValue} 
-                onPointerDownCapture={actionStart}
-                onInput={changeValue}
-                onPointerUpCapture={actionFinish}
-              />
-              :<></>
-          } */}
         </Box>
         <Box className="center">
           <Line

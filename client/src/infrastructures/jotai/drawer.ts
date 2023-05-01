@@ -2,6 +2,7 @@ import { LogStrokeDataType } from '@/@types/note';
 import { atom } from 'jotai';
 import { fetchNoteByID } from '../services/note';
 import { notesAtom } from './notes';
+import { TLogStrokeData } from '@/@types/newnote';
 
 
 /**
@@ -22,6 +23,15 @@ export const addHistoryAtom = atom(null, (get, set, obj: { "type": string, "stro
 export const historyForRedoAtom = atom<any[]>([]);
 export const addHistoryForRedoAtom = atom(null, (get, set, obj: { "type": string, "strokes": any[] }) => {
   set(historyForRedoAtom, get(historyForRedoAtom).concat([obj]));
+})
+/**
+ * @description
+ * PP-Undo前の状態のログ
+ */
+export const logOfBeforePPUndoAtom = atom<(LogStrokeDataType | TLogStrokeData)[]>([])
+
+export const addLogOfBeforePPUndoAtom = atom(null, (get, set, strokeData: LogStrokeDataType | TLogStrokeData) => {
+  set(logOfBeforePPUndoAtom, get(logOfBeforePPUndoAtom).concat([strokeData]));
 })
 
 /**
@@ -141,16 +151,6 @@ export const redoAtom = atom((get) => {get(undoStrokeLogAtom)}, (get, set) => {
   set(undoableCountAtom, get(undoableCountAtom)+1);
 })
 
-
-/**
- * @description
- * PP-Undo前の状態のログ
- */
-export const logOfBeforePPUndoAtom = atom<LogStrokeDataType[]>([])
-
-export const addLogOfBeforePPUndoAtom = atom(null, (get, set, strokeData: LogStrokeDataType) => {
-  set(logOfBeforePPUndoAtom, get(logOfBeforePPUndoAtom).concat([strokeData]));
-})
 
 /**
  * @description

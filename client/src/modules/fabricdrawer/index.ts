@@ -40,6 +40,14 @@ export class FabricDrawer {
   }
 
   /**
+   * @returns {string}
+   */
+  getImg = (): string => {
+    const img = this.editor.canvas.toDataURL();
+    return img
+  }
+
+  /**
    * @param {string} [color]
   */
   changeColor = (
@@ -156,6 +164,13 @@ export class FabricDrawer {
   getStroke = (index: number): fabric.Object => {
     return this.editor.canvas._objects[index];
   }
+  
+  /**
+   * @return {fabric.Object[]}
+   */
+  getAllStrokes = (): fabric.Object[] => {
+    return JSON.parse(JSON.stringify(this.editor.canvas._objects));
+  }
 
   /**
    * @return {Array}
@@ -188,6 +203,7 @@ export class FabricDrawer {
         return;
     }
   }
+
 
   /**
    * @param {number[]} [indexList]
@@ -232,6 +248,23 @@ export class FabricDrawer {
       }
     })
     this.reDraw();
+  }
+
+  clearStrokesColor = () => {
+    // 逆順じゃないと配列がどんどん小さくなって変になる
+    for(var i=this.editor.canvas._objects.length - 1; i >= 0; i-- ) {
+      const obj = this.editor.canvas._objects[i];
+      switch (obj.stroke?.length) {
+        case 5:
+          if(obj.stroke.slice(-1) != "0") {
+            this.editor.canvas.remove(obj)
+          }
+        case 9:
+          if(obj.stroke.slice(-2) != "00") {
+            this.editor.canvas.remove(obj)
+          }
+      }
+    }
   }
 
   /**
