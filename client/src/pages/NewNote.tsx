@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef, PointerEvent } from "react";
 import { useAtom } from 'jotai';
 import { fabric } from "fabric";
-import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
+import { FabricJSCanvas, FabricJSEditorHook, useFabricJSEditor } from "fabricjs-react";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 import { Box, Button } from "@mui/material";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 import { averagePressure } from "@/modules/note/AveragePressure";
 import { NewNoteHeader } from "@/components/newnote/header";
 import { drawModeAtom } from "@/infrastructures/jotai/drawer";
+import { isLineSegmentIntersecting } from "@/modules/note/IsLineSegmentIntersecting";
+import { distanceFromPointToLine } from "@/modules/note/DistanceFromPointToLine";
+import { getMinimumPoints } from "@/modules/note/GetMinimumPoints";
 
 let drawStartTime: number = 0; // 描画時の時刻
 let drawEndTime: number = 0; // 描画終了時の時刻
@@ -186,10 +189,44 @@ export const NewNote: () =>JSX.Element = () => {
     setStrokePressure([...strokePressure, event.pressure]);
     const offsetXAbout = Math.round(event.nativeEvent.offsetX);
     const offsetYAbout = Math.round(event.nativeEvent.offsetY);
+    const paths = fabricDrawer?.getObjectPaths();
+    const toleranceRange = 2;
+    paths?.map((path: any, index: number) => {
+      let isErase = false;
+      const stroke = fabricDrawer?.getStroke(index);
+      const minPoints = getMinimumPoints(path);
+      for(var j=0; j<path.length; j++) {
+        if (isErase) {break}
+        const points = path[j];
+        if(points.length === 5) {
+          const prevPointX = Math.round(points[1] + stroke?.left - minPoints.left), prevPointY = Math.round(points[2] + stroke?.top - minPoints.top);
+          const pointX = Math.round(points[3] + stroke?.left - minPoints.left), pointY = Math.round(points[4] + stroke?.top - minPoints.top);
+          if (prevOffset !== null) {
+            const isIntersect = isLineSegmentIntersecting(
+              prevOffset.x,
+              prevOffset.y,
+              offsetXAbout,
+              offsetYAbout,
+              prevPointX,
+              prevPointY,
+              pointX,
+              pointY,
+            );
+            const distance = distanceFromPointToLine(pointX, pointY, offsetXAbout, offsetYAbout, prevOffset.x, prevOffset.y);
+            if ((isIntersect || distance <= toleranceRange) && stroke) {
+              fabricDrawer?.removeStroke(stroke);
+              isErase = true;
+            }
+          }
+        }
+      }
+    })
+    setPrevOffset({"x": offsetXAbout, "y": offsetYAbout});
   }
-
+  
   const handleEraseUp = () => {
     drawEndTime = performance.now();
+    setPrevOffset(null);
     setIsDraw(false);
   }
 
@@ -197,64 +234,29 @@ export const NewNote: () =>JSX.Element = () => {
     <Box className="width100 note">
       <NewNoteHeader fabricDrawer={fabricDrawer} />
       <Box sx={{ display: "flex" }} className="width100">
-      {/* <button onClick={onAddCircle}>Add circle</button>
-      <button onClick={onAddRectangle} disabled={!cropImage}>
-        Add Rectangle
-      </button>
-      <button onClick={addText} disabled={!cropImage}>
-        Add Text
-      </button>
-      <button onClick={toggleDraw} disabled={!cropImage}>
-        Toggle draw
-      </button>
-      <button onClick={togglePoint} disabled={!cropImage}>
-        Toggle Point
-      </button>
-      <button onClick={clear} disabled={!cropImage}>
-        Clear
-      </button>
-      <button onClick={undo} disabled={!cropImage}>
-        Undo
-      </button>
-      <button onClick={redo} disabled={!cropImage}>
-        Redo
-      </button>
-      <button onClick={toggleSize} disabled={!cropImage}>
-        ToggleSize
-      </button>
-      <button onClick={removeSelectedObject} disabled={!cropImage}>
-        Delete
-      </button>
-      <button onClick={(e) => setCropImage(!cropImage)}>Crop</button>
-      
-      <button onClick={exportSVG} disabled={!cropImage}>
-        {" "}
-        ToSVG
-      </button> */}
         <Box className="canvasWrapper" id="canvasWrapper" sx={{ width: noteSize['width'], height: noteSize["height"], position: "relative" }}>
-
-      <Box
-        className="fabric-canvas-wrapper"
-        sx={{width: `${noteSize.width}px`, height: `${noteSize.height}px` }}
-        onPointerDownCapture={handlePointerDown}
-        onPointerMoveCapture={handlePointerMove}
-        onPointerUpCapture={handlePointerUp}
-      >
-        <FabricJSCanvas
-          className="fabric-canvas"
-          onReady={onReady}
-        />
-      </Box>
-      {drawMode == "strokeErase" &&
-        <svg
-          id="erase-drawer"
-          className="canvas"
-          style={{ width: `${noteSize.width}px`, height: `${noteSize.height}px` }}
-          onPointerDownCapture={handleEraseDown}
-          onPointerMoveCapture={handleEraseMove}
-          onPointerUpCapture={handleEraseUp}
-        ></svg>
-      }
+          <Box
+            className="fabric-canvas-wrapper"
+            sx={{width: `${noteSize.width}px`, height: `${noteSize.height}px` }}
+            onPointerDownCapture={handlePointerDown}
+            onPointerMoveCapture={handlePointerMove}
+            onPointerUpCapture={handlePointerUp}
+          >
+            <FabricJSCanvas
+              className="fabric-canvas"
+              onReady={onReady}
+            />
+          </Box>
+          {drawMode == "strokeErase" &&
+            <svg
+              id="erase-drawer"
+              className="canvas"
+              style={{ width: `${noteSize.width}px`, height: `${noteSize.height}px` }}
+              onPointerDownCapture={handleEraseDown}
+              onPointerMoveCapture={handleEraseMove}
+              onPointerUpCapture={handleEraseUp}
+            ></svg>
+          }
         </Box>
         {/* <NoteGraphAreas /> */}
       </Box>

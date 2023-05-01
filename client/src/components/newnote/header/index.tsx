@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/assets/logo.png'
 // import { UndoButton } from "./UndoButton";
-// import { StrokeEraseButton } from "./StrokeEraseButton";
 import { 
   Box,
   Toolbar,
@@ -21,6 +20,7 @@ import { ChangePenWidthButton } from "./ChangePenWidthButton";
 import { PenButton } from "./PenButton";
 import { PointerButton } from "./PointerButton";
 import { drawMode } from "@nkmr-lab/average-figure-drawer";
+import { StrokeEraseButton } from "./StrokeEraseButton";
 // import { ChangePenWidthButton } from "./ChangePenWidthButton";
 
 export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
@@ -84,8 +84,9 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fa
 
             <Box className="align-center">
               <Box className="align-center" sx={{ marginRight: "60px"}}>
-                {/* <StrokeEraseButton /> */}
                 <PointerButton fabricDrawer={fabricDrawer} />
+                <Spacer size={6} axis="horizontal" />
+                <StrokeEraseButton fabricDrawer={fabricDrawer} />
                 <Spacer size={6} axis="horizontal" />
                 <PenButton fabricDrawer={fabricDrawer} />
               </Box>
