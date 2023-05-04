@@ -34,6 +34,9 @@ export const addLogOfBeforePPUndoAtom = atom(null, (get, set, strokeData: LogStr
   set(logOfBeforePPUndoAtom, get(logOfBeforePPUndoAtom).concat([strokeData]));
 })
 
+export const backgroundImageAtom = atom<string>("");
+
+
 /**
 @description
 drawerを保持
