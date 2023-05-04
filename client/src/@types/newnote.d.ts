@@ -17,6 +17,7 @@ export interface TChangePenWidthButton {
 
 export interface TLogStrokeData {
   image?: string;
+  backgroundImage?: string;
   createTime: string;
   sliderValue?: number | nubmer[];
   strokes?: any[];
