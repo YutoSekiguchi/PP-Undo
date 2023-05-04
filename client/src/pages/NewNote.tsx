@@ -7,20 +7,21 @@ import { Box, Button } from "@mui/material";
 import { NoteGraphAreas } from "@/components/newnote/graphAreas";
 import { averagePressure } from "@/modules/note/AveragePressure";
 import { NewNoteHeader } from "@/components/newnote/header";
-import { addHistoryAtom, drawModeAtom, historyAtom, historyForRedoAtom } from "@/infrastructures/jotai/drawer";
+import { addHistoryAtom, backgroundImageAtom, drawModeAtom, historyAtom, historyForRedoAtom } from "@/infrastructures/jotai/drawer";
 import { isLineSegmentIntersecting } from "@/modules/note/IsLineSegmentIntersecting";
 import { distanceFromPointToLine } from "@/modules/note/DistanceFromPointToLine";
 import { getMinimumPoints } from "@/modules/note/GetMinimumPoints";
+import Note from "@/assets/note.png"
 
 let drawStartTime: number = 0; // 描画時の時刻
 let drawEndTime: number = 0; // 描画終了時の時刻
+let strokePressureList: number[] = [];
 
 export const NewNote: () =>JSX.Element = () => {
   const { editor, onReady } = useFabricJSEditor();
 
   const noteSize: {width: number, height: number} = {width: 800, height: 800}
   const [isDraw, setIsDraw] = useState<boolean>(false);
-  const [strokePressure, setStrokePressure] = useState<number[]>([]);
   const [prevOffset, setPrevOffset] = useState<{x: number, y: number} | null>(null);
   const [cropImage, setCropImage] = useState(true);
   const [fabricDrawer, setFabricDrawer] = useState<FabricDrawer | null>(null);
@@ -29,6 +30,7 @@ export const NewNote: () =>JSX.Element = () => {
   const [history, ] = useAtom(historyAtom); // 操作の履歴
   const [, addHistory] = useAtom(addHistoryAtom);
   const [, setHistoryForRedo] = useAtom(historyForRedoAtom);
+  const [backgroundImage, setBackgroundImage] = useAtom(backgroundImageAtom);
 
   useEffect(() => {
     if (!editor || !fabric || !(fabricDrawer == null && !!editor)) {
@@ -81,7 +83,7 @@ export const NewNote: () =>JSX.Element = () => {
       setFabricDrawer(instance);
     }
     editor.canvas.renderAll();
-  }, [editor]);
+  }, [editor, fabricDrawer]);
   
 
   useEffect(() => {
@@ -91,8 +93,9 @@ export const NewNote: () =>JSX.Element = () => {
     fabricDrawer?.setDrawingMode();
     fabricDrawer?.changeColor("#1f1f1f");
     fabricDrawer?.setCanvasSize(noteSize.width, noteSize.height);
+    setBackgroundImage(Note);
     fabricDrawer?.reDraw();
-  }, [fabricDrawer]);
+  }, [fabricDrawer, backgroundImage]);
 
   const toggleSize = () => {
     fabricDrawer?.setStrokeWidth(2);
@@ -139,8 +142,8 @@ export const NewNote: () =>JSX.Element = () => {
     if (!editor || !fabric) {
       return;
     }
-    const imgUrl = "https://thegraphicsfairy.com/wp-content/uploads/2019/02/Anatomical-Heart-Illustration-Black-GraphicsFairy.jpg";
-    fabricDrawer?.setBackgroundImage(imgUrl);
+    const imgUrl = Note;
+    fabricDrawer?.setBackgroundImage(imgUrl, noteSize.width, noteSize.height);
   };
 
   const exportSVG = () => {
@@ -154,23 +157,24 @@ export const NewNote: () =>JSX.Element = () => {
 
   const handlePointerDown = () => {
     setHistoryForRedo([]);
+    strokePressureList = [];
     drawStartTime = performance.now();
     setIsDraw(true);
+    console.log(editor)
   }
 
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
     if (!isDraw) { return; } // ポインター位置を取得
     if (event.pressure !== 0) {
       console.log(event.pressure)
-      setStrokePressure([...strokePressure, event.pressure]);
+      strokePressureList = [...strokePressureList, event.pressure];
     }
   }
 
   const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
     drawEndTime = performance.now();
     setIsDraw(false);
-    const resultPressure: number = event.pointerType=="mouse"?Math.random(): averagePressure(strokePressure);
-    setStrokePressure([]);
+    const resultPressure: number = event.pointerType=="mouse"?Math.random(): averagePressure(strokePressureList);
     setTimeout(() => {
       if (drawMode == "pen") {
         const finalStroke = fabricDrawer?.getFinalStroke();
@@ -182,18 +186,19 @@ export const NewNote: () =>JSX.Element = () => {
           })
         }
       }
-      console.log(editor?.canvas._objects);
+      console.log(editor);
     }, 100)
   }
 
   const handleEraseDown = () => {
+    strokePressureList = [];
     drawStartTime = performance.now();
     setIsDraw(true);
   }
 
   const handleEraseMove = (event: PointerEvent<SVGSVGElement>) => {
     if (!isDraw && drawMode === "strokeErase") { return; }
-    setStrokePressure([...strokePressure, event.pressure]);
+    strokePressureList = [...strokePressureList, event.pressure];
     const offsetXAbout = Math.round(event.nativeEvent.offsetX);
     const offsetYAbout = Math.round(event.nativeEvent.offsetY);
     const paths = fabricDrawer?.getObjectPaths();
@@ -266,6 +271,12 @@ export const NewNote: () =>JSX.Element = () => {
             <FabricJSCanvas
               className="fabric-canvas"
               onReady={onReady}
+              css={{
+                backgroundImage: `url("${Note}")`,
+                // touchAction: "none",
+                // display:`${(canvasHeight!=0&&canvasWidth!=0)? "block": "none"}`,
+                // backgroundSize: "contain"
+              }}
             />
           </Box>
           {drawMode == "strokeErase" &&
