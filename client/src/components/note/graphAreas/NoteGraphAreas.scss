@@ -25,8 +25,8 @@
 
 .graph-wrapper-height {
   min-height: 280px;
-  height: 35vh;
-  max-height: 350px;
+  height: 43vh;
+  max-height: 500px;
   position: relative;
 }
 
@@ -61,7 +61,7 @@
     margin: 50px 60px 10px 50px;
     display: grid;
     grid-gap: 24px;
-    grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
+    grid-template-columns: repeat(auto-fill,minmax(16%,1fr));
   }
   .log-image-wrapper {
     cursor: pointer;
