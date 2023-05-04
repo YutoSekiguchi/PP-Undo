@@ -43,7 +43,9 @@ export class FabricDrawer {
    * @returns {string}
    */
   getImg = (): string => {
-    const img = this.editor.canvas.toDataURL();
+    const img = this.editor.canvas.toDataURL({
+      withoutTransform: true,
+    });
     return img
   }
 
@@ -60,13 +62,17 @@ export class FabricDrawer {
   /**
    * @param {string} [imgUrl]
   */
-  setBackgroundImage = (imgUrl: string) => {
+  setBackgroundImage = (imgUrl: string, width: number, height: number) => {
     fabric.Image.fromURL(
       imgUrl,
       (image: fabric.Image) => {
         this.editor.canvas.setBackgroundImage(
           image,
-          this.editor.canvas.renderAll.bind(this.editor.canvas)
+          this.editor.canvas.renderAll.bind(this.editor.canvas),
+          {
+            width: width,
+            height: height,
+          }
         );
       }
     );
@@ -169,7 +175,25 @@ export class FabricDrawer {
    * @return {fabric.Object[]}
    */
   getAllStrokes = (): fabric.Object[] => {
-    return JSON.parse(JSON.stringify(this.editor.canvas._objects));
+    // return JSON.stringify(this.editor.canvas._objects);
+    return this.editor.canvas._objects.map(obj => fabric.util.object.clone(obj));
+  }
+
+  setNewStrokes = (strokes: any[]) => {
+    // const news = fabric.util.object.clone(strokes[0]) as fabric.Object;
+    // this.editor.canvas.add(news);
+    // this.editor.canvas.loadFromJSON(strokes, this.editor.canvas.renderAll.bind(this.editor.canvas))
+    this.clear();
+    strokes.forEach((obj: any, i: number) => {
+      if (obj.stroke.length == 9 && obj.stroke.slice(-2) == "22") {
+        obj.set({stroke: `${obj.stroke.slice(0, -2)}`});
+      } else if (obj.stroke.length == 5 && obj.stroke.slice(-1) == "2") {
+        obj.set({stroke: `${obj.stroke.slice(0, -1)}`});
+      }
+      this.editor.canvas.insertAt(obj, i, false);
+    });
+    this.editor.canvas.renderAll();
+    
   }
 
   /**
@@ -232,7 +256,9 @@ export class FabricDrawer {
   ) => {
     lowerIndexList.map(index => {
       if (!newLowerIndexList.includes(index)) {
-        const color = this.editor.canvas._objects[index].stroke;
+        // FIXME: ここの処理エラーが出るからこうしてるけどもっとしっかり 
+        const color = this.editor.canvas._objects[index]?.stroke? this.editor.canvas._objects[index].stroke: "#000000";
+        console.log(color);
         switch (color?.length) {
           case 5:
             if(color.slice(-1) != "0") {
