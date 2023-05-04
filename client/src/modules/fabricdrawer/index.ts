@@ -179,7 +179,7 @@ export class FabricDrawer {
     return this.editor.canvas._objects.map(obj => fabric.util.object.clone(obj));
   }
 
-  setNewStrokes = (strokes: any[]) => {
+  setNewStrokes = (strokes: any) => {
     // const news = fabric.util.object.clone(strokes[0]) as fabric.Object;
     // this.editor.canvas.add(news);
     // this.editor.canvas.loadFromJSON(strokes, this.editor.canvas.renderAll.bind(this.editor.canvas))
@@ -310,5 +310,19 @@ export class FabricDrawer {
       res.push(object.pressure);
     })
     return res;
+  }
+
+  /**
+   * @description 現在描かれてるストロークの平均筆圧
+   * @return {number}
+   */
+  getAveragePressure = (): number => {
+    let total: number = 0;
+    let count: number = 0;
+    this.editor.canvas._objects.map((object: any, _: number) => {
+      total += object.pressure;
+      count += 1
+    })
+    return Math.round((total / count) * 100) / 100;
   }
 }
