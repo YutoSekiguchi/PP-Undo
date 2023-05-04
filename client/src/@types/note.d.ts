@@ -76,6 +76,7 @@ export interface StrokeType {
 
 export interface LogStrokeDataType {
   image?: string;
+  backgroundImage?: string;
   createTime: string;
   sliderValue?: number | number[];
   strokes: StrokeType[];
