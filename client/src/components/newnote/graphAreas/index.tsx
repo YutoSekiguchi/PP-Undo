@@ -5,7 +5,7 @@ import {
   Box, Button, MobileStepper 
 } from "@mui/material";
 import { PPUndoArea } from "./PPUndoArea";
-// import { LogRedo } from "./LogRedo";
+import { LogRedo } from "./LogRedo";
 // import { NowPressureGraphArea } from "./NowPressureLineGraph";
 // import { AvgPressureGraphArea } from "./AvgPressureLineGraph";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
@@ -47,7 +47,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ 
 	return (
     <Box className="graph-area">
       <PPUndoArea fabricDrawer={fabricDrawer} />
-      {/* <LogRedo /> */}
+      <LogRedo fabricDrawer={fabricDrawer} />
       <Box className="graph-wrapper graph-wrapper-height">
         {
           activeStep == 0 && 

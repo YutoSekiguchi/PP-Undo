@@ -36,7 +36,7 @@ export const LogRedoImageDialog: React.FC<LogRedoImageDialogProps> = (props) => 
     const numOfStroke = drawer.numOfStroke;
     if(numOfStroke <= 0) return
     drawer.currentFigure.strokes = []
-    logOfBeforePPUndo[dialogIndex].strokes.forEach(stroke => {
+    logOfBeforePPUndo[dialogIndex].strokes?.forEach(stroke => {
       const newStroke = new Stroke(
         stroke.points.map(point => new Point(point.x, point.y, {z: point.z})),
         {

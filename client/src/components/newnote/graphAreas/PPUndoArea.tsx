@@ -8,6 +8,7 @@ import {
   sliderValueAtom,
   logNotifierCountAtom,
   ppUndoCountAtom,
+  backgroundImageAtom,
 } from "@/infrastructures/jotai/drawer";
 import {
   Chart as ChartJS,
@@ -85,6 +86,7 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
   const [logStrokeData, setLogStrokeData] = useState<any>({})
   const [defaultSliderValue, setDefaultSliderValue] = useState<number | number[] | undefined>(sliderValue);
   const [strokeIndexList, setStrokeIndexList] = useState<number[]>([]);
+  const [backgroundImage, ] = useAtom(backgroundImageAtom);
 
 
   const setGraphData = () => {
@@ -133,8 +135,10 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
     const img = fabricDrawer?.getImg();
     const now = getJaStringTime();
     const strokes = fabricDrawer?.getAllStrokes();
+    // console.log(stroke)
     const strokeData: TLogStrokeData = {
       image: img,
+      backgroundImage: backgroundImage,
       sliderValue: sliderValue,
       createTime: now,
       strokes: strokes
@@ -157,7 +161,8 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
     fabricDrawer?.clearStrokesColor();
     setAddLogOfBeforePPUndo(logData!);
     setGraphData();
-    // setLogNotifierCount(logNotifierCount + 1);
+    setLogNotifierCount(logNotifierCount + 1);
+    setSliderValue(0);
     // setPPUndoCount(ppUndoCount + 1);
     // const postLogData: PostLogDataType = {
     //   UID: myNote?.UID? myNote?.UID: 0,
