@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { LogRedoImageDialogProps, PostLogRedoCountsDataType } from "@/@types/note";
 import { useAtom } from "jotai";
-import { Stroke, Point } from "@nkmr-lab/average-figure-drawer";
 import { addAvgPressureOfStrokeAtom, clearAvgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawerAtom, logOfBeforePPUndoAtom, logRedoCountAtom, sliderValueAtom, undoableCountAtom } from "@/infrastructures/jotai/drawer";
 import { Box, Button } from "@mui/material";
 import { CancelButton } from "./CancelButton";

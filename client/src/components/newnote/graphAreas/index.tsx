@@ -11,7 +11,7 @@ import { LogRedo } from "./LogRedo";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import { useTheme } from '@mui/material/styles';
 import { styled } from '@mui/system';
-// import { DoughnutPressureGraph } from "./DoughnutPressureGraph";
+import { DoughnutPressureGraph } from "./DoughnutPressureGraph";
 import { avgDatasetsConfig, avgGraphLabel, nowDatasetsConfig, nowGraphLabel } from "@/configs/DoughnutPressureGraphConfig";
 import { averagePressure } from "@/modules/note/AveragePressure";
 import { NowPressure } from "@/modules/note/NowPressure";
@@ -51,19 +51,29 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ 
       <Box className="graph-wrapper graph-wrapper-height">
         {
           activeStep == 0 && 
-          <Box sx={{width: "100%", height: "100%", display: "flex", justifyContent: "space-around", alignItems: "center"}}>
-            {/* <DoughnutPressureGraph
-              pressureValue={NowPressure(avgPressureOfStroke)}
-              title="Now"
-              graphLabel={nowGraphLabel}
-              datasetsConfig={nowDatasetsConfig}
-            /> */}
-            {/* <DoughnutPressureGraph
-              pressureValue={averagePressure(avgPressureOfStroke)}
-              title="Average"
-              graphLabel={avgGraphLabel}
-              datasetsConfig={avgDatasetsConfig}
-            /> */}
+          <Box sx={{width: "100%", height: "100%"}}>
+            <Box sx={{display: "flex", justifyContent: "space-around", alignItems: "center"}}>
+              <DoughnutPressureGraph
+                pressureValue={NowPressure(avgPressureOfStroke)}
+                title="Now"
+                graphLabel={nowGraphLabel}
+                datasetsConfig={nowDatasetsConfig}
+              />
+            </Box>
+            <Box sx={{display: "flex", justifyContent: "space-around", alignItems: "center"}}>
+              <DoughnutPressureGraph
+                pressureValue={averagePressure(avgPressureOfStroke)}
+                title="All Average"
+                graphLabel={avgGraphLabel}
+                datasetsConfig={avgDatasetsConfig}
+              />
+              <DoughnutPressureGraph
+                pressureValue={fabricDrawer?.getAveragePressure()? fabricDrawer.getAveragePressure(): 0}
+                title="Displayed Average"
+                graphLabel={avgGraphLabel}
+                datasetsConfig={avgDatasetsConfig}
+              />
+            </Box>
           </Box>
         }
         {
