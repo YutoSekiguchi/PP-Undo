@@ -7,7 +7,7 @@ import { Box, Button } from "@mui/material";
 import { NoteGraphAreas } from "@/components/newnote/graphAreas";
 import { averagePressure } from "@/modules/note/AveragePressure";
 import { NewNoteHeader } from "@/components/newnote/header";
-import { addHistoryAtom, backgroundImageAtom, drawModeAtom, historyAtom, historyForRedoAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, addHistoryAtom, backgroundImageAtom, drawModeAtom, historyAtom, historyForRedoAtom } from "@/infrastructures/jotai/drawer";
 import { isLineSegmentIntersecting } from "@/modules/note/IsLineSegmentIntersecting";
 import { distanceFromPointToLine } from "@/modules/note/DistanceFromPointToLine";
 import { getMinimumPoints } from "@/modules/note/GetMinimumPoints";
@@ -20,7 +20,7 @@ let strokePressureList: number[] = [];
 export const NewNote: () =>JSX.Element = () => {
   const { editor, onReady } = useFabricJSEditor();
 
-  const noteSize: {width: number, height: number} = {width: 800, height: 800}
+  const noteSize: {width: number, height: number} = {width: 800, height: 3000}
   const [isDraw, setIsDraw] = useState<boolean>(false);
   const [prevOffset, setPrevOffset] = useState<{x: number, y: number} | null>(null);
   const [cropImage, setCropImage] = useState(true);
@@ -31,6 +31,7 @@ export const NewNote: () =>JSX.Element = () => {
   const [, addHistory] = useAtom(addHistoryAtom);
   const [, setHistoryForRedo] = useAtom(historyForRedoAtom);
   const [backgroundImage, setBackgroundImage] = useAtom(backgroundImageAtom);
+  const [, setAddAvgPressureOfStroke] = useAtom(addAvgPressureOfStrokeAtom);
 
   useEffect(() => {
     if (!editor || !fabric || !(fabricDrawer == null && !!editor)) {
@@ -177,6 +178,7 @@ export const NewNote: () =>JSX.Element = () => {
     const resultPressure: number = event.pointerType=="mouse"?Math.random(): averagePressure(strokePressureList);
     setTimeout(() => {
       if (drawMode == "pen") {
+        setAddAvgPressureOfStroke(resultPressure);
         const finalStroke = fabricDrawer?.getFinalStroke();
         if (finalStroke) {
           fabricDrawer?.setPressureToStroke(resultPressure);
@@ -263,7 +265,7 @@ export const NewNote: () =>JSX.Element = () => {
         <Box className="canvasWrapper" id="canvasWrapper" sx={{ width: noteSize['width'], height: noteSize["height"], position: "relative" }}>
           <Box
             className="fabric-canvas-wrapper"
-            sx={{width: `${noteSize.width}px`, height: `${noteSize.height}px` }}
+            sx={{width: `75vw`, height: `${noteSize.height}px` }}
             onPointerDownCapture={handlePointerDown}
             onPointerMoveCapture={handlePointerMove}
             onPointerUpCapture={handlePointerUp}
@@ -283,7 +285,7 @@ export const NewNote: () =>JSX.Element = () => {
             <svg
               id="erase-drawer"
               className="canvas"
-              style={{ width: `${noteSize.width}px`, height: `${noteSize.height}px` }}
+              style={{ width: `75vw`, height: `${noteSize.height}px` }}
               onPointerDownCapture={handleEraseDown}
               onPointerMoveCapture={handleEraseMove}
               onPointerUpCapture={handleEraseUp}
