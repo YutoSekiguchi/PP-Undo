@@ -9,6 +9,7 @@ import {
   logNotifierCountAtom,
   ppUndoCountAtom,
   backgroundImageAtom,
+  historyAtom,
 } from "@/infrastructures/jotai/drawer";
 import {
   Chart as ChartJS,
@@ -87,6 +88,7 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
   const [defaultSliderValue, setDefaultSliderValue] = useState<number | number[] | undefined>(sliderValue);
   const [strokeIndexList, setStrokeIndexList] = useState<number[]>([]);
   const [backgroundImage, ] = useAtom(backgroundImageAtom);
+  const [, setHistory] = useAtom(historyAtom);
 
 
   const setGraphData = () => {
@@ -162,6 +164,7 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
     setAddLogOfBeforePPUndo(logData!);
     setGraphData();
     setLogNotifierCount(logNotifierCount + 1);
+    setHistory([]);
     setSliderValue(0);
     // setPPUndoCount(ppUndoCount + 1);
     // const postLogData: PostLogDataType = {

@@ -79,8 +79,8 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ 
         {
           activeStep == 1 && 
           <>
-            {/* <NowPressureGraphArea />
-            <AvgPressureGraphArea /> */}
+            {/* <NowPressureGraphArea /> */}
+            {/* <AvgPressureGraphArea /> */}
           </>
         }
         <GraphStepper

@@ -153,20 +153,19 @@ export const AllLogImageList: React.FC<TLogImageListProps> = (props) => {
             <Box key={i}>
             { logOfBeforePPUndo.length > activeStep*displayLogCount+i &&
               <Box
-                className="log-image-wrapper"
                 onClick={() => openDialog(logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1)}
               >
                 { activeStep*3+i < logNotifierCount
-                  ? <Box
-                      className="log"
+                  ? <Badge badgeContent={"New"} color="error"> 
+                    <Box
+                      className="log-image-wrapper"
                       sx={{backgroundImage: `url("${logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].backgroundImage}")`,}}
                     >
-                      <Badge badgeContent={"New"} color="error"> 
-                        <LogImage i={i} />
-                      </Badge>
+                      <LogImage i={i} />
                       <LogTimeText i={i} />
                     </Box>
-                  : <Box className="log"
+                  </Badge>
+                  : <Box className="log-image-wrapper"
                     sx={{backgroundImage: `url("${logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].backgroundImage}")`,}}
                     >
                       <LogImage i={i} />

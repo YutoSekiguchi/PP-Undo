@@ -87,7 +87,10 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
       />
       <Box className="width100 dialog-image-wrapper">
         <Box className="width100">
-          <Box sx={{backgroundImage: `url("${logOfBeforePPUndo[dialogIndex].backgroundImage}")`,}}>
+          <Box sx={{
+            backgroundImage: `url("${logOfBeforePPUndo[dialogIndex].backgroundImage}")`,
+            }}
+          >
             <img
               className="dialog-image"
               src={logOfBeforePPUndo[dialogIndex].image}
