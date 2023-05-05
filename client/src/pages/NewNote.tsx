@@ -18,6 +18,8 @@ import { LoadingScreen } from "@/components/common/LoadingScreen";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { fetchNoteByID, updateNote } from "@/infrastructures/services/note";
 import { NoteDataType } from "@/@types/notefolders";
+import { PostStrokeDataType } from "@/@types/note";
+import { addStroke } from "@/infrastructures/services/strokes";
 
 let drawStartTime: number = 0; // 描画時の時刻
 let drawEndTime: number = 0; // 描画終了時の時刻
@@ -95,13 +97,13 @@ export const NewNote: () =>JSX.Element = () => {
 
     const firstLoadData = async () => {
       const noteData: NoteDataType | null = await getFirstStrokeData();
+      const instance = new FabricDrawer(editor);
+      setFabricDrawer(instance);
+      finishLoading(100);
     }
     console.log("editor change")
     if (fabricDrawer == null && !!editor) {
       firstLoadData();
-      const instance = new FabricDrawer(editor);
-      setFabricDrawer(instance);
-      finishLoading(100);
     }
     editor.canvas.renderAll();
   }, [editor, fabricDrawer]);
@@ -224,10 +226,25 @@ export const NewNote: () =>JSX.Element = () => {
             type: "pen",
             strokes: [finalStroke]
           })
+          postStrokeData(resultPressure, strokePressureList);
         }
       }
       console.log(editor);
     }, 100)
+  }
+
+  const postStrokeData = async (pressure: number, strokePressureList: number[]) => {
+    const data: PostStrokeDataType = {
+      UID: myNote!.UID,
+      NID: myNote!.ID,
+      StrokeData: {"Strokes": fabricDrawer?.getAllStrokes()},
+      AvgPressure: pressure,
+      PressureList: strokePressureList.join(','),
+      Time: drawEndTime - drawStartTime,
+      Mode: drawMode,
+      Save: 0,
+    }
+    await addStroke(data);
   }
 
   const handleEraseDown = () => {
@@ -309,7 +326,6 @@ export const NewNote: () =>JSX.Element = () => {
       myNote!.RedoCount += redoCount;
       myNote!.LogRedoCount += logRedoCount;
       myNote!.PPUndoCount += ppUndoCount;
-      // await makeRequestData();
       await updateNote(myNote!);
       console.log("保存しました");
     } catch (error) {
