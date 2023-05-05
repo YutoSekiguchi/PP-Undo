@@ -35,6 +35,56 @@ export const addLogOfBeforePPUndoAtom = atom(null, (get, set, strokeData: LogStr
 })
 
 export const backgroundImageAtom = atom<string>("");
+/**
+ * @description
+ * ストロークごとの筆圧を保持
+ */
+// 表示されているストロークの筆圧
+export const avgPressureOfStrokeAtom = atom<number[]>([]);
+// 削除したものも含めた筆圧
+export const allAvgPressureOfStrokeAtom = atom<number[]>([]);
+// 追加処理
+export const addAvgPressureOfStrokeAtom = atom(null, (get, set, val: number) => {
+  set(avgPressureOfStrokeAtom, get(avgPressureOfStrokeAtom).concat([val]));
+  set(allAvgPressureOfStrokeAtom, get(allAvgPressureOfStrokeAtom).concat([val]));
+})
+/**
+   * @description
+   * ログRedo系統のAtom
+   */
+export const logRedoCountAtom = atom<number>(0);
+  
+/**
+ * @description
+ * PP-Undoをした回数を保持
+ */
+export const ppUndoCountAtom = atom<number>(0);
+
+/**
+ * @description
+ * 新規ログの件数通知
+ */
+export const logNotifierCountAtom = atom<number>(0);
+
+/**
+ * @description
+ * undo回数
+ */
+export const undoCountAtom = atom<number>(0);
+
+export const plusUndoCountAtom = atom(null, (get, set) => {
+  set(undoCountAtom, get(undoCountAtom) + 1);
+});
+
+/**
+ * @description
+ * redo回数
+ */
+export const redoCountAtom = atom<number>(0);
+
+export const plusRedoCountAtom = atom(null, (get, set) => {
+  set(redoCountAtom, get(redoCountAtom) + 1);
+});
 
 
 /**
@@ -87,19 +137,6 @@ export const clearPressureOfOneStrokeAtom = atom(null, (_get, set) => {
   set(pressureOfOneStrokeAtom, []);
 })
 
-/**
- * @description
- * ストロークごとの筆圧を保持
- */
-// 表示されているストロークの筆圧
-export const avgPressureOfStrokeAtom = atom<number[]>([]);
-// 削除したものも含めた筆圧
-export const allAvgPressureOfStrokeAtom = atom<number[]>([]);
-// 追加処理
-export const addAvgPressureOfStrokeAtom = atom(null, (get, set, val: number) => {
-  set(avgPressureOfStrokeAtom, get(avgPressureOfStrokeAtom).concat([val]));
-  set(allAvgPressureOfStrokeAtom, get(allAvgPressureOfStrokeAtom).concat([val]));
-})
 // 削除処理
 export const removeAvgPressureOfStrokeAtom = atom(null, (get, set, values: number | number[]) => {
   let tmp: number[] = [];
@@ -160,41 +197,3 @@ export const redoAtom = atom((get) => {get(undoStrokeLogAtom)}, (get, set) => {
  * 全てのストローク量
  */
 export const allStrokeCountAtom = atom<number>(0);
-
-/**
- * @description
- * ログRedo系統のAtom
- */
-export const logRedoCountAtom = atom<number>(0);
-
-/**
- * @description
- * PP-Undoをした回数を保持
- */
-export const ppUndoCountAtom = atom<number>(0);
-
-/**
- * @description
- * 新規ログの件数通知
- */
-export const logNotifierCountAtom = atom<number>(0);
-
-/**
- * @description
- * undo回数
- */
-export const undoCountAtom = atom<number>(0);
-
-export const plusUndoCountAtom = atom(null, (get, set) => {
-  set(undoCountAtom, get(undoCountAtom) + 1);
-});
-
-/**
- * @description
- * redo回数
- */
-export const redoCountAtom = atom<number>(0);
-
-export const plusRedoCountAtom = atom(null, (get, set) => {
-  set(redoCountAtom, get(redoCountAtom) + 1);
-});
