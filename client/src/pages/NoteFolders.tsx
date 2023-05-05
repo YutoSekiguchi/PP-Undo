@@ -14,7 +14,7 @@ import FolderIcon from '@mui/icons-material/Folder';
 import Spacer from "@/components/common/Spacer";
 import { fetchNoteFoldersTree } from "@/infrastructures/services/noteFolders";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import { getNotesByNFIDAtom } from "@/infrastructures/jotai/notes";
+import { getNotesByNFIDAndUIDAtom } from "@/infrastructures/jotai/notes";
 import DescriptionTwoToneIcon from '@mui/icons-material/DescriptionTwoTone';
 import { Description } from "@mui/icons-material";
 import { truncateString } from "@/modules/common/truncateString";
@@ -28,7 +28,7 @@ export const Notefolders: React.FC = () => {
   const [treeData, setTreeData] = useState<NoteFoldersDataType[]>([]);
   const [loginUserData, ] = useAtom(userDataAtom);
   const [, getFolders] = useAtom(getFoldersAtom);
-  const [, getNotesByNFID] = useAtom(getNotesByNFIDAtom);
+  const [, getNotesByNFIDAndUID] = useAtom(getNotesByNFIDAndUIDAtom);
   const navigate = useNavigate();
 
   const NewButton = styled(Button)({
@@ -59,7 +59,10 @@ export const Notefolders: React.FC = () => {
         UID: uid,
         PNFID: pnfid
       }));
-      setNotesData(await getNotesByNFID(pnfid));
+      setNotesData(await getNotesByNFIDAndUID({
+        PNFID: pnfid,
+        UID: uid
+      }));
       if (pnfid != 0) { setTreeData(await fetchNoteFoldersTree(pnfid)); } 
     }
     const userData = lscache.get('loginUserData');
@@ -175,7 +178,7 @@ export const Notefolders: React.FC = () => {
                   {
                     notesData.map((noteData, i) => {
                       return (
-                        <Box key={i} className="text-center file-box pointer" onClick={() => navigate(`/note/${noteData.ID}`)}>
+                        <Box key={i} className="text-center file-box pointer" onClick={() => navigate(`/newnote/${noteData.ID}`)}>
                           <Box className="flex-start">
                             <Description sx={{ fontSize: 16 }} className="note-title-icon" />
                             <Box className="note-text">{noteData.Title}</Box>
