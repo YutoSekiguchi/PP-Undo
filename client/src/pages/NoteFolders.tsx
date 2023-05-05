@@ -188,7 +188,13 @@ export const Notefolders: React.FC = () => {
                             ? <Box className="center note-background">
                                 <DescriptionTwoToneIcon sx={{ fontSize: 120 }} className="note-icon" />
                               </Box>
-                            : <img src={noteData.NoteImage} width={250} height={210} />
+                            : <Box sx={{
+                                backgroundImage: `url(${noteData.BackgroundImage})`,
+                                margin: "0 auto",
+                                borderRadius: "5%"
+                              }} width={240} height={210}>
+                              <img src={noteData.NoteImage} width={250} height={210} />
+                            </Box>
                           }
                         </Box>
                       );
