@@ -39,6 +39,18 @@ func (s NotesService) GetNotesByNFID(db *gorm.DB, c echo.Context) ([]Notes, erro
 	return n, nil
 }
 
+// nfidとuidからノートを全て取得
+func (s NotesService) GetNotesByNFIDAndUID(db *gorm.DB, c echo.Context) ([]Notes, error) {
+	var n []Notes
+	nfid := c.Param("nfid")
+	uid := c.Param("uid")
+
+	if err := db.Raw("SELECT * FROM `notes` WHERE nfid = ? AND uid = ?", nfid, uid).Scan(&n).Error; err != nil {
+		return nil, err
+	}
+	return n, nil
+}
+
 // POST
 // ノートの作成
 func (s NotesService) PostNote(db *gorm.DB, c echo.Context) (Notes, error) {

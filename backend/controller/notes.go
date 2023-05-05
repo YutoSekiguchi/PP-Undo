@@ -30,6 +30,14 @@ func (ctrl Controller) HandleGetNotesByNFID(c echo.Context) error {
 	return Res(c, p, err)
 }
 
+// nfidとuidからノートを全て取得
+func (ctrl Controller) HandleGetNotesByNFIDAndUID(c echo.Context) error {
+	var s service.NotesService
+	p, err := s.GetNotesByNFIDAndUID(ctrl.Db, c)
+
+	return Res(c, p, err)
+}
+
 // ノートの追加
 func (ctrl Controller) HandlePostNote(c echo.Context) error {
 	var s service.NotesService
