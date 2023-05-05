@@ -326,6 +326,7 @@ export const NewNote: () =>JSX.Element = () => {
       myNote!.RedoCount += redoCount;
       myNote!.LogRedoCount += logRedoCount;
       myNote!.PPUndoCount += ppUndoCount;
+      myNote!.BackgroundImage = Note;
       await updateNote(myNote!);
       console.log("保存しました");
     } catch (error) {
