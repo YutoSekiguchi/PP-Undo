@@ -12,14 +12,14 @@ export const DrawerConfig = {
     "dft": defaultWidth
   },
   "colors": { // 描線の色
-    "originalPoint": "#000000",
-    "originalPath": "#000000",
-    "point": "#000000",
-    "spline": "#000000",
-    "dft": "#000000",
+    "originalPoint": "#00000000",
+    "originalPath": "#00ff0000",
+    "point": "#0000ff00",
+    "spline": "#00ffff00",
+    "dft": "#ffffff00",
     "onion": {
-      "current": "rgba(30, 100, 100, 0.1)",
-      "others": "rgba(0, 100, 100, 0.05)"
+      "current": "rgba(30, 100, 100, 0)",
+      "others": "rgba(0, 100, 100, 0)"
     }
   },
   drawer: {

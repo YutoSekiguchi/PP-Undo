@@ -35,6 +35,7 @@ import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { addClientLog, addLog } from "@/infrastructures/services/ppUndoLogs";
 import { calcIsShowStrokeCount } from "@/modules/note/CalcIsShowStroke";
 import { addPPUndoCount } from "@/infrastructures/services/ppUndoCounts";
+import { drawMode } from "@nkmr-lab/average-figure-drawer";
 
 
 export const PPUndoArea: React.FC = () => {
@@ -81,6 +82,7 @@ export const PPUndoArea: React.FC = () => {
   const [prevSliderValue, setPrevSliderValue] = useState<number | number[]>(0);
   const [logStrokeData, setLogStrokeData] = useState<any>({})
   const [defaultSliderValue, setDefaultSliderValue] = useState<number | number[] | undefined>(sliderValue);
+  const [strokeIndexList, setStrokeIndexList] = useState<number[]>([]);
 
   const changeValue = async(event: Event, newValue: number | number[]) => {
     const newLowerPressureIndexList: number[] = getStrokesIndexWithLowPressure(avgPressureOfStroke, newValue);
@@ -111,24 +113,42 @@ export const PPUndoArea: React.FC = () => {
     for(let i=0; i < diff.oldOnly.length; i++) {
       const stroke = strokes[diff.oldOnly[i]];
       if (stroke.color.length == 9 && stroke.color.slice(-2) == "00") {continue;}
+      // if (strokeIndexList.includes(diff.oldOnly[i])) {
+      //   var res = strokeIndexList.filter(function(index) {
+      //     return index !== diff.oldOnly[i]
+      //   })
+      //   setStrokeIndexList(res);
+      // }
       await stroke.DFT.draw(drawer, stroke);
+      // stroke.draw(drawer, drawMode.DFT);
     }
     for (let i=0; i < diff.newOnly.length; i++) {
       const stroke = strokes[diff.newOnly[i]];
-      if (stroke.color.length == 9 && stroke.color.slice(-2) == "00") {
+      if (stroke.color.length == 9 && (stroke.color.slice(-2) == "00")) {
         continue;
       }
-      const transparentStroke = {
-        DFT: stroke.DFT,
-        originalLength: 0,
-        points: stroke.points,
-        spline: "",
-        svg: "",
-        stime: 0,
-        strokeWidth: stroke.strokeWidth,
-        color: "#ffffffcc"
-      }
-      await stroke.DFT.draw(drawer, transparentStroke);
+      // if (!strokeIndexList.includes(diff.newOnly[i])) {
+      //   console.log("ffff")
+      //   stroke.svg.remove();
+        // console.log(stroke.svg)
+        // const transparentStroke = {
+        //   DFT: stroke.DFT,
+        //   originalLength: 0,
+        //   points: stroke.points,
+        //   spline: "",
+        //   svg: "",
+        //   stime: 0,
+        //   strokeWidth: stroke.strokeWidth,
+        //   // color: stroke.color.slice(0, -2) + "22",
+        //   color: "#fff"
+        // }
+        // strokes.splice(i, 1);
+        // await stroke.DFT.draw(drawer, transparentStroke);
+        if (i == diff.newOnly.length -1) {
+          drawer.reDraw();
+        }
+      //   setStrokeIndexList(strokeIndexList.concat(diff.newOnly[i]));
+      // }
     }
   }
 

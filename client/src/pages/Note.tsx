@@ -60,6 +60,7 @@ export const Note:React.FC =() => {
   let erasePressureList: number[] = [];
   let countErasePoints: number = 0;
   const drawers: any = {};
+  const firstColor = "#000000"
   
   const getFirstStrokeData = async () => {
     const data: NoteDataType | null = await fetchNoteByID(Number(params.id));
@@ -90,17 +91,19 @@ export const Note:React.FC =() => {
         adaptionResponseAllAvgPressureList(noteData);
         adaptionResponseSliderValue(noteData);
         drawers["drawer"].numOfStroke = drawers["drawer"].currentFigure.strokes.length;
+        drawers["drawer"].config.colors.originalPoint = firstColor;
+        drawers["drawer"].config.colors.dft = firstColor;
+        drawers["drawer"].setStrokeColor(firstColor);
         drawers["drawer"].reDraw();
         setDrawer(drawers["drawer"])
         resetDataCount();
-        console.log(drawer)
       }
       finishLoading(2000);
     }
     
     main();
   }, []);
-
+  
   const finishLoading = (time: number) => {
     setTimeout(() => {
       setIsLoading(false);
@@ -151,9 +154,10 @@ export const Note:React.FC =() => {
 
   const finishDraw = async (e: PointerEvent<SVGSVGElement>) => {
     drawEndTime = performance.now();
+    
     setTimeout(async() => {
-      try {
-        const finalStroke = drawer.currentFigure.strokes[drawer.currentFigure.strokes.length-1];
+    try {
+      const finalStroke = drawer.currentFigure.strokes[drawer.currentFigure.strokes.length-1];
         if ("svg" in finalStroke == false || finalStroke.svg == null) {
           drawer.currentFigure.strokes.pop();
           drawer.numOfStroke -= 1;
@@ -192,11 +196,11 @@ export const Note:React.FC =() => {
         console.log(drawEndTime);
         console.log(drawStartTime);
         strokePressureList = [];
-        drawer.reDraw();
       } catch (error) {
         drawError(error);
       }
-    }, 10);
+        // drawer.reDraw();
+    }, 100);
   }
 
   const startEraseDraw = () => {
