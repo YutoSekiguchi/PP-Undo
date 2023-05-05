@@ -1,12 +1,13 @@
 import React from "react";
 import { useAtom } from 'jotai'
-import { addHistoryAtom, historyForRedoAtom } from "@/infrastructures/jotai/drawer";
+import { addHistoryAtom, historyForRedoAtom, plusRedoCountAtom } from "@/infrastructures/jotai/drawer";
 import { ButtonStyleType } from "@/@types/note";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 
 export const RedoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
   const [historyForRedo, setHistoryForRedo] = useAtom(historyForRedoAtom);
   const [, addHistory] = useAtom(addHistoryAtom);
+  const [, plusRedoCount] = useAtom(plusRedoCountAtom);
 
   const buttonStyle: ButtonStyleType = {
     backgroundColor: `${historyForRedo.length === 0? "#eee": "rgb(96, 165, 250)"}`,
@@ -26,6 +27,7 @@ export const RedoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
       }
       addHistory(lastHistoryForRedo);
       setHistoryForRedo(historyForRedo.splice(0, historyForRedo.length - 1));
+      plusRedoCount();
     }
     // if (redoable[0] == false) {
     //   return;

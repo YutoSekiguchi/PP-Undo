@@ -70,6 +70,7 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
     //   AfterLogRedoStrokeCount: afterLogRedoStrokeCount,
     // };
     // await addLogRedoCount(postLogRedoCountData);
+    setLogRedoCount(logRedoCount + 1);
     closeDialog();
     closeLog();
     setIsLoadingScreen(false);

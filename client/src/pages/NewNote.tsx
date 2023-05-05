@@ -4,14 +4,20 @@ import { fabric } from "fabric";
 import { FabricJSCanvas, FabricJSEditorHook, useFabricJSEditor } from "fabricjs-react";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 import { Box, Button } from "@mui/material";
+import { isAuth } from "@/modules/common/isAuth";
 import { NoteGraphAreas } from "@/components/newnote/graphAreas";
 import { averagePressure } from "@/modules/note/AveragePressure";
 import { NewNoteHeader } from "@/components/newnote/header";
-import { addAvgPressureOfStrokeAtom, addHistoryAtom, backgroundImageAtom, drawModeAtom, historyAtom, historyForRedoAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, addHistoryAtom, avgPressureOfStrokeAtom, backgroundImageAtom, drawModeAtom, historyAtom, historyForRedoAtom, logRedoCountAtom, ppUndoCountAtom, redoCountAtom, sliderValueAtom, undoCountAtom } from "@/infrastructures/jotai/drawer";
 import { isLineSegmentIntersecting } from "@/modules/note/IsLineSegmentIntersecting";
 import { distanceFromPointToLine } from "@/modules/note/DistanceFromPointToLine";
 import { getMinimumPoints } from "@/modules/note/GetMinimumPoints";
 import Note from "@/assets/note.png"
+import { Params, useParams } from "react-router-dom";
+import { LoadingScreen } from "@/components/common/LoadingScreen";
+import { myNoteAtom } from "@/infrastructures/jotai/notes";
+import { fetchNoteByID, updateNote } from "@/infrastructures/services/note";
+import { NoteDataType } from "@/@types/notefolders";
 
 let drawStartTime: number = 0; // 描画時の時刻
 let drawEndTime: number = 0; // 描画終了時の時刻
@@ -20,18 +26,26 @@ let strokePressureList: number[] = [];
 export const NewNote: () =>JSX.Element = () => {
   const { editor, onReady } = useFabricJSEditor();
 
+  const params: Params<string> = useParams();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const noteSize: {width: number, height: number} = {width: 800, height: 3000}
   const [isDraw, setIsDraw] = useState<boolean>(false);
   const [prevOffset, setPrevOffset] = useState<{x: number, y: number} | null>(null);
   const [cropImage, setCropImage] = useState(true);
   const [fabricDrawer, setFabricDrawer] = useState<FabricDrawer | null>(null);
   const [eraseStrokes, setEraseStrokes] = useState<any[]>([]);
+  const [myNote, setMyNote] = useAtom(myNoteAtom);
   const [drawMode, ] = useAtom(drawModeAtom); // penか消しゴムか
   const [history, ] = useAtom(historyAtom); // 操作の履歴
   const [, addHistory] = useAtom(addHistoryAtom);
   const [, setHistoryForRedo] = useAtom(historyForRedoAtom);
   const [backgroundImage, setBackgroundImage] = useAtom(backgroundImageAtom);
+  const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom);
   const [, setAddAvgPressureOfStroke] = useAtom(addAvgPressureOfStrokeAtom);
+  const [undoCount, setUndoCount] = useAtom(undoCountAtom);
+  const [redoCount, setRedoCount] = useAtom(redoCountAtom);
+  const [logRedoCount, setLogRedoCount] = useAtom(logRedoCountAtom);
+  const [ppUndoCount, setPPUndoCount] = useAtom(ppUndoCountAtom);
 
   useEffect(() => {
     if (!editor || !fabric || !(fabricDrawer == null && !!editor)) {
@@ -78,10 +92,16 @@ export const NewNote: () =>JSX.Element = () => {
 
     //   });
     // }
+
+    const firstLoadData = async () => {
+      const noteData: NoteDataType | null = await getFirstStrokeData();
+    }
     console.log("editor change")
     if (fabricDrawer == null && !!editor) {
+      firstLoadData();
       const instance = new FabricDrawer(editor);
       setFabricDrawer(instance);
+      finishLoading(100);
     }
     editor.canvas.renderAll();
   }, [editor, fabricDrawer]);
@@ -97,6 +117,24 @@ export const NewNote: () =>JSX.Element = () => {
     setBackgroundImage(Note);
     fabricDrawer?.reDraw();
   }, [fabricDrawer, backgroundImage]);
+
+  const getFirstStrokeData = async () => {
+    const data: NoteDataType | null = await fetchNoteByID(Number(params.id));
+    setMyNote(data);
+    // const clientLogData: ClientLogDataType[] | null = await fetchClientLogsByNID(Number(params.id))
+    // const tmp: any[] = [];
+    // clientLogData?.map((clientLog: ClientLogDataType, i: number) => {
+    //   tmp.push(clientLog.Data);
+    // });
+    // setLogOfBeforePPUndo(tmp);
+    return data
+  }
+
+  const finishLoading = (time: number) => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, time);
+  }
 
   const toggleSize = () => {
     fabricDrawer?.setStrokeWidth(2);
@@ -258,45 +296,77 @@ export const NewNote: () =>JSX.Element = () => {
     }, 100)
   }
 
+  const save = async() => {
+    try {
+      myNote!.NoteImage = fabricDrawer!.getImg();
+      myNote!.StrokeData = {"Strokes": fabricDrawer!.getAllStrokes()};
+      myNote!.AvgPressure = fabricDrawer!.getAveragePressure();
+      myNote!.AvgPressureList = fabricDrawer!.getPressureList().join(',');
+      myNote!.AllAvgPressureList = avgPressureOfStroke.join(',');
+      myNote!.AllStrokeCount = avgPressureOfStroke.length;
+      myNote!.StrokeCount = fabricDrawer!.getStrokeLength();
+      myNote!.UndoCount += undoCount;
+      myNote!.RedoCount += redoCount;
+      myNote!.LogRedoCount += logRedoCount;
+      myNote!.PPUndoCount += ppUndoCount;
+      // await makeRequestData();
+      await updateNote(myNote!);
+      console.log("保存しました");
+    } catch (error) {
+      alert("保存に失敗しました");
+      throw error;
+    }
+  }
+
+
   return (
-    <Box className="width100 note">
-      <NewNoteHeader fabricDrawer={fabricDrawer} />
-      <Box sx={{ display: "flex" }} className="width100">
-        <Box className="canvasWrapper" id="canvasWrapper" sx={{ width: noteSize['width'], height: noteSize["height"], position: "relative" }}>
-          <Box
-            className="fabric-canvas-wrapper"
-            sx={{width: `75vw`, height: `${noteSize.height}px` }}
-            onPointerDownCapture={handlePointerDown}
-            onPointerMoveCapture={handlePointerMove}
-            onPointerUpCapture={handlePointerUp}
-          >
-            <FabricJSCanvas
-              className="fabric-canvas"
-              onReady={onReady}
-              css={{
-                backgroundImage: `url("${Note}")`,
-                // touchAction: "none",
-                // display:`${(canvasHeight!=0&&canvasWidth!=0)? "block": "none"}`,
-                // backgroundSize: "contain"
-              }}
-            />
+    <>
+    {
+      (isAuth() && isLoading)&& <LoadingScreen /> 
+    }
+    {
+      isAuth()?
+      <Box className="width100 note">
+        <NewNoteHeader fabricDrawer={fabricDrawer} />
+        <Box sx={{ display: "flex" }} className="width100">
+          <Box className="canvasWrapper" id="canvasWrapper" sx={{ width: noteSize['width'], height: noteSize["height"], position: "relative" }}>
+            <Box
+              className="fabric-canvas-wrapper"
+              sx={{width: `75vw`, height: `${noteSize.height}px` }}
+              onPointerDownCapture={handlePointerDown}
+              onPointerMoveCapture={handlePointerMove}
+              onPointerUpCapture={handlePointerUp}
+            >
+              <FabricJSCanvas
+                className="fabric-canvas"
+                onReady={onReady}
+                css={{
+                  backgroundImage: `url("${Note}")`,
+                  // touchAction: "none",
+                  // display:`${(canvasHeight!=0&&canvasWidth!=0)? "block": "none"}`,
+                  // backgroundSize: "contain"
+                }}
+              />
+            </Box>
+            {drawMode == "strokeErase" &&
+              <svg
+                id="erase-drawer"
+                className="canvas"
+                style={{ width: `75vw`, height: `${noteSize.height}px` }}
+                onPointerDownCapture={handleEraseDown}
+                onPointerMoveCapture={handleEraseMove}
+                onPointerUpCapture={handleEraseUp}
+              ></svg>
+            }
           </Box>
-          {drawMode == "strokeErase" &&
-            <svg
-              id="erase-drawer"
-              className="canvas"
-              style={{ width: `75vw`, height: `${noteSize.height}px` }}
-              onPointerDownCapture={handleEraseDown}
-              onPointerMoveCapture={handleEraseMove}
-              onPointerUpCapture={handleEraseUp}
-            ></svg>
-          }
+          <NoteGraphAreas fabricDrawer={fabricDrawer} />
         </Box>
-        <NoteGraphAreas fabricDrawer={fabricDrawer} />
+        <Button onClick={save}>Save</Button>
+        {/* <Button onClick={test}>TEST(出力チェック)</Button> */}
       </Box>
-      {/* <Button onClick={save}>Save</Button>
-      <Button onClick={test}>TEST(出力チェック)</Button> */}
-    </Box>
+    :<></>
+    }
+  </>
   );
   
 }

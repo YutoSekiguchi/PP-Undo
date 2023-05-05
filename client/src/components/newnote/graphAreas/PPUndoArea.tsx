@@ -166,7 +166,7 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
     setLogNotifierCount(logNotifierCount + 1);
     setHistory([]);
     setSliderValue(0);
-    // setPPUndoCount(ppUndoCount + 1);
+    setPPUndoCount(ppUndoCount + 1);
     // const postLogData: PostLogDataType = {
     //   UID: myNote?.UID? myNote?.UID: 0,
     //   NID: myNote?.ID? myNote?.ID: 0,

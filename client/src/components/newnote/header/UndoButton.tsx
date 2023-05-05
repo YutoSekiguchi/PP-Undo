@@ -1,11 +1,12 @@
 import React from "react";
 import { useAtom } from 'jotai'
 import { ButtonStyleType } from "@/@types/note";
-import { addHistoryForRedoAtom, historyAtom } from "@/infrastructures/jotai/drawer";
+import { addHistoryForRedoAtom, historyAtom, plusUndoCountAtom } from "@/infrastructures/jotai/drawer";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 
 export const UndoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
   const [history, setHistory] = useAtom(historyAtom);
+  const [, plusUndoCount] = useAtom(plusUndoCountAtom);
   const [, addHistoryForRedo] = useAtom(addHistoryForRedoAtom);
 
   const buttonStyle: ButtonStyleType = {
@@ -27,6 +28,7 @@ export const UndoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
       }
       addHistoryForRedo(lastHistory);
       setHistory(history.splice(0, history.length - 1));
+      plusUndoCount();
     }
     // if (undoableCount <= 0 || drawer.numOfStroke<=0) {
     //   return;
