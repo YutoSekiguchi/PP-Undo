@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom } from 'jotai'
 import {
   addLogOfBeforePPUndoAtom,
-  avgPressureOfStrokeAtom,
-  drawerAtom,
-  getAvgPressureOfStrokeCountAtom,
   sliderValueAtom,
   logNotifierCountAtom,
   ppUndoCountAtom,
   backgroundImageAtom,
   historyAtom,
+  historyForRedoAtom,
 } from "@/infrastructures/jotai/drawer";
 import {
   Chart as ChartJS,
@@ -28,16 +26,13 @@ import {
   Box, Typography,
 } from "@mui/material";
 import Spacer from "@/components/common/Spacer";
-import { PPUndoGraphDatasetsConfigType, Point2Type, LogStrokeDataType, PostLogDataType, PostPPUndoCountsDataType } from "@/@types/note";
+import { PPUndoGraphDatasetsConfigType, PostLogDataType, PostPPUndoCountsDataType } from "@/@types/note";
 import { PrettoSlider, datasetsConfig, options, xLabels } from "@/configs/PPUndoGraphConifig";
 import { getJaStringTime } from "@/modules/common/getJaStringTime";
-import { getStrokesIndexWithLowPressure, hideLowPressureStrokes, increaseStrokeColorOpacity, reduceStrokeColorOpacity, getDiffLowerPressureIndexList } from "@/modules/note/PPUndo";
-import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
+import { getStrokesIndexWithLowPressure } from "@/modules/note/PPUndo";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { addClientLog, addLog } from "@/infrastructures/services/ppUndoLogs";
-import { calcIsShowStrokeCount } from "@/modules/note/CalcIsShowStroke";
 import { addPPUndoCount } from "@/infrastructures/services/ppUndoCounts";
-import { drawMode } from "@nkmr-lab/average-figure-drawer";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 import { TLogStrokeData } from "@/@types/newnote";
 
@@ -74,8 +69,6 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
   };
 
   const [sliderValue, setSliderValue] = useAtom(sliderValueAtom);
-  const [drawer, setDrawer] = useAtom(drawerAtom);
-  // const avgPressureOfStroke = useAtomValue(avgPressureOfStrokeAtom);
   const [, setAddLogOfBeforePPUndo] = useAtom(addLogOfBeforePPUndoAtom);
   const [logNotifierCount, setLogNotifierCount] = useAtom(logNotifierCountAtom);
   const [ppUndoCount, setPPUndoCount] = useAtom(ppUndoCountAtom)
@@ -83,12 +76,11 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
   
   const [lowerPressureIndexList, setLowerPressureIndexList] = useState<number[]>([]);
   const [logData, setLogData] = useState<TLogStrokeData | null>(null);
-  const [prevSliderValue, setPrevSliderValue] = useState<number | number[]>(0);
-  const [logStrokeData, setLogStrokeData] = useState<any>({})
+  const [, setPrevSliderValue] = useState<number | number[]>(0);
   const [defaultSliderValue, setDefaultSliderValue] = useState<number | number[] | undefined>(sliderValue);
-  const [strokeIndexList, setStrokeIndexList] = useState<number[]>([]);
   const [backgroundImage, ] = useAtom(backgroundImageAtom);
   const [, setHistory] = useAtom(historyAtom);
+  const [, setHistoryForRedo] = useAtom(historyForRedoAtom);
 
 
   const setGraphData = () => {
@@ -137,7 +129,6 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
     const img = fabricDrawer?.getImg();
     const now = getJaStringTime();
     const strokes = fabricDrawer?.getAllStrokes();
-    // console.log(stroke)
     const strokeData: TLogStrokeData = {
       image: img,
       backgroundImage: backgroundImage,
@@ -146,57 +137,48 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
       strokes: strokes
     };
     setPrevSliderValue(sliderValue);
-    // await addClientLog(
-    //   {
-    //     NID: myNote?.ID? myNote?.ID: 0,
-    //     Data: strokeData,
-    //   }
-    // );
-    // const _logStrokeData = await getCurrentStrokeData(figure.strokes);
-    // setLogStrokeData(_logStrokeData);
+
+    await addClientLog(
+      {
+        NID: myNote?.ID? myNote?.ID: 0,
+        Data: strokeData,
+      }
+    );
     setLogData(strokeData);
   }
 
   const actionFinish = async (event: any) => {
-    // const newSliderValue = Number(event.target.value);
-    // setSliderValue(newSliderValue)
     fabricDrawer?.clearStrokesColor();
     setAddLogOfBeforePPUndo(logData!);
     setGraphData();
     setLogNotifierCount(logNotifierCount + 1);
+    const postLogData: PostLogDataType = {
+      UID: myNote?.UID? myNote?.UID: 0,
+      NID: myNote?.ID? myNote?.ID: 0,
+      StrokeData: {"Strokes": {"data": logData!.strokes, "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}},
+      LogImage: logData!.image? logData!.image: "",
+      AvgPressureList: fabricDrawer!.getPressureList().join(','),
+      Save: 0,
+      SliderValue: sliderValue,
+      BeforeLogRedoSliderValue: 0,
+    }
     setHistory([]);
+    setHistoryForRedo([]);
     setSliderValue(0);
     setPPUndoCount(ppUndoCount + 1);
-    // const postLogData: PostLogDataType = {
-    //   UID: myNote?.UID? myNote?.UID: 0,
-    //   NID: myNote?.ID? myNote?.ID: 0,
-    //   StrokeData: logStrokeData,
-    //   LogImage: logData!.image? logData!.image: "",
-    //   AvgPressureList: avgPressureOfStroke.join(','),
-    //   Save: 0,
-    //   // SliderValue: newSliderValue,
-    //   SliderValue: sliderValue,
-    //   BeforeLogRedoSliderValue: prevSliderValue,
-    // }
-    // await addLog(postLogData);
-    // setTimeout(async() => {
-    //   await drawer.reDraw();
-    //   const reqStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
-    //   const img: string = await drawer.getBase64PngImage().catch((error: unknown) => {
-    //     console.log(error);
-    //   });
-    //   const beforePPUndoStrokeCount: number = calcIsShowStrokeCount(logStrokeData.Strokes);
-    //   const afterPPUndoStrokeCount: number = calcIsShowStrokeCount(drawer.currentFigure.strokes);
-    //   const postPPUndoCountsData: PostPPUndoCountsDataType = {
-    //     UID: myNote?.UID? myNote?.UID: 0,
-    //     NID: myNote?.ID? myNote?.ID: 0,
-    //     AfterPPUndoStrokeData: reqStrokeData,
-    //     AfterPPUndoImageData: img,
-    //     BeforePPUndoStrokeCount: beforePPUndoStrokeCount,
-    //     AfterPPUndoStrokeCount: afterPPUndoStrokeCount,
-    //   }
-    //   await addPPUndoCount(postPPUndoCountsData);
-    // }, 100);
+    await addLog(postLogData);
+    setTimeout(async() => {
+      const img = fabricDrawer?.getImg();
+      const postPPUndoCountsData: PostPPUndoCountsDataType = {
+        UID: myNote?.UID? myNote?.UID: 0,
+        NID: myNote?.ID? myNote?.ID: 0,
+        AfterPPUndoStrokeData: {"Strokes": {"data": fabricDrawer?.getAllStrokes(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}},
+        AfterPPUndoImageData: img? img: "",
+        BeforePPUndoStrokeCount: logData!.strokes!.length,
+        AfterPPUndoStrokeCount: fabricDrawer!.getStrokeLength(),
+      }
+      await addPPUndoCount(postPPUndoCountsData);
+    }, 100);
   }
 
 
