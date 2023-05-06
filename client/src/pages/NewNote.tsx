@@ -20,6 +20,7 @@ import { fetchNoteByID, updateNote } from "@/infrastructures/services/note";
 import { NoteDataType } from "@/@types/notefolders";
 import { PostStrokeDataType } from "@/@types/note";
 import { addStroke } from "@/infrastructures/services/strokes";
+import { rgbToHex } from "@material-ui/core";
 
 let drawStartTime: number = 0; // 描画時の時刻
 let drawEndTime: number = 0; // 描画終了時の時刻
@@ -99,6 +100,19 @@ export const NewNote: () =>JSX.Element = () => {
       const noteData: NoteDataType | null = await getFirstStrokeData();
       const instance = new FabricDrawer(editor);
       setFabricDrawer(instance);
+      if (instance?.getStrokeLength() == 0) {
+        console.log(noteData!.StrokeData.strokes)
+        setTimeout(() => {
+          instance?.setSVGFromString(noteData!.StrokeData.strokes.svg);
+          for(let i=0; i<editor.canvas._objects.length; i++) {
+            if (editor.canvas._objects[i].stroke!.slice(0, 3) === "rgb") {
+              editor.canvas._objects[i].stroke = rgbToHex(editor.canvas._objects[i].stroke!)
+            }
+            Object.assign(editor.canvas._objects[i], { pressure: noteData!.StrokeData.strokes.pressure[i] });
+          }
+          console.log(editor.canvas._objects)
+        }, 500)
+      }
       finishLoading(100);
     }
     console.log("editor change")
@@ -205,7 +219,7 @@ export const NewNote: () =>JSX.Element = () => {
   }
 
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
-    if (!isDraw) { return; } // ポインター位置を取得
+    if (!isDraw) { return; }
     if (event.pressure !== 0) {
       console.log(event.pressure)
       strokePressureList = [...strokePressureList, event.pressure];
@@ -237,7 +251,7 @@ export const NewNote: () =>JSX.Element = () => {
     const data: PostStrokeDataType = {
       UID: myNote!.UID,
       NID: myNote!.ID,
-      StrokeData: {"Strokes": fabricDrawer?.getAllStrokes()},
+      StrokeData: {"Strokes": {"svg": fabricDrawer?.getSVG()}},
       AvgPressure: pressure,
       PressureList: strokePressureList.join(','),
       Time: drawEndTime - drawStartTime,
@@ -316,9 +330,9 @@ export const NewNote: () =>JSX.Element = () => {
   const save = async() => {
     try {
       myNote!.NoteImage = fabricDrawer!.getImg();
-      myNote!.StrokeData = {"Strokes": fabricDrawer!.getAllStrokes()};
+      myNote!.StrokeData = {"Strokes": {"data": editor?.canvas.getObjects(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}};
       myNote!.AvgPressure = fabricDrawer!.getAveragePressure();
-      myNote!.AvgPressureList = fabricDrawer!.getPressureList().join(',');
+      myNote!.AvgPressureList = editor!.canvas._objects.join(',');
       myNote!.AllAvgPressureList = avgPressureOfStroke.join(',');
       myNote!.AllStrokeCount = avgPressureOfStroke.length;
       myNote!.StrokeCount = fabricDrawer!.getStrokeLength();
@@ -328,6 +342,7 @@ export const NewNote: () =>JSX.Element = () => {
       myNote!.PPUndoCount += ppUndoCount;
       myNote!.BackgroundImage = Note;
       await updateNote(myNote!);
+      console.log(myNote!.StrokeData)
       console.log("保存しました");
     } catch (error) {
       alert("保存に失敗しました");
