@@ -21,4 +21,6 @@ export interface TLogStrokeData {
   createTime: string;
   sliderValue?: number | nubmer[];
   strokes?: any[];
+  svg?: string;
+  pressureList?: number[];
 }

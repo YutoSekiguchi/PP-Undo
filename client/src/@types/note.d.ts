@@ -80,6 +80,8 @@ export interface LogStrokeDataType {
   createTime: string;
   sliderValue?: number | number[];
   strokes: StrokeType[];
+  svg?: string;
+  pressureList?: number[];
 }
 
 export interface DoughnutPressureGraphPropsType {
