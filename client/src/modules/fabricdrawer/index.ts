@@ -20,10 +20,10 @@ export class FabricDrawer {
     fabric.loadSVGFromString(
       svg,
       (objects: fabric.Object[], _options: any) => {
-        this.editor.canvas._objects.splice(0, this.editor.canvas._objects.length);
+        // this.editor.canvas._objects.splice(0, this.editor.canvas._objects.length);
         // editor.canvas.backgroundImage = objects[0];
-        const newObj = objects.filter((_, index) => index !== 0);
-        newObj.forEach((object) => {
+        // const newObj = objects.filter((_, index) => index !== 0);
+        objects.forEach((object) => {
           this.editor.canvas.add(object);
         });
         this.editor.canvas.renderAll();
@@ -194,6 +194,27 @@ export class FabricDrawer {
     });
     this.editor.canvas.renderAll();
     
+  }
+
+  setFirstData = (strokes: any) => {
+    // const news = fabric.util.object.clone(strokes[0]) as fabric.Object;
+    // this.editor.canvas.add(news);
+    // this.editor.canvas.loadFromJSON(strokes, this.editor.canvas.renderAll.bind(this.editor.canvas))
+    this.clear();
+    // console.log(strokes)
+    // strokes.forEach((obj: any, i: number) => {
+    //   if (obj.stroke.length == 9 && obj.stroke.slice(-2) == "22") {
+    //     obj.set({stroke: `${obj.stroke.slice(0, -2)}`});
+    //   } else if (obj.stroke.length == 5 && obj.stroke.slice(-1) == "2") {
+    //     obj.set({stroke: `${obj.stroke.slice(0, -1)}`});
+    //   }
+    //   this.editor.canvas.insertAt(obj, i, false);
+    // });
+    
+    for( var i in strokes ) {
+      this.editor.canvas.insertAt(strokes[i], 0, false);
+    }
+    this.editor.canvas.renderAll();
   }
 
   /**
