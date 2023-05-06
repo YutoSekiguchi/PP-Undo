@@ -37,9 +37,12 @@ func (s *StrokeData) Scan(value interface{}) error {
 
 type ClientLogData struct {
 	CreateTime string `json:"createTime" gorm:"not null;"`
+	BackgroundImage string `json:"backgroundImage" gorm:"not null;"`
 	Image string `json:"image" gorm:"not null;"`
 	SliderValue float64 `json:"sliderValue" gorm:"not null;"`
 	Strokes []interface{} `json:"strokes" gorm:"not null;"`
+	Svg string `json:"svg"`
+	PressureList []float64 `json:"pressureList"`
 }
 
 func (s ClientLogData) Value() (driver.Value, error) {
