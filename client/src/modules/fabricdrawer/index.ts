@@ -1,4 +1,4 @@
-import { TAddText } from "@/@types/fabricdrawer";
+import { TAddText } from "@/@types/note";
 import { fabric } from "fabric";
 import { FabricJSEditor } from "fabricjs-react"
 
@@ -34,7 +34,7 @@ export class FabricDrawer {
   /**
    * @return {string} svg
   */
-  getSVG = (): string | undefined => {
+  getSVG = (): string => {
     const svg = this.editor.canvas.toSVG();
     return svg;
   }
