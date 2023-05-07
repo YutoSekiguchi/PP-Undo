@@ -2,11 +2,11 @@ import { useAtom } from 'jotai'
 import { drawModeAtom } from "@/infrastructures/jotai/drawer";
 import { FabricDrawer } from '@/modules/fabricdrawer';
 
-export const StrokeEraseButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
+export const StrokeEraseButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
   const [drawMode, setDrawMode] = useAtom(drawModeAtom);
 
   const setEraseMode = () => {
-    fabricDrawer?.setDrawingMode();
+    fabricDrawer.setDrawingMode();
     setDrawMode("strokeErase");
   }
 

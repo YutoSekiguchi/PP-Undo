@@ -3,10 +3,10 @@ import { useAtom } from 'jotai'
 import { drawModeAtom } from "@/infrastructures/jotai/drawer";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 
-export const PointerButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
+export const PointerButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
   const [drawMode, setDrawMode] = useAtom(drawModeAtom);
   const setPointerMode = () => {
-    fabricDrawer?.setPointingMode();
+    fabricDrawer.setPointingMode();
     setDrawMode("pointer");
   }
 

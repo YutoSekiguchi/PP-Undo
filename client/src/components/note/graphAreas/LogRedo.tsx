@@ -12,7 +12,7 @@ import { logNotifierCountAtom } from "@/infrastructures/jotai/drawer";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 
 
-export const LogRedo: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
+export const LogRedo: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
   const DisplayLogButton = styled(Button) ({
     backgroundColor:'#fff',
     color: '#1A2939',

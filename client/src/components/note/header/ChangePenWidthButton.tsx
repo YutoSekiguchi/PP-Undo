@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import Spacer from "@/components/common/Spacer";
 import { penWidthList } from "@/configs/PenWidthConfig";
-import { TChangePenWidthButton } from "@/@types/newnote";
+import { TChangePenWidthButton } from "@/@types/note";
 
 export const ChangePenWidthButton: React.FC<TChangePenWidthButton> = ({ strokeWidth, setStrokeWidth }) => {
   const [isShowMenu, setIsShowMenu] = useState<boolean>(false);

@@ -15,7 +15,7 @@ import { averagePressure } from "@/modules/note/AveragePressure";
 import { NowPressure } from "@/modules/note/NowPressure";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 
-export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
+export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
   const theme = useTheme();
   const [activeStep, setActiveStep] = useState(0);
   const maxSteps = 2;
@@ -66,7 +66,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ 
                 datasetsConfig={avgDatasetsConfig}
               />
               <DoughnutPressureGraph
-                pressureValue={fabricDrawer?.getAveragePressure()? fabricDrawer.getAveragePressure(): 0}
+                pressureValue={fabricDrawer.getAveragePressure()? fabricDrawer.getAveragePressure(): 0}
                 title="Displayed Average"
                 graphLabel={avgGraphLabel}
                 datasetsConfig={avgDatasetsConfig}

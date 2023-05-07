@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { penColorList } from "@/configs/PenColorConfig";
 import Spacer from "@/components/common/Spacer";
-import { TPenColor } from "@/@types/newnote";
+import { TPenColor } from "@/@types/note";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 import { ColorButton } from "./ColorButton";
 import { penWidthList } from "@/configs/PenWidthConfig";
@@ -21,7 +21,7 @@ import { StrokeEraseButton } from "./StrokeEraseButton";
 import { UndoButton } from "./UndoButton";
 import { RedoButton } from "./RedoButton";
 
-export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer | null, save: () => void}> = ({ fabricDrawer, save }) => {
+export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => void}> = ({ fabricDrawer, save }) => {
   const navigate = useNavigate();
   const colorList: TPenColor[] = penColorList;
   const [color, setColor] = useState<string>(penColorList[0].penColor);
@@ -50,11 +50,11 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer | null, save: ()
   
 
   useEffect(() => {
-    fabricDrawer?.changeColor(color);
+    fabricDrawer.changeColor(color);
   }, [color]);
 
   useEffect(() => {
-    fabricDrawer?.setStrokeWidth(strokeWidth)
+    fabricDrawer.setStrokeWidth(strokeWidth)
   }, [strokeWidth])
 
   return (

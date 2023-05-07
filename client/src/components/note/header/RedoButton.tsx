@@ -1,18 +1,18 @@
 import React from "react";
 import { useAtom } from 'jotai'
 import { addHistoryAtom, historyForRedoAtom, plusRedoCountAtom } from "@/infrastructures/jotai/drawer";
-import { ButtonStyleType } from "@/@types/note";
+import { TButtonStyle } from "@/@types/note";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 import { addRedoCount } from "@/infrastructures/services/redoCounts";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 
-export const RedoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
+export const RedoButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
   const [historyForRedo, setHistoryForRedo] = useAtom(historyForRedoAtom);
   const [, addHistory] = useAtom(addHistoryAtom);
   const [, plusRedoCount] = useAtom(plusRedoCountAtom);
   const [myNote, ] = useAtom(myNoteAtom);
 
-  const buttonStyle: ButtonStyleType = {
+  const buttonStyle: TButtonStyle = {
     backgroundColor: `${historyForRedo.length === 0? "#eee": "rgb(96, 165, 250)"}`,
     cursor: `${historyForRedo.length === 0? "not-allowed": "pointer"}`,
   }
@@ -20,15 +20,15 @@ export const RedoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
   const redo = async () => {
     if (historyForRedo.length === 0) {return;}
     const beforeRedoNoteImage = "";
-    const beforeRedoStrokeData = {"Strokes": {"data": fabricDrawer?.editor.canvas.getObjects(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}};
+    const beforeRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
 
     const lastHistoryForRedo = historyForRedo[historyForRedo.length - 1];
     if (lastHistoryForRedo) {
       if (lastHistoryForRedo.type === "pen") {
-        fabricDrawer?.addStroke(lastHistoryForRedo.strokes[0]);
+        fabricDrawer.addStroke(lastHistoryForRedo.strokes[0]);
       } else if (lastHistoryForRedo.type === "erase") {
         for(var i=0; i<lastHistoryForRedo.strokes.length; i++) {
-          fabricDrawer?.removeStroke(lastHistoryForRedo.strokes[i]);
+          fabricDrawer.removeStroke(lastHistoryForRedo.strokes[i]);
         }
       }
       addHistory(lastHistoryForRedo);
@@ -40,7 +40,7 @@ export const RedoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
     //   myNote.StrokeData = drawer.currentFigure.strokes.concat();
     // }
     const afterRedoNoteImage = "";
-    const afterRedoStrokeData = {"Strokes": {"data": fabricDrawer?.editor.canvas.getObjects(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}};
+    const afterRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
     await addRedoCount(
       {
         UID: myNote!.UID,
@@ -49,7 +49,7 @@ export const RedoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
         BeforeRedoStrokeData: beforeRedoStrokeData,
         AfterRedoNoteImage: afterRedoNoteImage,
         AfterRedoStrokeData: afterRedoStrokeData,
-        LeftStrokeCount: fabricDrawer!.getStrokeLength(),
+        LeftStrokeCount: fabricDrawer.getStrokeLength(),
       }
     )
   }

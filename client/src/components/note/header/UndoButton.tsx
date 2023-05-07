@@ -1,18 +1,18 @@
 import React from "react";
 import { useAtom } from 'jotai'
-import { ButtonStyleType } from "@/@types/note";
+import { TButtonStyle } from "@/@types/note";
 import { addHistoryForRedoAtom, historyAtom, plusUndoCountAtom } from "@/infrastructures/jotai/drawer";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 import { addUndoCount } from "@/infrastructures/services/undoCounts";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 
-export const UndoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
+export const UndoButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
   const [history, setHistory] = useAtom(historyAtom);
   const [, plusUndoCount] = useAtom(plusUndoCountAtom);
   const [, addHistoryForRedo] = useAtom(addHistoryForRedoAtom);
   const [myNote, ] = useAtom(myNoteAtom);
 
-  const buttonStyle: ButtonStyleType = {
+  const buttonStyle: TButtonStyle = {
     backgroundColor: `${history.length === 0 ?"#eee": "rgb(96, 165, 250)"}`,
     cursor: `${history.length === 0 ?"not-allowed" :"pointer"}`,
   }
@@ -21,15 +21,15 @@ export const UndoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
   const undo = async () => {
     if (history.length === 0) {return;}
     const beforeUndoNoteImage = "";
-    const beforeUndoStrokeData = {"Strokes": {"data": fabricDrawer?.editor.canvas.getObjects(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}};
+    const beforeUndoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
 
     const lastHistory = history[history.length - 1];
     if (lastHistory) {
       if (lastHistory.type === "pen") {
-        fabricDrawer?.removeStroke(lastHistory.strokes[0])
+        fabricDrawer.removeStroke(lastHistory.strokes[0])
       } else if (lastHistory.type === "erase") {
         for(var i=0; i<lastHistory.strokes.length; i++) {
-          fabricDrawer?.addStroke(lastHistory.strokes[i]);
+          fabricDrawer.addStroke(lastHistory.strokes[i]);
         }
       }
       addHistoryForRedo(lastHistory);
@@ -40,7 +40,7 @@ export const UndoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
     //   myNote.StrokeData = drawer.currentFigure.strokes.concat();
     // }
     const afterUndoNoteImage = "";
-    const afterUndoStrokeData = {"Strokes": {"data": fabricDrawer?.editor.canvas.getObjects(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}};
+    const afterUndoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
     await addUndoCount(
       {
         UID: myNote!.UID,
@@ -49,7 +49,7 @@ export const UndoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
         BeforeUndoStrokeData: beforeUndoStrokeData,
         AfterUndoNoteImage: afterUndoNoteImage,
         AfterUndoStrokeData: afterUndoStrokeData,
-        LeftStrokeCount: fabricDrawer!.getStrokeLength(),
+        LeftStrokeCount: fabricDrawer.getStrokeLength(),
       }
     )
   }

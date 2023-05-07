@@ -27,7 +27,7 @@ import {
   Box, Typography,
 } from "@mui/material";
 import Spacer from "@/components/common/Spacer";
-import { PPUndoGraphDatasetsConfigType, PostLogDataType, PostPPUndoCountsDataType } from "@/@types/note";
+import { TPPUndoGraphDatasetsConfig, TPostLogData, TPostPPUndoCountsData} from "@/@types/note";
 import { PrettoSlider, datasetsConfig, options, xLabels } from "@/configs/PPUndoGraphConifig";
 import { getJaStringTime } from "@/modules/common/getJaStringTime";
 import { getStrokesIndexWithLowPressure } from "@/modules/note/PPUndo";
@@ -35,10 +35,10 @@ import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { addClientLog, addLog } from "@/infrastructures/services/ppUndoLogs";
 import { addPPUndoCount } from "@/infrastructures/services/ppUndoCounts";
 import { FabricDrawer } from "@/modules/fabricdrawer";
-import { TLogStrokeData } from "@/@types/newnote";
+import { TLogStrokeData } from "@/@types/note";
 
 
-export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
+export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -52,17 +52,17 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
   )
   ChartJS.defaults.scales.linear.min = 0;
 
-  interface dataType {
+  interface TData {
     data: number[];
   }
-  interface datasetsType extends PPUndoGraphDatasetsConfigType, dataType {};
-  interface graphDataType {
+  interface TDatasets extends TPPUndoGraphDatasetsConfig, TData {};
+  interface TGraphData {
     labels: number[];
-    datasets: datasetsType[];
+    datasets: TDatasets[];
   }
 
   const [data, setData] = useState<number[]>([]);
-  const graphData: graphDataType = {
+  const graphData: TGraphData = {
     labels: xLabels,
     datasets: [
       { ...datasetsConfig, ...{data: data,} },
@@ -96,11 +96,11 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
 
   useEffect(() => {
     setGraphData();
-  }, [fabricDrawer?.getStrokeLength()])
+  }, [fabricDrawer.getStrokeLength()])
 
   const changeValue = async(event: Event, newValue: number | number[]) => {
     setSliderValue(newValue)
-    if (fabricDrawer?.getStrokeLength() == 0) { return; }
+    if (fabricDrawer.getStrokeLength() == 0) { return; }
     const pressureList: number[] = fabricDrawer? fabricDrawer.getPressureList(): [];
     const newLowerPressureIndexList: number[] = getStrokesIndexWithLowPressure(
       pressureList,
@@ -110,9 +110,9 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
       return;
     }
     // 色を薄く
-    fabricDrawer?.changeStrokesColorToLight(newLowerPressureIndexList);
+    fabricDrawer.changeStrokesColorToLight(newLowerPressureIndexList);
     // 色を元に戻す
-    fabricDrawer?.changeStrokesColorToDark(
+    fabricDrawer.changeStrokesColorToDark(
       lowerPressureIndexList,
       newLowerPressureIndexList,
     );
@@ -128,10 +128,10 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
   // }, [sliderValue])
 
   const actionStart = async () => {
-    const img = fabricDrawer?.getImg();
+    const img = fabricDrawer.getImg();
     const now = getJaStringTime();
-    const strokes = fabricDrawer?.getAllStrokes();
-    const svg = fabricDrawer?.getSVG();
+    const strokes = fabricDrawer.getAllStrokes();
+    const svg = fabricDrawer.getSVG();
     const strokeData: TLogStrokeData = {
       image: img,
       backgroundImage: backgroundImage,
@@ -139,7 +139,7 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
       createTime: now,
       strokes: strokes,
       svg: svg,
-      pressureList: fabricDrawer!.getPressureList(),
+      pressureList: fabricDrawer.getPressureList(),
     };
     setPrevSliderValue(sliderValue);
 
@@ -152,12 +152,12 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
     setLogData(strokeData);
   }
 
-  const actionFinish = async (event: any) => {
-    fabricDrawer?.clearStrokesColor();
+  const actionFinish = async () => {
+    fabricDrawer.clearStrokesColor();
     setAddLogOfBeforePPUndo(logData!);
     setGraphData();
     setLogNotifierCount(logNotifierCount + 1);
-    const postLogData: PostLogDataType = {
+    const postLogData: TPostLogData = {
       UID: myNote?.UID? myNote?.UID: 0,
       NID: myNote?.ID? myNote?.ID: 0,
       // StrokeData: {"Strokes": {"data": logData!.strokes, "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}},
@@ -175,14 +175,14 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
     setPPUndoCount(ppUndoCount + 1);
     await addLog(postLogData);
     setTimeout(async() => {
-      const img = fabricDrawer?.getImg();
-      const postPPUndoCountsData: PostPPUndoCountsDataType = {
+      const img = fabricDrawer.getImg();
+      const postPPUndoCountsData: TPostPPUndoCountsData = {
         UID: myNote?.UID? myNote?.UID: 0,
         NID: myNote?.ID? myNote?.ID: 0,
-        AfterPPUndoStrokeData: {"Strokes": {"data": fabricDrawer?.getAllStrokes(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}},
+        AfterPPUndoStrokeData: {"Strokes": {"data": fabricDrawer.getAllStrokes(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}},
         AfterPPUndoImageData: img? img: "",
-        BeforePPUndoStrokeCount: logData!.strokes!.length,
-        AfterPPUndoStrokeCount: fabricDrawer!.getStrokeLength(),
+        BeforePPUndoStrokeCount: logData!.strokes.length,
+        AfterPPUndoStrokeCount: fabricDrawer.getStrokeLength(),
       }
       await addPPUndoCount(postPPUndoCountsData);
     }, 100);

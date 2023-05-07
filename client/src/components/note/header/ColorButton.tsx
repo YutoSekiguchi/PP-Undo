@@ -1,4 +1,4 @@
-import { TColorButton } from "@/@types/newnote";
+import { TColorButton } from "@/@types/note";
 import { drawModeAtom } from "@/infrastructures/jotai/drawer";
 import { useAtom } from "jotai";
 
@@ -10,7 +10,7 @@ export const ColorButton: React.FC<TColorButton> = (props) => {
   }
   const changeColor = (newColor: string) => {
     setColor(newColor);
-    fabricDrawer?.setDrawingMode();
+    fabricDrawer.setDrawingMode();
     setDrawMode("pen");
   }
   return (

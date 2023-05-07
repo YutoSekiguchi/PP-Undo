@@ -14,7 +14,7 @@ import {
 import NoImage from "@/assets/noimage.png"
 import { CancelButton } from "./CancelButton";
 import { LogRedoImageDialog } from "./LogRedoImageDialog";
-import { TLogImageListProps } from "@/@types/fabricdrawer";
+import { TLogImageListProps } from "@/@types/note";
 import { NOTE_WIDTH_RATIO } from "@/configs/settings";
 
 export const AllLogImageList: React.FC<TLogImageListProps> = (props) => {

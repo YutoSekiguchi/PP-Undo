@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PostLogRedoCountsDataType } from "@/@types/note";
+import { TPostLogRedoCountsData } from "@/@types/note";
 import { useAtom } from "jotai";
 import { historyAtom, historyForRedoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, sliderValueAtom } from "@/infrastructures/jotai/drawer";
 import { Box, Button } from "@mui/material";
@@ -7,7 +7,7 @@ import { CancelButton } from "./CancelButton";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { addLogRedoCount } from "@/infrastructures/services/ppUndoLogs/counts";
 import { LoadingScreen } from "@/components/common/LoadingScreen";
-import { TLogRedoImageDialogProps } from "@/@types/fabricdrawer";
+import { TLogRedoImageDialogProps } from "@/@types/note";
 import { rgbToHex } from "@/modules/note/RGBToHex";
 import { NOTE_WIDTH_RATIO } from "@/configs/settings";
 
@@ -26,25 +26,25 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
   const ppRedo = async () => {
     setIsLoadingScreen(true);
 
-    const beforeLogRedoNoteImage = fabricDrawer?.getImg();
-    const beforeLogRedoStrokeData = {"Strokes": {"data": fabricDrawer?.editor.canvas.getObjects(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}};
+    const beforeLogRedoNoteImage = fabricDrawer.getImg();
+    const beforeLogRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
     const beforeLogRedoStrokeCount = fabricDrawer?.getStrokeLength();
     
-    fabricDrawer?.clear();
-    fabricDrawer?.setSVGFromString(logOfBeforePPUndo[dialogIndex].svg!)
-    for(let i=0; i<logOfBeforePPUndo[dialogIndex].pressureList!.length; i++) {
-      if (fabricDrawer?.editor.canvas._objects[i].stroke!.slice(0, 3) === "rgb") {
+    fabricDrawer.clear();
+    fabricDrawer.setSVGFromString(logOfBeforePPUndo[dialogIndex].svg)
+    for(let i=0; i<logOfBeforePPUndo[dialogIndex].pressureList.length; i++) {
+      if (fabricDrawer.editor.canvas._objects[i].stroke!.slice(0, 3) === "rgb") {
         fabricDrawer.editor.canvas._objects[i].stroke = rgbToHex(fabricDrawer.editor.canvas._objects[i].stroke!)
       }
-      Object.assign(fabricDrawer!.editor.canvas._objects[i], { pressure: logOfBeforePPUndo[dialogIndex].pressureList![i] });
+      Object.assign(fabricDrawer.editor.canvas._objects[i], { pressure: logOfBeforePPUndo[dialogIndex].pressureList[i] });
     }
     fabricDrawer?.reDraw();
-    setSliderValue(logOfBeforePPUndo[dialogIndex].sliderValue!);
+    setSliderValue(logOfBeforePPUndo[dialogIndex].sliderValue);
 
-    const afterLogRedoNoteImage = fabricDrawer?.getImg();
-    const afterLogRedoStrokeData = {"Strokes": {"data": fabricDrawer?.editor.canvas.getObjects(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}};
-    const afterLogRedoStrokeCount = fabricDrawer?.getStrokeLength();
-    const postLogRedoCountData: PostLogRedoCountsDataType = {
+    const afterLogRedoNoteImage = fabricDrawer.getImg();
+    const afterLogRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
+    const afterLogRedoStrokeCount = fabricDrawer.getStrokeLength();
+    const postLogRedoCountData: TPostLogRedoCountsData = {
       UID: myNote?.UID? myNote?.UID: 0,
       NID: myNote?.ID? myNote?.ID: 0,
       // BeforeLogRedoNoteImage: beforeLogRedoNoteImage!,
@@ -53,8 +53,8 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
       // AfterLogRedoNoteImage: afterLogRedoNoteImage!,
       AfterLogRedoNoteImage: "",
       AfterLogRedoStrokeData: afterLogRedoStrokeData,
-      BeforeLogRedoStrokeCount: beforeLogRedoStrokeCount!,
-      AfterLogRedoStrokeCount: afterLogRedoStrokeCount!,
+      BeforeLogRedoStrokeCount: beforeLogRedoStrokeCount,
+      AfterLogRedoStrokeCount: afterLogRedoStrokeCount,
     };
     await addLogRedoCount(postLogRedoCountData);
 
