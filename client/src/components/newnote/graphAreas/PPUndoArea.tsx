@@ -8,6 +8,7 @@ import {
   backgroundImageAtom,
   historyAtom,
   historyForRedoAtom,
+  avgPressureOfStrokeAtom,
 } from "@/infrastructures/jotai/drawer";
 import {
   Chart as ChartJS,
@@ -81,6 +82,7 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
   const [backgroundImage, ] = useAtom(backgroundImageAtom);
   const [, setHistory] = useAtom(historyAtom);
   const [, setHistoryForRedo] = useAtom(historyForRedoAtom);
+  const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom);
 
 
   const setGraphData = () => {
@@ -129,12 +131,15 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
     const img = fabricDrawer?.getImg();
     const now = getJaStringTime();
     const strokes = fabricDrawer?.getAllStrokes();
+    const svg = fabricDrawer?.getSVG();
     const strokeData: TLogStrokeData = {
       image: img,
       backgroundImage: backgroundImage,
       sliderValue: sliderValue,
       createTime: now,
-      strokes: strokes
+      strokes: strokes,
+      svg: svg,
+      pressureList: fabricDrawer!.getPressureList(),
     };
     setPrevSliderValue(sliderValue);
 
@@ -155,9 +160,11 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
     const postLogData: PostLogDataType = {
       UID: myNote?.UID? myNote?.UID: 0,
       NID: myNote?.ID? myNote?.ID: 0,
-      StrokeData: {"Strokes": {"data": logData!.strokes, "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}},
-      LogImage: logData!.image? logData!.image: "",
-      AvgPressureList: fabricDrawer!.getPressureList().join(','),
+      // StrokeData: {"Strokes": {"data": logData!.strokes, "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}},
+      StrokeData: {"Strokes": {"data": [], "pressure": [], "svg": ""}},
+      // LogImage: logData!.image? logData!.image: "",
+      LogImage: "",
+      AvgPressureList: avgPressureOfStroke.join(','),
       Save: 0,
       SliderValue: sliderValue,
       BeforeLogRedoSliderValue: 0,
