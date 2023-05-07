@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useAtom } from 'jotai'
 import { avgPressureOfStrokeAtom } from "@/infrastructures/jotai/drawer";
 import {
@@ -6,8 +6,6 @@ import {
 } from "@mui/material";
 import { PPUndoArea } from "./PPUndoArea";
 import { LogRedo } from "./LogRedo";
-// import { NowPressureGraphArea } from "./NowPressureLineGraph";
-// import { AvgPressureGraphArea } from "./AvgPressureLineGraph";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import { useTheme } from '@mui/material/styles';
 import { styled } from '@mui/system';
