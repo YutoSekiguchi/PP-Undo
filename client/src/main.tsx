@@ -32,12 +32,12 @@ const lightTheme = createTheme({
 })
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <ThemeProvider theme={lightTheme}>
       <Provider>
         <CssBaseline />
         <RouterConfig />
       </Provider>
     </ThemeProvider>
-  </React.StrictMode>,
+  // </React.StrictMode>,
 )
