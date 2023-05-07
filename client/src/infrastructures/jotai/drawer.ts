@@ -133,3 +133,18 @@ export const getAvgPressureOfStrokeCountAtom = atom((get) => {
  * PPUndoのバーの値を保持
  */
 export const sliderValueAtom = atom<number | number[]>(0);
+
+
+/**
+ * @description
+ * リセット
+ */
+export const resetAtom = atom(null, (_get, set) => {
+  set(undoCountAtom, 0);
+  set(redoCountAtom, 0);
+  set(logRedoCountAtom, 0);
+  set(ppUndoCountAtom, 0);
+  set(historyAtom, []);
+  set(historyForRedoAtom, []);
+  set(avgPressureOfStrokeAtom, []);
+})
