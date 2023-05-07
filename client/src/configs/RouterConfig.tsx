@@ -18,6 +18,7 @@ export const RouterConfig:React.FC =() => {
               <Route index element={<Home />} />
               <Route path="/notefolders/:pnfid" element={<Notefolders />} />
               <Route path='/note/:id' element={<Note />} />
+              <Route path='/demo' element={<Note />} />
             </Routes>
           </Box>
       </BrowserRouter>

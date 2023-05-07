@@ -20,12 +20,15 @@ import { PointerButton } from "./PointerButton";
 import { StrokeEraseButton } from "./StrokeEraseButton";
 import { UndoButton } from "./UndoButton";
 import { RedoButton } from "./RedoButton";
+import { useAtom } from "jotai";
+import { isDemoAtom } from "@/infrastructures/jotai/drawer";
 
 export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => void}> = ({ fabricDrawer, save }) => {
   const navigate = useNavigate();
   const colorList: TPenColor[] = penColorList;
   const [color, setColor] = useState<string>(penColorList[0].penColor);
   const [strokeWidth, setStrokeWidth] = useState<number>(penWidthList[1]);
+  const [isDemo, ] = useAtom(isDemoAtom);
 
   
   const backToHome = () => {
@@ -82,7 +85,7 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => voi
                 component="div"
                 sx={{ fontWeight: "bold" }}
               >
-                PP-Undo
+                PP-Undo改{isDemo&& "デモ"}
               </Typography>
             </Box>
 
@@ -121,14 +124,19 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => voi
               <UndoButton fabricDrawer={fabricDrawer} />
               <Spacer size={4} axis="horizontal" />
               <RedoButton fabricDrawer={fabricDrawer} />
-              <Spacer size={12} axis="horizontal" />
-              <Button
-                variant="outlined"
-                color="warning"
-                onClick={handleSave}
-              >
-                Save
-              </Button>
+              {
+                (!isDemo) &&
+                <>
+                  <Spacer size={12} axis="horizontal" />
+                  <Button
+                    variant="outlined"
+                    color="warning"
+                    onClick={handleSave}
+                  >
+                    Save
+                  </Button>
+                </>
+              }
             </Box>
           </Toolbar>
         </Paper>

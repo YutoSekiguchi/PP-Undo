@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import {
   FolderCopyOutlined,
-  NoteAddOutlined,
+  FavoriteBorderOutlined,
   CreateOutlined,
   SettingsOutlined
 } from "@mui/icons-material"
@@ -28,13 +28,13 @@ export const SideBar:React.FC =() => {
       path: lscache.get('loginUserData')? '/notefolders/0': '/',
     },
     {
-      label: "Create Note",
-      icon: <NoteAddOutlined />,
-      path: '/',
-    },
-    {
       label: "Try Demo",
       icon: <CreateOutlined />,
+      path: '/demo',
+    },
+    {
+      label: "Favorite",
+      icon: <FavoriteBorderOutlined />,
       path: '/',
     },
     {

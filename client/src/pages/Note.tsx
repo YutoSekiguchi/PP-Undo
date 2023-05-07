@@ -1,6 +1,7 @@
 import { useState, useEffect, PointerEvent } from "react";
 import { useAtom } from 'jotai';
 import { fabric } from "fabric";
+import lscache from "lscache";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 import { Box } from "@mui/material";
@@ -8,11 +9,11 @@ import { isAuth } from "@/modules/common/isAuth";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 import { averagePressure } from "@/modules/note/AveragePressure";
 import { NewNoteHeader } from "@/components/note/header";
-import { addAvgPressureOfStrokeAtom, addHistoryAtom, avgPressureOfStrokeAtom, backgroundImageAtom, drawModeAtom, historyAtom, historyForRedoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, ppUndoCountAtom, redoCountAtom, resetAtom, undoCountAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, addHistoryAtom, avgPressureOfStrokeAtom, backgroundImageAtom, drawModeAtom, historyAtom, historyForRedoAtom, isDemoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, ppUndoCountAtom, redoCountAtom, resetAtom, undoCountAtom } from "@/infrastructures/jotai/drawer";
 import { isLineSegmentIntersecting } from "@/modules/note/IsLineSegmentIntersecting";
 import { getMinimumPoints } from "@/modules/note/GetMinimumPoints";
 import NoteImg from "@/assets/notesolidb.svg"
-import { Params, useParams } from "react-router-dom";
+import { Location, Params, useLocation, useNavigate, useParams } from "react-router-dom";
 import { LoadingScreen } from "@/components/common/LoadingScreen";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { fetchNoteByID, updateNote } from "@/infrastructures/services/note";
@@ -29,8 +30,12 @@ let strokePressureList: number[] = [];
 
 export const Note: () => JSX.Element = () => {
   const { editor, onReady } = useFabricJSEditor();
-
+  
+  const navigate = useNavigate();
+  const location: Location = useLocation();
   const params: Params<string> = useParams();
+  const isDemo = (location.pathname.indexOf("/demo/")>-1 || location.pathname.indexOf("/demo")>-1);
+  const [, setIsDemo] = useAtom(isDemoAtom)
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isDraw, setIsDraw] = useState<boolean>(false);
   const [prevOffset, setPrevOffset] = useState<{x: number, y: number} | null>(null);
@@ -104,17 +109,20 @@ export const Note: () => JSX.Element = () => {
       const instance = new FabricDrawer(editor);
       setFabricDrawer(instance);
       if (instance?.getStrokeLength() == 0) {
-        instance?.setSVGFromString(noteData!.StrokeData.strokes.svg);
-        for(let i=0; i<editor.canvas._objects.length; i++) {
-          if (editor.canvas._objects[i].stroke!.slice(0, 3) === "rgb") {
-            editor.canvas._objects[i].stroke = rgbToHex(editor.canvas._objects[i].stroke!)
+        if (noteData !== null) {
+          instance?.setSVGFromString(noteData.StrokeData.strokes.svg);
+          for(let i=0; i<editor.canvas._objects.length; i++) {
+            if (editor.canvas._objects[i].stroke!.slice(0, 3) === "rgb") {
+              editor.canvas._objects[i].stroke = rgbToHex(editor.canvas._objects[i].stroke!)
+            }
+            Object.assign(editor.canvas._objects[i], { pressure: noteData.StrokeData.strokes.pressure[i] });
           }
-          Object.assign(editor.canvas._objects[i], { pressure: noteData!.StrokeData.strokes.pressure[i] });
         }
       }
       finishLoading(2500);
     }
     if (fabricDrawer === undefined && !!editor) {
+      setIsDemo(isDemo);
       firstLoadData();
     }
     editor.canvas.renderAll();
@@ -154,14 +162,19 @@ export const Note: () => JSX.Element = () => {
       if (isLoading) {
         return;
       }
-      console.log(fabricDrawer);
       save();
-      console.log("cleanup")
     }
   }, [isLoading])
 
   const getFirstStrokeData = async () => {
+    if (isDemo) {
+      return null;
+    }
+    const userData = lscache.get('loginUserData');
     const data: NoteDataType | null = await fetchNoteByID(Number(params.id));
+    if(data?.UID !== Number(userData.ID)) {
+      navigate('/notefolders/0');
+    }
     setMyNote(data);
     const clientLogData: TClientLogData[] | null = await fetchClientLogsByNID(Number(params.id))
     const tmp: any[] = [];
@@ -177,64 +190,6 @@ export const Note: () => JSX.Element = () => {
       setIsLoading(false);
     }, time);
   }
-
-  const toggleSize = () => {
-    fabricDrawer?.setStrokeWidth(2);
-  };
-
-  const toggleDraw = () => {
-    fabricDrawer?.setDrawingMode();
-  };
-
-  const togglePoint = () => {
-    fabricDrawer?.setPointingMode();
-  }
-
-  const clear = () => {
-    history.splice(0, history.length);
-    fabricDrawer?.clear();
-  };
-
-  const removeSelectedObject = () => {
-    fabricDrawer?.removeSelectedStrokes();
-  };
-
-  const onAddCircle = () => {
-    fabricDrawer?.addText({
-      mode: "circle",
-    });
-    fabricDrawer?.addText({
-      mode: "line",
-    });
-  };
-  const onAddRectangle = () => {
-    fabricDrawer?.addText({
-      mode: "rect"
-    });
-  };
-  const addText = () => {
-    fabricDrawer?.addText({
-      mode: "text",
-      text: "aaaa",
-    });
-  };
-
-  const addBackground = () => {
-    if (!editor || !fabric) {
-      return;
-    }
-    const imgUrl = NoteImg;
-    fabricDrawer?.setBackgroundImage(imgUrl, window.innerWidth * NOTE_WIDTH_RATIO, window.innerWidth * NOTE_WIDTH_RATIO * noteAspectRatio);
-  };
-
-  const exportSVG = () => {
-    const svg = fabricDrawer?.getSVG();
-    if (svg === undefined) {
-      alert("svgとして取得できませんでした");
-      return;
-    }
-    console.log(svg);
-  };
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     // 前のストロークが要素をはみ出してしまっていた時の処理
@@ -279,15 +234,15 @@ export const Note: () => JSX.Element = () => {
           postStrokeData(resultPressure, strokePressureList);
         }
       }
-      console.log(fabricDrawer?.getAllStrokes())
     }, 100)
   }
 
   const postStrokeData = async (pressure: number, strokePressureList: number[]) => {
+    if(isDemo) {return;}
     const data: TPostStrokeData = {
       UID: myNote!.UID,
       NID: myNote!.ID,
-      StrokeData: {"Strokes": {"pressure": fabricDrawer?.getStrokeLength(), "svg": fabricDrawer?.getSVG()}},
+      StrokeData: {"Strokes": {"pressure": fabricDrawer?.getStrokeLength(), "svg": ""}},
       AvgPressure: pressure,
       PressureList: strokePressureList.join(','),
       Time: drawEndTime - drawStartTime,
@@ -366,6 +321,7 @@ export const Note: () => JSX.Element = () => {
   }
 
   const save = async() => {
+    if (isDemo) { return; }
     try {
       myNote!.NoteImage = fabricDrawer!.getImg();
       myNote!.StrokeData = {"Strokes": {"data": editor?.canvas.getObjects(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}};
@@ -391,10 +347,10 @@ export const Note: () => JSX.Element = () => {
   return (
     <>
     {
-      (isAuth() && isLoading)&& <LoadingScreen /> 
+      ((isAuth() || isDemo) && isLoading)&& <LoadingScreen /> 
     }
     {
-      isAuth()?
+      isAuth() || isDemo?
       <Box className="width100 note">
         {
           fabricDrawer !== undefined &&

@@ -1,6 +1,6 @@
 import React from "react";
 import { useAtom } from 'jotai'
-import { addHistoryAtom, historyForRedoAtom, plusRedoCountAtom } from "@/infrastructures/jotai/drawer";
+import { addHistoryAtom, historyForRedoAtom, isDemoAtom, plusRedoCountAtom } from "@/infrastructures/jotai/drawer";
 import { TButtonStyle } from "@/@types/note";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 import { addRedoCount } from "@/infrastructures/services/redoCounts";
@@ -11,6 +11,7 @@ export const RedoButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
   const [, addHistory] = useAtom(addHistoryAtom);
   const [, plusRedoCount] = useAtom(plusRedoCountAtom);
   const [myNote, ] = useAtom(myNoteAtom);
+  const [isDemo, ] = useAtom(isDemoAtom);
 
   const buttonStyle: TButtonStyle = {
     backgroundColor: `${historyForRedo.length === 0? "#eee": "rgb(96, 165, 250)"}`,
@@ -39,6 +40,8 @@ export const RedoButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
     // if (myNote != null) {
     //   myNote.StrokeData = drawer.currentFigure.strokes.concat();
     // }
+    if (isDemo) {return;}
+    
     const afterRedoNoteImage = "";
     const afterRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
     await addRedoCount(

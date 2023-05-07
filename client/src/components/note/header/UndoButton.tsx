@@ -1,7 +1,7 @@
 import React from "react";
 import { useAtom } from 'jotai'
 import { TButtonStyle } from "@/@types/note";
-import { addHistoryForRedoAtom, historyAtom, plusUndoCountAtom } from "@/infrastructures/jotai/drawer";
+import { addHistoryForRedoAtom, historyAtom, isDemoAtom, plusUndoCountAtom } from "@/infrastructures/jotai/drawer";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 import { addUndoCount } from "@/infrastructures/services/undoCounts";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
@@ -11,6 +11,7 @@ export const UndoButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
   const [, plusUndoCount] = useAtom(plusUndoCountAtom);
   const [, addHistoryForRedo] = useAtom(addHistoryForRedoAtom);
   const [myNote, ] = useAtom(myNoteAtom);
+  const [isDemo, ] = useAtom(isDemoAtom);
 
   const buttonStyle: TButtonStyle = {
     backgroundColor: `${history.length === 0 ?"#eee": "rgb(96, 165, 250)"}`,
@@ -39,6 +40,8 @@ export const UndoButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
     // if (myNote != null) {
     //   myNote.StrokeData = drawer.currentFigure.strokes.concat();
     // }
+    if (isDemo) { return; }
+    
     const afterUndoNoteImage = "";
     const afterUndoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
     await addUndoCount(

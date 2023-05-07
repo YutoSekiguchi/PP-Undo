@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TPostLogRedoCountsData } from "@/@types/note";
 import { useAtom } from "jotai";
-import { historyAtom, historyForRedoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, sliderValueAtom } from "@/infrastructures/jotai/drawer";
+import { historyAtom, historyForRedoAtom, isDemoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, sliderValueAtom } from "@/infrastructures/jotai/drawer";
 import { Box, Button } from "@mui/material";
 import { CancelButton } from "./CancelButton";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
@@ -22,6 +22,7 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
   const [, setHistoryForRedo] = useAtom(historyForRedoAtom);
   const [myNote, ] = useAtom(myNoteAtom);
   const [noteAspectRatio, ] = useAtom(noteAspectRatiotAtom);
+  const [isDemo, ] = useAtom(isDemoAtom);
 
   const ppRedo = async () => {
     setIsLoadingScreen(true);
@@ -44,19 +45,22 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
     const afterLogRedoNoteImage = fabricDrawer.getImg();
     const afterLogRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
     const afterLogRedoStrokeCount = fabricDrawer.getStrokeLength();
-    const postLogRedoCountData: TPostLogRedoCountsData = {
-      UID: myNote?.UID? myNote?.UID: 0,
-      NID: myNote?.ID? myNote?.ID: 0,
-      // BeforeLogRedoNoteImage: beforeLogRedoNoteImage!,
-      BeforeLogRedoNoteImage: "",
-      BeforeLogRedoStrokeData: beforeLogRedoStrokeData,
-      // AfterLogRedoNoteImage: afterLogRedoNoteImage!,
-      AfterLogRedoNoteImage: "",
-      AfterLogRedoStrokeData: afterLogRedoStrokeData,
-      BeforeLogRedoStrokeCount: beforeLogRedoStrokeCount,
-      AfterLogRedoStrokeCount: afterLogRedoStrokeCount,
-    };
-    await addLogRedoCount(postLogRedoCountData);
+    
+    if(!isDemo) {
+      const postLogRedoCountData: TPostLogRedoCountsData = {
+        UID: myNote?.UID? myNote?.UID: 0,
+        NID: myNote?.ID? myNote?.ID: 0,
+        // BeforeLogRedoNoteImage: beforeLogRedoNoteImage!,
+        BeforeLogRedoNoteImage: "",
+        BeforeLogRedoStrokeData: beforeLogRedoStrokeData,
+        // AfterLogRedoNoteImage: afterLogRedoNoteImage!,
+        AfterLogRedoNoteImage: "",
+        AfterLogRedoStrokeData: afterLogRedoStrokeData,
+        BeforeLogRedoStrokeCount: beforeLogRedoStrokeCount,
+        AfterLogRedoStrokeCount: afterLogRedoStrokeCount,
+      };
+      await addLogRedoCount(postLogRedoCountData);
+    }
 
     setHistory([]);
     setHistoryForRedo([]);

@@ -10,6 +10,12 @@ export const drawModeAtom = atom<"pen" | "strokeErase" | "pointer">("pen");
 
 /**
  * @description
+ * デモかどうか
+ */
+export const isDemoAtom = atom<boolean>(false);
+
+/**
+ * @description
  * 描画履歴の保持
 **/
 export const historyAtom = atom<any[]>([]);

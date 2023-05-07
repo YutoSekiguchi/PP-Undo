@@ -9,6 +9,7 @@ import {
   historyAtom,
   historyForRedoAtom,
   avgPressureOfStrokeAtom,
+  isDemoAtom,
 } from "@/infrastructures/jotai/drawer";
 import {
   Chart as ChartJS,
@@ -83,6 +84,7 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
   const [, setHistory] = useAtom(historyAtom);
   const [, setHistoryForRedo] = useAtom(historyForRedoAtom);
   const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom);
+  const [isDemo, ] = useAtom(isDemoAtom);
 
 
   const setGraphData = () => {
@@ -137,19 +139,20 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
       backgroundImage: backgroundImage,
       sliderValue: sliderValue,
       createTime: now,
-      strokes: strokes,
+      strokes: [],
       svg: svg,
       pressureList: fabricDrawer.getPressureList(),
     };
     setPrevSliderValue(sliderValue);
+    setLogData(strokeData);
 
+    if(isDemo) { return; }
     await addClientLog(
       {
         NID: myNote?.ID? myNote?.ID: 0,
         Data: strokeData,
       }
     );
-    setLogData(strokeData);
   }
 
   const actionFinish = async () => {
@@ -173,6 +176,8 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
     setHistoryForRedo([]);
     setSliderValue(0);
     setPPUndoCount(ppUndoCount + 1);
+
+    if(isDemo) { return; }
     await addLog(postLogData);
     setTimeout(async() => {
       const img = fabricDrawer.getImg();
@@ -180,7 +185,7 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
         UID: myNote?.UID? myNote?.UID: 0,
         NID: myNote?.ID? myNote?.ID: 0,
         AfterPPUndoStrokeData: {"Strokes": {"data": fabricDrawer.getAllStrokes(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}},
-        AfterPPUndoImageData: img? img: "",
+        AfterPPUndoImageData: "",
         BeforePPUndoStrokeCount: logData!.strokes.length,
         AfterPPUndoStrokeCount: fabricDrawer.getStrokeLength(),
       }
