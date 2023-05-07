@@ -4,6 +4,7 @@
 .graph-area {
   background-color: variables.$dark-blue-color;
   width: 25vw;
+  min-width: 280px;
   min-height: calc(100vh - 65px);
   position: fixed;
   right: 0;
