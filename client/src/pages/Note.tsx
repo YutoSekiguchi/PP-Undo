@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 import { fabric } from "fabric";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 import { FabricDrawer } from "@/modules/fabricdrawer";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import { isAuth } from "@/modules/common/isAuth";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 import { averagePressure } from "@/modules/note/AveragePressure";
@@ -17,7 +17,7 @@ import { LoadingScreen } from "@/components/common/LoadingScreen";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { fetchNoteByID, updateNote } from "@/infrastructures/services/note";
 import { NoteDataType } from "@/@types/notefolders";
-import { ClientLogDataType, PostStrokeDataType } from "@/@types/note";
+import { TClientLogData, TPostStrokeData } from "@/@types/note";
 import { addStroke } from "@/infrastructures/services/strokes";
 import { rgbToHex } from "@material-ui/core";
 import { fetchClientLogsByNID } from "@/infrastructures/services/ppUndoLogs";
@@ -34,7 +34,7 @@ export const Note: () => JSX.Element = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isDraw, setIsDraw] = useState<boolean>(false);
   const [prevOffset, setPrevOffset] = useState<{x: number, y: number} | null>(null);
-  const [fabricDrawer, setFabricDrawer] = useState<FabricDrawer | null>(null);
+  const [fabricDrawer, setFabricDrawer] = useState<FabricDrawer>();
   const [eraseStrokes, setEraseStrokes] = useState<any[]>([]);
   const [myNote, setMyNote] = useAtom(myNoteAtom);
   const [drawMode, ] = useAtom(drawModeAtom); // penか消しゴムか
@@ -52,7 +52,7 @@ export const Note: () => JSX.Element = () => {
   const [noteAspectRatio, setNoteAspectRatio] = useAtom(noteAspectRatiotAtom);
 
   useEffect(() => {
-    if (!editor || !fabric || !(fabricDrawer == null && !!editor)) {
+    if (!editor || !fabric || !(fabricDrawer === undefined && !!editor)) {
       return;
     }
 
@@ -112,7 +112,7 @@ export const Note: () => JSX.Element = () => {
       }
       finishLoading(100);
     }
-    if (fabricDrawer == null && !!editor) {
+    if (fabricDrawer === undefined && !!editor) {
       firstLoadData();
     }
     editor.canvas.renderAll();
@@ -161,9 +161,9 @@ export const Note: () => JSX.Element = () => {
   const getFirstStrokeData = async () => {
     const data: NoteDataType | null = await fetchNoteByID(Number(params.id));
     setMyNote(data);
-    const clientLogData: ClientLogDataType[] | null = await fetchClientLogsByNID(Number(params.id))
+    const clientLogData: TClientLogData[] | null = await fetchClientLogsByNID(Number(params.id))
     const tmp: any[] = [];
-    clientLogData?.map((clientLog: ClientLogDataType, i: number) => {
+    clientLogData?.map((clientLog: TClientLogData, i: number) => {
       tmp.push(clientLog.Data);
     });
     setLogOfBeforePPUndo(tmp);
@@ -282,7 +282,7 @@ export const Note: () => JSX.Element = () => {
   }
 
   const postStrokeData = async (pressure: number, strokePressureList: number[]) => {
-    const data: PostStrokeDataType = {
+    const data: TPostStrokeData = {
       UID: myNote!.UID,
       NID: myNote!.ID,
       StrokeData: {"Strokes": {"pressure": fabricDrawer?.getStrokeLength(), "svg": fabricDrawer?.getSVG()}},
@@ -395,7 +395,10 @@ export const Note: () => JSX.Element = () => {
     {
       isAuth()?
       <Box className="width100 note">
-        <NewNoteHeader fabricDrawer={fabricDrawer} save={save} />
+        {
+          fabricDrawer !== undefined &&
+          <NewNoteHeader fabricDrawer={fabricDrawer} save={save} />
+        }
         <Box sx={{ display: "flex" }} className="width100">
           <Box className="canvasWrapper" id="canvasWrapper" 
             sx={{ 
@@ -439,7 +442,10 @@ export const Note: () => JSX.Element = () => {
               ></svg>
             }
           </Box>
-          <NoteGraphAreas fabricDrawer={fabricDrawer} />
+          {
+            fabricDrawer !== undefined &&
+            <NoteGraphAreas fabricDrawer={fabricDrawer} />
+          }
         </Box>
       </Box>
     :<></>
