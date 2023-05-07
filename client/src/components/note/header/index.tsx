@@ -47,6 +47,11 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => voi
       </Box>
     );
   }
+
+  const handleSave = () => {
+    save();
+    alert("保存しました");
+  }
   
 
   useEffect(() => {
@@ -120,7 +125,7 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => voi
               <Button
                 variant="outlined"
                 color="warning"
-                onClick={save}
+                onClick={handleSave}
               >
                 Save
               </Button>
