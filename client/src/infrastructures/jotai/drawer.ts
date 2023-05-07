@@ -150,6 +150,7 @@ export const resetAtom = atom(null, (_get, set) => {
   set(redoCountAtom, 0);
   set(logRedoCountAtom, 0);
   set(ppUndoCountAtom, 0);
+  set(logNotifierCountAtom, 0);
   set(historyAtom, []);
   set(historyForRedoAtom, []);
   set(avgPressureOfStrokeAtom, []);
