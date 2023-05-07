@@ -1,9 +1,9 @@
-import { PostLogRedoCountsDataType } from "@/@types/note";
+import { TPostLogRedoCountsData } from "@/@types/note";
 import { API_URL } from "@/configs/settings";
 import axios from "axios";
 
 // LogRedoカウント
-export const addLogRedoCount = async (data: PostLogRedoCountsDataType) => {
+export const addLogRedoCount = async (data: TPostLogRedoCountsData) => {
   const url = `${API_URL}/logredocounts`;
   try {
     const res = await axios.post(url, data);

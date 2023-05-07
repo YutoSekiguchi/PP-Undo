@@ -1,8 +1,5 @@
-import { LogStrokeDataType } from '@/@types/note';
 import { atom } from 'jotai';
-import { fetchNoteByID } from '../services/note';
-import { notesAtom } from './notes';
-import { TLogStrokeData } from '@/@types/newnote';
+import { TLogStrokeData } from '@/@types/note';
 
 
 /**
@@ -28,9 +25,9 @@ export const addHistoryForRedoAtom = atom(null, (get, set, obj: { "type": string
  * @description
  * PP-Undo前の状態のログ
  */
-export const logOfBeforePPUndoAtom = atom<(LogStrokeDataType | TLogStrokeData)[]>([])
+export const logOfBeforePPUndoAtom = atom<TLogStrokeData[]>([])
 
-export const addLogOfBeforePPUndoAtom = atom(null, (get, set, strokeData: LogStrokeDataType | TLogStrokeData) => {
+export const addLogOfBeforePPUndoAtom = atom(null, (get, set, strokeData: TLogStrokeData) => {
   set(logOfBeforePPUndoAtom, get(logOfBeforePPUndoAtom).concat([strokeData]));
 })
 
@@ -90,44 +87,6 @@ export const noteAspectRatiotAtom = atom<number>(1);
 
 
 /**
-@description
-drawerを保持
-**/
-export const drawerAtom = atom<any>({});
-
-export const clearDrawerAtom = atom(null, (_get, set) => {
-  set(drawerAtom, {});
-})
-
-/**
-@description
-undo出来る本数
-**/
-export const undoableCountAtom = atom<number>(0);
-
-
-/**
- * @description
- * undo系
-**/
-const undoStrokeLogAtom = atom<any[]>([]);
-
-// undoしたストロークを追加
-export const setUndoStrokeLogAtom = atom(null, (get, set, obj: {"stroke": any, "pressure": number}) => {
-  set(undoStrokeLogAtom, get(undoStrokeLogAtom).concat([obj]));
-})
-
-// undoしたログを空にするAtom
-export const clearUndoStrokeLogAtom = atom(null, (_get, set) => {
-  set(undoStrokeLogAtom, []);
-})
-
-// redo可能かを返す
-export const redoableAtom = atom((get) => {
-  return get(undoStrokeLogAtom).length > 0 ? true: false;
-})
-
-/**
  * @description
  * 1ストロークの筆圧を保持
  */
@@ -174,28 +133,3 @@ export const getAvgPressureOfStrokeCountAtom = atom((get) => {
  * PPUndoのバーの値を保持
  */
 export const sliderValueAtom = atom<number | number[]>(0);
-
-
-/**
- * @description
- * redo この後に
- * drawer.numOfStroke = drawer.numOfStroke + 1;
- * setDrawer(drawer);
- * drawer.reDraw();
- * を実行
-**/
-export const redoAtom = atom((get) => {get(undoStrokeLogAtom)}, (get, set) => {
-  get(drawerAtom).currentFigure.add(
-    get(undoStrokeLogAtom)[get(undoStrokeLogAtom).length-1]["stroke"]
-  );
-  set(avgPressureOfStrokeAtom, get(avgPressureOfStrokeAtom).concat([get(undoStrokeLogAtom)[get(undoStrokeLogAtom).length-1]["pressure"]]));
-  set(undoStrokeLogAtom, get(undoStrokeLogAtom).slice(0, -1));
-  set(undoableCountAtom, get(undoableCountAtom)+1);
-})
-
-
-/**
- * @description
- * 全てのストローク量
- */
-export const allStrokeCountAtom = atom<number>(0);

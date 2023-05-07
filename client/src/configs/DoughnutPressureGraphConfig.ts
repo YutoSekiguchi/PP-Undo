@@ -1,4 +1,4 @@
-import { DoughnutGraphConfigType } from "@/@types/note";
+import { TDoughnutGraphConfig } from "@/@types/note";
 
 export const nowGraphLabel: string[] = [
   "現在の筆圧",
@@ -9,11 +9,11 @@ export const avgGraphLabel: string[] = [
   "None"
 ]
 
-export const nowDatasetsConfig: DoughnutGraphConfigType = {
+export const nowDatasetsConfig: TDoughnutGraphConfig = {
   backgroundColor:  ["#7ff", "rgba(0, 0, 0, 0.8)"],
   borderColor: "#7ff3",
 }
-export const avgDatasetsConfig: DoughnutGraphConfigType = {
+export const avgDatasetsConfig: TDoughnutGraphConfig = {
   backgroundColor: ["#0fa", "rgba(0, 0, 0, 0.8)"],
   // backgroundColor: ["#e5289e", "rgba(0, 0, 0, 0.8)"],
   borderColor: "#0fa3",
