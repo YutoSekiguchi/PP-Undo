@@ -23,6 +23,7 @@ import { addStroke } from "@/infrastructures/services/strokes";
 import { rgbToHex } from "@material-ui/core";
 import { fetchClientLogsByNID } from "@/infrastructures/services/ppUndoLogs";
 import { NOTE_WIDTH_RATIO } from "@/configs/settings";
+import { confirmNumberArrayFromString } from "@/modules/common/confirmArrayFromString";
 
 let drawStartTime: number = 0; // 描画時の時刻
 let drawEndTime: number = 0; // 描画終了時の時刻
@@ -47,7 +48,7 @@ export const Note: () => JSX.Element = () => {
   const [, addHistory] = useAtom(addHistoryAtom);
   const [, setHistoryForRedo] = useAtom(historyForRedoAtom);
   const [backgroundImage, setBackgroundImage] = useAtom(backgroundImageAtom);
-  const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom);
+  const [avgPressureOfStroke, setAvgPressureOfStroke] = useAtom(avgPressureOfStrokeAtom);
   const [, setAddAvgPressureOfStroke] = useAtom(addAvgPressureOfStrokeAtom);
   const [, setLogOfBeforePPUndo] = useAtom(logOfBeforePPUndoAtom);
   const [undoCount, ] = useAtom(undoCountAtom);
@@ -70,6 +71,7 @@ export const Note: () => JSX.Element = () => {
       if (instance?.getStrokeLength() == 0) {
         if (noteData !== null) {
           instance?.setSVGFromString(noteData.StrokeData.strokes.svg);
+          setAvgPressureOfStroke(confirmNumberArrayFromString(noteData.AllAvgPressureList));
           for(let i=0; i<editor.canvas._objects.length; i++) {
             if (editor.canvas._objects[i].stroke!.slice(0, 3) === "rgb") {
               editor.canvas._objects[i].stroke = rgbToHex(editor.canvas._objects[i].stroke!)
