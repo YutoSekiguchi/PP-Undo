@@ -86,6 +86,8 @@ export const plusRedoCountAtom = atom(null, (get, set) => {
   set(redoCountAtom, get(redoCountAtom) + 1);
 });
 
+export const noteAspectRatiotAtom = atom<number>(1);
+
 
 /**
 @description
