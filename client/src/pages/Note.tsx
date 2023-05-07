@@ -62,47 +62,6 @@ export const Note: () => JSX.Element = () => {
       return;
     }
 
-    // if (cropImage) {
-    //   editor.canvas.__eventListeners = {};
-    //   return;
-    // }
-
-    // if (!editor.canvas.__eventListeners["mouse:wheel"]) {
-    //   editor.canvas.on("mouse:wheel", function (opt) {
-    //     var delta = opt.e.deltaY;
-    //     var zoom = editor.canvas.getZoom();
-    //     zoom *= 0.999 ** delta;
-    //     if (zoom > 20) zoom = 20;
-    //     if (zoom < 0.01) zoom = 0.01;
-    //     editor.canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
-    //     opt.e.preventDefault();
-    //     opt.e.stopPropagation();
-    //   });
-    // }
-
-    // if (!editor.canvas.__eventListeners["mouse:down"]) {
-    //   editor.canvas.on("mouse:down", function (this: any) {
-    //     this.isDragging = true;
-    //     console.log(editor.canvas)
-    //   });
-    // }
-
-    // if (!editor.canvas.__eventListeners["mouse:move"]) {
-    //   editor.canvas.on("mouse:move", function (this: any) {
-    //     if (this.isDragging) {
-    //     }
-    //   });
-    // }
-
-    // if (!editor.canvas.__eventListeners["mouse:up"]) {
-    //   editor.canvas.on("mouse:up", function (this: any) {
-    //     // on mouse up we want to recalculate new interaction
-    //     // for all objects, so we call setViewportTransform
-    //     this.isDragging = false;
-
-    //   });
-    // }
-
     const firstLoadData = async () => {
       setReset();
       const noteData: NoteDataType | null = await getFirstStrokeData();
