@@ -3,11 +3,14 @@ import { useAtom } from 'jotai'
 import { ButtonStyleType } from "@/@types/note";
 import { addHistoryForRedoAtom, historyAtom, plusUndoCountAtom } from "@/infrastructures/jotai/drawer";
 import { FabricDrawer } from "@/modules/fabricdrawer";
+import { addUndoCount } from "@/infrastructures/services/undoCounts";
+import { myNoteAtom } from "@/infrastructures/jotai/notes";
 
 export const UndoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
   const [history, setHistory] = useAtom(historyAtom);
   const [, plusUndoCount] = useAtom(plusUndoCountAtom);
   const [, addHistoryForRedo] = useAtom(addHistoryForRedoAtom);
+  const [myNote, ] = useAtom(myNoteAtom);
 
   const buttonStyle: ButtonStyleType = {
     backgroundColor: `${history.length === 0 ?"#eee": "rgb(96, 165, 250)"}`,
@@ -17,6 +20,9 @@ export const UndoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
 
   const undo = async () => {
     if (history.length === 0) {return;}
+    const beforeUndoNoteImage = "";
+    const beforeUndoStrokeData = {"Strokes": {"data": fabricDrawer?.editor.canvas.getObjects(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}};
+
     const lastHistory = history[history.length - 1];
     if (lastHistory) {
       if (lastHistory.type === "pen") {
@@ -30,39 +36,22 @@ export const UndoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
       setHistory(history.splice(0, history.length - 1));
       plusUndoCount();
     }
-    // if (undoableCount <= 0 || drawer.numOfStroke<=0) {
-    //   return;
-    // }
-    // addLog({
-    //   stroke: drawer.currentFigure.strokes[drawer.currentFigure.strokes.length-1],
-    //   pressure: avgPressureOfStroke[drawer.currentFigure.strokes.length-1]
-    // });
-    // const beforeUndoNoteImage = await getCurrentNoteImage();
-    // const beforeUndoNoteImage = "";
-    // const beforeUndoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
-    // removeAvgPressureOfStroke(drawer.currentFigure.strokes.length-1);
-    // drawer.undo();
-    // plusUndoCount();
-    // setDrawer(drawer);
-    // setUndoableCount(undoableCount-1);
-    // drawer.reDraw();
     // if (myNote != null) {
     //   myNote.StrokeData = drawer.currentFigure.strokes.concat();
     // }
-    // const afterUndoNoteImage = await getCurrentNoteImage();
-    // const afterUndoNoteImage = "";
-    // const afterUndoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
-    // await addUndoCount(
-    //   {
-    //     UID: myNote!.UID,
-    //     NID: myNote!.ID,
-    //     BeforeUndoNoteImage: beforeUndoNoteImage,
-    //     BeforeUndoStrokeData: beforeUndoStrokeData,
-    //     AfterUndoNoteImage: afterUndoNoteImage,
-    //     AfterUndoStrokeData: afterUndoStrokeData,
-    //     LeftStrokeCount: drawer.currentFigure.strokes.length,
-    //   }
-    // )
+    const afterUndoNoteImage = "";
+    const afterUndoStrokeData = {"Strokes": {"data": fabricDrawer?.editor.canvas.getObjects(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}};
+    await addUndoCount(
+      {
+        UID: myNote!.UID,
+        NID: myNote!.ID,
+        BeforeUndoNoteImage: beforeUndoNoteImage,
+        BeforeUndoStrokeData: beforeUndoStrokeData,
+        AfterUndoNoteImage: afterUndoNoteImage,
+        AfterUndoStrokeData: afterUndoStrokeData,
+        LeftStrokeCount: fabricDrawer!.getStrokeLength(),
+      }
+    )
   }
 
   const undoIcon = (

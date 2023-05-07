@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { LogRedoImageDialogProps, PostLogRedoCountsDataType } from "@/@types/note";
 import { useAtom } from "jotai";
-import { addAvgPressureOfStrokeAtom, clearAvgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawerAtom, logOfBeforePPUndoAtom, logRedoCountAtom, sliderValueAtom, undoableCountAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, clearAvgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawerAtom, historyAtom, historyForRedoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, sliderValueAtom, undoableCountAtom } from "@/infrastructures/jotai/drawer";
 import { Box, Button } from "@mui/material";
 import { CancelButton } from "./CancelButton";
 import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
@@ -10,6 +10,7 @@ import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { addLogRedoCount } from "@/infrastructures/services/ppUndoLogs/counts";
 import { LoadingScreen } from "@/components/common/LoadingScreen";
 import { TLogRedoImageDialogProps } from "@/@types/fabricdrawer";
+import { rgbToHex } from "@/modules/note/RGBToHex";
 
 
 export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) => {
@@ -22,54 +23,47 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
   const [, setUndoableCount] = useAtom(undoableCountAtom);
   const [logRedoCount, setLogRedoCount] = useAtom(logRedoCountAtom);
   const [isLoadingScreen, setIsLoadingScreen] = useState<boolean>(false);
+  const [, setHistory] = useAtom(historyAtom);
+  const [, setHistoryForRedo] = useAtom(historyForRedoAtom);
   const [myNote, ] = useAtom(myNoteAtom);
 
   const ppRedo = async () => {
     setIsLoadingScreen(true);
-    const beforeLogRedoNoteImage = fabricDrawer?.getImg();
-    // const beforeLogRedoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
-    // const beforeLogRedoStrokeCount = calcIsShowStrokeCount(drawer.currentFigure.strokes);
-    // setClearAvgPressureOfStroke();
-    // const numOfStroke = drawer.numOfStroke;
-    // if(numOfStroke <= 0) return
-    // drawer.currentFigure.strokes = []
-    // logOfBeforePPUndo[dialogIndex].strokes.forEach(stroke => {
-    //   const newStroke = new Stroke(
-    //     stroke.points.map(point => new Point(point.x, point.y, {z: point.z})),
-    //     {
-    //       color: (stroke.color.length == 9 && stroke.color.slice(-2) !== "00")? stroke.color.slice(0, -2): stroke.color,
-    //       strokeWidth: stroke.strokeWidth,
-    //     }
-    //   );
-    //   newStroke.DFT.pointsToDraw();
-    //   drawer.currentFigure.add(newStroke);
-    //   setAddAvgPressureOfStroke(stroke.strokeAvgPressure)
-    // });
 
-    fabricDrawer?.setNewStrokes(logOfBeforePPUndo[dialogIndex].strokes);
-    // fabricDrawer?.reDraw();
-    // drawer.numOfStroke = drawer.currentFigure.strokes.length;
-    // drawer.reDraw();
-    // setClearUndoStrokeLog();
-    // setUndoableCount(0);
+    const beforeLogRedoNoteImage = fabricDrawer?.getImg();
+    const beforeLogRedoStrokeData = {"Strokes": {"data": fabricDrawer?.editor.canvas.getObjects(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}};
+    const beforeLogRedoStrokeCount = fabricDrawer?.getStrokeLength();
+    
+    fabricDrawer?.clear();
+    fabricDrawer?.setSVGFromString(logOfBeforePPUndo[dialogIndex].svg!)
+    for(let i=0; i<logOfBeforePPUndo[dialogIndex].pressureList!.length; i++) {
+      if (fabricDrawer?.editor.canvas._objects[i].stroke!.slice(0, 3) === "rgb") {
+        fabricDrawer.editor.canvas._objects[i].stroke = rgbToHex(fabricDrawer.editor.canvas._objects[i].stroke!)
+      }
+      Object.assign(fabricDrawer!.editor.canvas._objects[i], { pressure: logOfBeforePPUndo[dialogIndex].pressureList![i] });
+    }
+    fabricDrawer?.reDraw();
     setSliderValue(logOfBeforePPUndo[dialogIndex].sliderValue!);
-    // setLogRedoCount(logRedoCount + 1);
-    // const afterLogRedoNoteImage: string = await drawer.getBase64PngImage().catch((error: unknown) => {
-    //   console.log(error);
-    // });
-    // const afterLogRedoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
-    // const afterLogRedoStrokeCount = calcIsShowStrokeCount(drawer.currentFigure.strokes);
-    // const postLogRedoCountData: PostLogRedoCountsDataType = {
-    //   UID: myNote?.UID? myNote?.UID: 0,
-    //   NID: myNote?.ID? myNote?.ID: 0,
-    //   BeforeLogRedoNoteImage: beforeLogRedoNoteImage,
-    //   BeforeLogRedoStrokeData: beforeLogRedoStrokeData,
-    //   AfterLogRedoNoteImage: afterLogRedoNoteImage,
-    //   AfterLogRedoStrokeData: afterLogRedoStrokeData,
-    //   BeforeLogRedoStrokeCount: beforeLogRedoStrokeCount,
-    //   AfterLogRedoStrokeCount: afterLogRedoStrokeCount,
-    // };
-    // await addLogRedoCount(postLogRedoCountData);
+
+    const afterLogRedoNoteImage = fabricDrawer?.getImg();
+    const afterLogRedoStrokeData = {"Strokes": {"data": fabricDrawer?.editor.canvas.getObjects(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}};
+    const afterLogRedoStrokeCount = fabricDrawer?.getStrokeLength();
+    const postLogRedoCountData: PostLogRedoCountsDataType = {
+      UID: myNote?.UID? myNote?.UID: 0,
+      NID: myNote?.ID? myNote?.ID: 0,
+      // BeforeLogRedoNoteImage: beforeLogRedoNoteImage!,
+      BeforeLogRedoNoteImage: "",
+      BeforeLogRedoStrokeData: beforeLogRedoStrokeData,
+      // AfterLogRedoNoteImage: afterLogRedoNoteImage!,
+      AfterLogRedoNoteImage: "",
+      AfterLogRedoStrokeData: afterLogRedoStrokeData,
+      BeforeLogRedoStrokeCount: beforeLogRedoStrokeCount!,
+      AfterLogRedoStrokeCount: afterLogRedoStrokeCount!,
+    };
+    await addLogRedoCount(postLogRedoCountData);
+
+    setHistory([]);
+    setHistoryForRedo([]);
     setLogRedoCount(logRedoCount + 1);
     closeDialog();
     closeLog();

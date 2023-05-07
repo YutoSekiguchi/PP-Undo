@@ -3,11 +3,14 @@ import { useAtom } from 'jotai'
 import { addHistoryAtom, historyForRedoAtom, plusRedoCountAtom } from "@/infrastructures/jotai/drawer";
 import { ButtonStyleType } from "@/@types/note";
 import { FabricDrawer } from "@/modules/fabricdrawer";
+import { addRedoCount } from "@/infrastructures/services/redoCounts";
+import { myNoteAtom } from "@/infrastructures/jotai/notes";
 
 export const RedoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
   const [historyForRedo, setHistoryForRedo] = useAtom(historyForRedoAtom);
   const [, addHistory] = useAtom(addHistoryAtom);
   const [, plusRedoCount] = useAtom(plusRedoCountAtom);
+  const [myNote, ] = useAtom(myNoteAtom);
 
   const buttonStyle: ButtonStyleType = {
     backgroundColor: `${historyForRedo.length === 0? "#eee": "rgb(96, 165, 250)"}`,
@@ -16,6 +19,9 @@ export const RedoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
 
   const redo = async () => {
     if (historyForRedo.length === 0) {return;}
+    const beforeRedoNoteImage = "";
+    const beforeRedoStrokeData = {"Strokes": {"data": fabricDrawer?.editor.canvas.getObjects(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}};
+
     const lastHistoryForRedo = historyForRedo[historyForRedo.length - 1];
     if (lastHistoryForRedo) {
       if (lastHistoryForRedo.type === "pen") {
@@ -29,35 +35,23 @@ export const RedoButton: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabr
       setHistoryForRedo(historyForRedo.splice(0, historyForRedo.length - 1));
       plusRedoCount();
     }
-    // if (redoable[0] == false) {
-    //   return;
-    // }
-    // const beforeRedoNoteImage = "";
-    // const beforeRedoNoteImage = await getCurrentNoteImage();
-    // const beforeRedoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
-    // console.log(drawer);
-    // redo();
-    // drawer.numOfStroke = drawer.numOfStroke + 1;
-    // setDrawer(drawer);
-    // plusRedoCount();
-    // drawer.reDraw();
+    
     // if (myNote != null) {
     //   myNote.StrokeData = drawer.currentFigure.strokes.concat();
     // }
-    // // const afterRedoNoteImage = await getCurrentNoteImage();
-    // const afterRedoNoteImage = "";
-    // const afterRedoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
-    // await addRedoCount(
-    //   {
-    //     UID: myNote!.UID,
-    //     NID: myNote!.ID,
-    //     BeforeRedoNoteImage: beforeRedoNoteImage,
-    //     BeforeRedoStrokeData: beforeRedoStrokeData,
-    //     AfterRedoNoteImage: afterRedoNoteImage,
-    //     AfterRedoStrokeData: afterRedoStrokeData,
-    //     LeftStrokeCount: drawer.currentFigure.strokes.length,
-    //   }
-    // )
+    const afterRedoNoteImage = "";
+    const afterRedoStrokeData = {"Strokes": {"data": fabricDrawer?.editor.canvas.getObjects(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}};
+    await addRedoCount(
+      {
+        UID: myNote!.UID,
+        NID: myNote!.ID,
+        BeforeRedoNoteImage: beforeRedoNoteImage,
+        BeforeRedoStrokeData: beforeRedoStrokeData,
+        AfterRedoNoteImage: afterRedoNoteImage,
+        AfterRedoStrokeData: afterRedoStrokeData,
+        LeftStrokeCount: fabricDrawer!.getStrokeLength(),
+      }
+    )
   }
 
   const redoIcon = (
