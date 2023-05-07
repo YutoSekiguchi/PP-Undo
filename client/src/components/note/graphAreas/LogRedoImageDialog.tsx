@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { LogRedoImageDialogProps, PostLogRedoCountsDataType } from "@/@types/note";
+import { PostLogRedoCountsDataType } from "@/@types/note";
 import { useAtom } from "jotai";
-import { addAvgPressureOfStrokeAtom, clearAvgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawerAtom, historyAtom, historyForRedoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, sliderValueAtom, undoableCountAtom } from "@/infrastructures/jotai/drawer";
+import { historyAtom, historyForRedoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, sliderValueAtom } from "@/infrastructures/jotai/drawer";
 import { Box, Button } from "@mui/material";
 import { CancelButton } from "./CancelButton";
-import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
-import { calcIsShowStrokeCount } from "@/modules/note/CalcIsShowStroke";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { addLogRedoCount } from "@/infrastructures/services/ppUndoLogs/counts";
 import { LoadingScreen } from "@/components/common/LoadingScreen";
@@ -18,10 +16,6 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
   const { dialogIndex, closeDialog, closeLog, fabricDrawer } = props;
   const [, setSliderValue] = useAtom(sliderValueAtom);
   const [logOfBeforePPUndo, ] = useAtom(logOfBeforePPUndoAtom);
-  const [, setClearAvgPressureOfStroke] = useAtom(clearAvgPressureOfStrokeAtom);
-  const [, setAddAvgPressureOfStroke] = useAtom(addAvgPressureOfStrokeAtom);
-  const [, setClearUndoStrokeLog] = useAtom(clearUndoStrokeLogAtom);
-  const [, setUndoableCount] = useAtom(undoableCountAtom);
   const [logRedoCount, setLogRedoCount] = useAtom(logRedoCountAtom);
   const [isLoadingScreen, setIsLoadingScreen] = useState<boolean>(false);
   const [, setHistory] = useAtom(historyAtom);

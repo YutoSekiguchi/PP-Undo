@@ -6,7 +6,6 @@ import {
   Toolbar,
   Typography,
   Paper,
-  Button
 } from "@mui/material";
 import { penColorList } from "@/configs/PenColorConfig";
 import Spacer from "@/components/common/Spacer";
@@ -17,7 +16,6 @@ import { penWidthList } from "@/configs/PenWidthConfig";
 import { ChangePenWidthButton } from "./ChangePenWidthButton";
 import { PenButton } from "./PenButton";
 import { PointerButton } from "./PointerButton";
-import { drawMode } from "@nkmr-lab/average-figure-drawer";
 import { StrokeEraseButton } from "./StrokeEraseButton";
 import { UndoButton } from "./UndoButton";
 import { RedoButton } from "./RedoButton";
