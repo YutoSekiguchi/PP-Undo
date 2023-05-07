@@ -178,7 +178,7 @@ export const Notefolders: React.FC = () => {
                   {
                     notesData.map((noteData, i) => {
                       return (
-                        <Box key={i} className="text-center file-box pointer" onClick={() => navigate(`/newnote/${noteData.ID}`)}>
+                        <Box key={i} className="text-center file-box pointer" onClick={() => navigate(`/note/${noteData.ID}`)}>
                           <Box className="flex-start">
                             <Description sx={{ fontSize: 16 }} className="note-title-icon" />
                             <Box className="note-text">{noteData.Title}</Box>
