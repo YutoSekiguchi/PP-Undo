@@ -190,10 +190,11 @@ export const Notefolders: React.FC = () => {
                               </Box>
                             : <Box sx={{
                                 backgroundImage: `url(${noteData.BackgroundImage})`,
+                                backgroundSize: "cover",
                                 margin: "0 auto",
                                 borderRadius: "5%"
                               }} width={240} height={210}>
-                              <img src={noteData.NoteImage} width={250} height={210} />
+                              <img src={noteData.NoteImage} width={240} height={210} />
                             </Box>
                           }
                         </Box>

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { styled } from '@mui/system';
 import { useTheme } from '@mui/material/styles';
 import { useAtom } from "jotai";
-import { logNotifierCountAtom, logOfBeforePPUndoAtom } from "@/infrastructures/jotai/drawer";
+import { logNotifierCountAtom, logOfBeforePPUndoAtom, noteAspectRatiotAtom } from "@/infrastructures/jotai/drawer";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import {
   Box,
@@ -15,6 +15,7 @@ import NoImage from "@/assets/noimage.png"
 import { CancelButton } from "./CancelButton";
 import { LogRedoImageDialog } from "./LogRedoImageDialog";
 import { TLogImageListProps } from "@/@types/fabricdrawer";
+import { NOTE_WIDTH_RATIO } from "@/configs/settings";
 
 export const AllLogImageList: React.FC<TLogImageListProps> = (props) => {
   const { closeLog, fabricDrawer } = props;
@@ -24,6 +25,7 @@ export const AllLogImageList: React.FC<TLogImageListProps> = (props) => {
   
   const [logOfBeforePPUndo, ] = useAtom(logOfBeforePPUndoAtom);
   const [logNotifierCount, ] = useAtom(logNotifierCountAtom);
+  const [noteAspectRatio, ] = useAtom(noteAspectRatiotAtom);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [maxSteps, setMaxSteps] = useState<number>(Math.ceil(logOfBeforePPUndo.length/displayLogCount));
   const theme = useTheme();
@@ -159,14 +161,21 @@ export const AllLogImageList: React.FC<TLogImageListProps> = (props) => {
                   ? <Badge badgeContent={"New"} color="error"> 
                     <Box
                       className="log-image-wrapper"
-                      sx={{backgroundImage: `url("${logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].backgroundImage}")`,}}
+                      sx={{
+                        backgroundImage: `url("${logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].backgroundImage}")`,
+                        height: `${window.innerWidth * NOTE_WIDTH_RATIO * noteAspectRatio}`,
+                        backgroundSize: "cover"
+                      }}
                     >
                       <LogImage i={i} />
                       <LogTimeText i={i} />
                     </Box>
                   </Badge>
                   : <Box className="log-image-wrapper"
-                    sx={{backgroundImage: `url("${logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].backgroundImage}")`,}}
+                    sx={{
+                      backgroundImage: `url("${logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].backgroundImage}")`,
+                      backgroundSize: "cover"
+                    }}
                     >
                       <LogImage i={i} />
                       <LogTimeText i={i} />

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { LogRedoImageDialogProps, PostLogRedoCountsDataType } from "@/@types/note";
 import { useAtom } from "jotai";
-import { addAvgPressureOfStrokeAtom, clearAvgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawerAtom, historyAtom, historyForRedoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, sliderValueAtom, undoableCountAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, clearAvgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawerAtom, historyAtom, historyForRedoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, sliderValueAtom, undoableCountAtom } from "@/infrastructures/jotai/drawer";
 import { Box, Button } from "@mui/material";
 import { CancelButton } from "./CancelButton";
 import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
@@ -11,6 +11,7 @@ import { addLogRedoCount } from "@/infrastructures/services/ppUndoLogs/counts";
 import { LoadingScreen } from "@/components/common/LoadingScreen";
 import { TLogRedoImageDialogProps } from "@/@types/fabricdrawer";
 import { rgbToHex } from "@/modules/note/RGBToHex";
+import { NOTE_WIDTH_RATIO } from "@/configs/settings";
 
 
 export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) => {
@@ -26,6 +27,7 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
   const [, setHistory] = useAtom(historyAtom);
   const [, setHistoryForRedo] = useAtom(historyForRedoAtom);
   const [myNote, ] = useAtom(myNoteAtom);
+  const [noteAspectRatio, ] = useAtom(noteAspectRatiotAtom);
 
   const ppRedo = async () => {
     setIsLoadingScreen(true);
@@ -80,10 +82,19 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
       <CancelButton
         close={closeDialog}
       />
-      <Box className="width100 dialog-image-wrapper">
+      <Box 
+        className="dialog-image-wrapper"
+        sx={{
+          width: window.innerWidth * NOTE_WIDTH_RATIO,
+        }}
+      >
         <Box className="width100">
           <Box sx={{
             backgroundImage: `url("${logOfBeforePPUndo[dialogIndex].backgroundImage}")`,
+            backgroundSize: "contain",
+            width: window.innerWidth * NOTE_WIDTH_RATIO,
+            height: window.innerWidth * NOTE_WIDTH_RATIO * noteAspectRatio,
+            backgroundColor: "white"
             }}
           >
             <img
