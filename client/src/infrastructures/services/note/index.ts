@@ -2,9 +2,9 @@ import { NoteDataType, PostNoteType } from "@/@types/notefolders";
 import { API_URL } from "@/configs/settings";
 import axios from "axios";
 
-// nfidからノートの取得
-export const fetchNotesByNFID = async (nfid: number) => {
-  const url = `${API_URL}/notes/in/${nfid}`;
+// nfidとuidからノートの取得
+export const fetchNotesByNFIDAndUID = async (nfid: number, uid: number) => {
+  const url = `${API_URL}/notes/user/${uid}/in/${nfid}`;
   try {
     const res = await axios.get(url);
     if (res.status === 200) {

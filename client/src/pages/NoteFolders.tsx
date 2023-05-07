@@ -14,7 +14,7 @@ import FolderIcon from '@mui/icons-material/Folder';
 import Spacer from "@/components/common/Spacer";
 import { fetchNoteFoldersTree } from "@/infrastructures/services/noteFolders";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import { getNotesByNFIDAtom } from "@/infrastructures/jotai/notes";
+import { getNotesByNFIDAndUIDAtom } from "@/infrastructures/jotai/notes";
 import DescriptionTwoToneIcon from '@mui/icons-material/DescriptionTwoTone';
 import { Description } from "@mui/icons-material";
 import { truncateString } from "@/modules/common/truncateString";
@@ -28,7 +28,7 @@ export const Notefolders: React.FC = () => {
   const [treeData, setTreeData] = useState<NoteFoldersDataType[]>([]);
   const [loginUserData, ] = useAtom(userDataAtom);
   const [, getFolders] = useAtom(getFoldersAtom);
-  const [, getNotesByNFID] = useAtom(getNotesByNFIDAtom);
+  const [, getNotesByNFIDAndUID] = useAtom(getNotesByNFIDAndUIDAtom);
   const navigate = useNavigate();
 
   const NewButton = styled(Button)({
@@ -59,7 +59,10 @@ export const Notefolders: React.FC = () => {
         UID: uid,
         PNFID: pnfid
       }));
-      setNotesData(await getNotesByNFID(pnfid));
+      setNotesData(await getNotesByNFIDAndUID({
+        PNFID: pnfid,
+        UID: uid
+      }));
       if (pnfid != 0) { setTreeData(await fetchNoteFoldersTree(pnfid)); } 
     }
     const userData = lscache.get('loginUserData');
@@ -185,7 +188,14 @@ export const Notefolders: React.FC = () => {
                             ? <Box className="center note-background">
                                 <DescriptionTwoToneIcon sx={{ fontSize: 120 }} className="note-icon" />
                               </Box>
-                            : <img src={noteData.NoteImage} width={250} height={210} />
+                            : <Box sx={{
+                                backgroundImage: `url(${noteData.BackgroundImage})`,
+                                backgroundSize: "cover",
+                                margin: "0 auto",
+                                borderRadius: "5%"
+                              }} width={240} height={210}>
+                              <img src={noteData.NoteImage} width={240} height={210} />
+                            </Box>
                           }
                         </Box>
                       );

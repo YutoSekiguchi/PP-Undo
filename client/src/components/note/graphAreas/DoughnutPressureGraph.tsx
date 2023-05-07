@@ -13,11 +13,10 @@ import {
 } from 'chart.js'
 import { Doughnut } from 'react-chartjs-2'
 import { Box, Typography } from "@mui/material";
-import { DoughnutGraphConfigType, DoughnutPressureGraphPropsType } from "@/@types/note";
+import { TDoughnutGraphConfig, TDoughnutPressureGraphProps } from "@/@types/note";
 import { doughnutOptions } from "@/configs/DoughnutPressureGraphConfig";
-import Spacer from "@/components/common/Spacer";
 
-export const DoughnutPressureGraph: React.FC<DoughnutPressureGraphPropsType> = (props) => {
+export const DoughnutPressureGraph: React.FC<TDoughnutPressureGraphProps> = (props) => {
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -31,18 +30,18 @@ export const DoughnutPressureGraph: React.FC<DoughnutPressureGraphPropsType> = (
   )
   ChartJS.defaults.scales.linear.min = 0;
 
-  interface dataType {
+  interface TData {
     data: number[];
   }
-  interface datasetsType extends DoughnutGraphConfigType, dataType {};
-  interface graphDataType {
+  interface TDatasets extends TDoughnutGraphConfig, TData {};
+  interface TGraphData {
     labels: string[];
-    datasets: datasetsType[];
+    datasets: TDatasets[];
   }
 
   const { pressureValue, title, graphLabel, datasetsConfig } = props;
 
-  const graphData: graphDataType = {
+  const graphData: TGraphData = {
     labels: graphLabel,
     datasets: [
       {
@@ -54,13 +53,12 @@ export const DoughnutPressureGraph: React.FC<DoughnutPressureGraphPropsType> = (
 
   return (
     <>
-      <Box sx={{ width: "48%", height: "30vh" }}>
-        <Typography component="div">
-          <Box className="big-white-text center">
+      <Box sx={{ width: "48%" }}>
+        <Box className="white-text center">
+          <Typography fontSize={12} fontWeight="bold">
             {title}
-          </Box>
-        </Typography>
-        <Spacer size={8} axis="vertical" />
+          </Typography>
+        </Box>
         <Box sx={{ position: "relative" }}>
           <Typography component="div">
             <Box className="absolute-center-text white-text text-center doughnut-graph-title">

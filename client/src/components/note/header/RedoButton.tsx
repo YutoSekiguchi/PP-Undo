@@ -1,42 +1,46 @@
 import React from "react";
 import { useAtom } from 'jotai'
-import { drawerAtom, plusRedoCountAtom, redoAtom, redoableAtom } from "@/infrastructures/jotai/drawer";
-import { ButtonStyleType } from "@/@types/note";
-import { myNoteAtom } from "@/infrastructures/jotai/notes";
-import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
+import { addHistoryAtom, historyForRedoAtom, plusRedoCountAtom } from "@/infrastructures/jotai/drawer";
+import { TButtonStyle } from "@/@types/note";
+import { FabricDrawer } from "@/modules/fabricdrawer";
 import { addRedoCount } from "@/infrastructures/services/redoCounts";
+import { myNoteAtom } from "@/infrastructures/jotai/notes";
 
-export const RedoButton: React.FC = () => {
-  const [drawer, setDrawer] = useAtom(drawerAtom);
-  const [, redo] = useAtom(redoAtom);
+export const RedoButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
+  const [historyForRedo, setHistoryForRedo] = useAtom(historyForRedoAtom);
+  const [, addHistory] = useAtom(addHistoryAtom);
   const [, plusRedoCount] = useAtom(plusRedoCountAtom);
-  const redoable = useAtom(redoableAtom);
-  const [myNote, ] = useAtom(myNoteAtom); // ノート情報の保持
+  const [myNote, ] = useAtom(myNoteAtom);
 
-  const buttonStyle: ButtonStyleType = {
-    backgroundColor: `${redoable[0]? "rgb(96, 165, 250)": "#eee"}`,
-    cursor: `${redoable[0]? "pointer": "not-allowed"}`,
+  const buttonStyle: TButtonStyle = {
+    backgroundColor: `${historyForRedo.length === 0? "#eee": "rgb(96, 165, 250)"}`,
+    cursor: `${historyForRedo.length === 0? "not-allowed": "pointer"}`,
   }
 
-  const clickRedoButton = async () => {
-    if (redoable[0] == false) {
-      return;
-    }
+  const redo = async () => {
+    if (historyForRedo.length === 0) {return;}
     const beforeRedoNoteImage = "";
-    // const beforeRedoNoteImage = await getCurrentNoteImage();
-    const beforeRedoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
-    console.log(drawer);
-    redo();
-    drawer.numOfStroke = drawer.numOfStroke + 1;
-    setDrawer(drawer);
-    plusRedoCount();
-    drawer.reDraw();
-    if (myNote != null) {
-      myNote.StrokeData = drawer.currentFigure.strokes.concat();
+    const beforeRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
+
+    const lastHistoryForRedo = historyForRedo[historyForRedo.length - 1];
+    if (lastHistoryForRedo) {
+      if (lastHistoryForRedo.type === "pen") {
+        fabricDrawer.addStroke(lastHistoryForRedo.strokes[0]);
+      } else if (lastHistoryForRedo.type === "erase") {
+        for(var i=0; i<lastHistoryForRedo.strokes.length; i++) {
+          fabricDrawer.removeStroke(lastHistoryForRedo.strokes[i]);
+        }
+      }
+      addHistory(lastHistoryForRedo);
+      setHistoryForRedo(historyForRedo.splice(0, historyForRedo.length - 1));
+      plusRedoCount();
     }
-    // const afterRedoNoteImage = await getCurrentNoteImage();
+    
+    // if (myNote != null) {
+    //   myNote.StrokeData = drawer.currentFigure.strokes.concat();
+    // }
     const afterRedoNoteImage = "";
-    const afterRedoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
+    const afterRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
     await addRedoCount(
       {
         UID: myNote!.UID,
@@ -45,16 +49,9 @@ export const RedoButton: React.FC = () => {
         BeforeRedoStrokeData: beforeRedoStrokeData,
         AfterRedoNoteImage: afterRedoNoteImage,
         AfterRedoStrokeData: afterRedoStrokeData,
-        LeftStrokeCount: drawer.currentFigure.strokes.length,
+        LeftStrokeCount: fabricDrawer.getStrokeLength(),
       }
     )
-  }
-
-  const getCurrentNoteImage  = async () => {
-    const image: string = await drawer.getBase64PngImage().catch((error: unknown) => {
-      console.log(error);
-    });
-    return image? image: "";
   }
 
   const redoIcon = (
@@ -75,7 +72,7 @@ export const RedoButton: React.FC = () => {
       <button
         className="undo-redo-button"
         {... {style: buttonStyle}}
-        onClick={() => clickRedoButton()}
+        onClick={() => redo()}
       >
         {redoIcon}
       </button>

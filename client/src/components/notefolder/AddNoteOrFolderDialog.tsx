@@ -1,6 +1,6 @@
 import { AddFolderDialogProps } from "@/@types/notefolders";
 import { getFoldersAtom } from "@/infrastructures/jotai/noteFolders";
-import { getNotesByNFIDAtom } from "@/infrastructures/jotai/notes";
+import { getNotesByNFIDAndUIDAtom } from "@/infrastructures/jotai/notes";
 import { addNote } from "@/infrastructures/services/note";
 import { addNoteFolder } from "@/infrastructures/services/noteFolders";
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
@@ -15,7 +15,7 @@ export const AddNoteOrFolderDialog: React.FC<AddFolderDialogProps> = (props) => 
   const [title, setTitle] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [, getFolders] = useAtom(getFoldersAtom);
-  const [, getNotesByNFID] = useAtom(getNotesByNFIDAtom);
+  const [, getNotesByNFIDAndUID] = useAtom(getNotesByNFIDAndUIDAtom);
 
   const handleChangeTitle = (event: any) => {
     setTitle(event.target.value);
@@ -70,7 +70,10 @@ export const AddNoteOrFolderDialog: React.FC<AddFolderDialogProps> = (props) => 
       SliderValue: 0,
       BackgroundImage: "",
     });
-    setNotesData!(await getNotesByNFID(nfid));
+    setNotesData!(await getNotesByNFIDAndUID({
+      UID: uid,
+      PNFID: nfid,
+    }));
     closeDialog();
   }
   

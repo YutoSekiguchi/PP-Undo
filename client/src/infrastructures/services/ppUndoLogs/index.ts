@@ -1,9 +1,9 @@
-import { PostClientLogDataType, PostLogDataType } from "@/@types/note";
+import { TPostClientLogData, TPostLogData} from "@/@types/note";
 import { API_URL } from "@/configs/settings";
 import axios from "axios";
 
 // ログの追加
-export const addLog = async (data: PostLogDataType) => {
+export const addLog = async (data: TPostLogData) => {
   const url = `${API_URL}/logs`;
   try {
     const res = await axios.post(url, data);
@@ -19,7 +19,7 @@ export const addLog = async (data: PostLogDataType) => {
 }
 
 // クライアント用のLogを追加
-export const addClientLog = async (data: PostClientLogDataType) => {
+export const addClientLog = async (data: TPostClientLogData) => {
   const url = `${API_URL}/clientlogs`;
   try {
     const res = await axios.post(url, data);

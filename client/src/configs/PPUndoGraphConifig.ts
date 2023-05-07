@@ -1,10 +1,10 @@
-import { PPUndoGraphDatasetsConfigType } from "@/@types/note";
+import { TPPUndoGraphDatasetsConfig } from "@/@types/note";
 import { styled } from '@mui/material/styles';
 import { Slider } from "@mui/material";
 
 export const xLabels: number[] = [...Array(21)].map((_, i) => Math.round((i*0.05)*100)/100);
 
-export const datasetsConfig: PPUndoGraphDatasetsConfigType = {
+export const datasetsConfig: TPPUndoGraphDatasetsConfig = {
   label: "ストローク数",
   borderColor: "#00b3ff",
   backgroundColor: "#9e4c9833",

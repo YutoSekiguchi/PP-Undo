@@ -7,7 +7,13 @@ import (
 )
 
 type StrokeData struct {
-	Strokes []interface{} `json:"strokes" gorm:"not null;"`
+	Strokes StrokeDataStrokes `json:"strokes" gorm:"not null;"`
+}
+
+type StrokeDataStrokes struct {
+	Data []interface{} `json:"data" gorm:"not null;"`
+	Pressure []float64 `json:"pressure"`
+	Svg string `json:"svg"`
 }
 
 func (s StrokeData) Value() (driver.Value, error) {
@@ -31,9 +37,12 @@ func (s *StrokeData) Scan(value interface{}) error {
 
 type ClientLogData struct {
 	CreateTime string `json:"createTime" gorm:"not null;"`
+	BackgroundImage string `json:"backgroundImage" gorm:"not null;"`
 	Image string `json:"image" gorm:"not null;"`
 	SliderValue float64 `json:"sliderValue" gorm:"not null;"`
 	Strokes []interface{} `json:"strokes" gorm:"not null;"`
+	Svg string `json:"svg"`
+	PressureList []float64 `json:"pressureList"`
 }
 
 func (s ClientLogData) Value() (driver.Value, error) {

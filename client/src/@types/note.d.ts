@@ -1,49 +1,18 @@
-export interface ColorButtonProps {
-  buttonColor: string;
-  isChoice: boolean;
-  colorChange: (index: number) => void;
-  index: number;
+import { FabricDrawer } from "@/modules/fabricdrawer";
+import { FabricJSEditor } from "fabricjs-react";
+
+export interface TDoughnutGraphConfig {
+  backgroundColor?: string | string[];
+  borderColor?: string;
+}
+export interface TDoughnutPressureGraphProps {
+  pressureValue: number;
+  title: string;
+  graphLabel: string[];
+  datasetsConfig: DoughnutGraphConfigType;
 }
 
-export interface LogImageListProps {
-  closeLog: () => void;
-}
-
-export interface LogRedoImageDialogProps {
-  dialogIndex: number;
-  closeDialog: () => void;
-  closeLog: () => void;
-}
-
-export interface CancelButtonProps {
-  half?: boolean;
-  fontSize?: number;
-  close: () => void;
-}
-
-export interface NoteSizeType {
-  width: number | string;
-  height: number | string;
-}
-
-export interface PenColorType {
-  penColor: string;
-  useable: boolean;
-}
-
-export interface ButtonStyleType {
-  backgroundColor: "#eee" | "rgb(96, 165, 250)";
-  cursor: "not-allowed" | "pointer";
-}
-
-export interface Point2Type {
-  x: number;
-  y: number;
-  z: number;
-  time: number;
-}
-
-export interface PPUndoGraphDatasetsConfigType {
+export interface TPPUndoGraphDatasetsConfig {
   label: string;
   borderColor: string;
   backgroundColor?: string;
@@ -55,98 +24,84 @@ export interface PPUndoGraphDatasetsConfigType {
   borderWidth?: number;
 }
 
-export interface DoughnutGraphConfigType {
-  backgroundColor?: string | string[];
-  borderColor?: string;
 
+export interface TColorButton {
+  buttonColor: string;
+  isChoice: boolean;
+  setColor: React.Dispatch<React.SetStateAction<string>>;
+  fabricDrawer: FabricDrawer;
 }
 
-export interface PointType {
-  x: number;
-  y: number;
-  z: number;
+export interface TButtonStyle {
+  backgroundColor: "#eee" | "rgb(96, 165, 250)";
+  cursor: "not-allowed" | "pointer";
 }
 
-export interface StrokeType {
-  points: PointType[];
-  color: string;
+export interface TPenColor {
+  penColor: string;
+  useable: boolean;
+}
+
+export interface TChangePenWidthButton {
   strokeWidth: number;
-  strokeAvgPressure: number;
+  setStrokeWidth: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export interface LogStrokeDataType {
-  image?: string;
+export interface TLogStrokeData {
+  image: string;
+  backgroundImage: string;
   createTime: string;
-  sliderValue?: number | number[];
-  strokes: StrokeType[];
+  sliderValue: number | number[];
+  strokes: any[];
+  svg: string;
+  pressureList: number[];
 }
 
-export interface DoughnutPressureGraphPropsType {
-  pressureValue: number;
-  title: string;
-  graphLabel: string[];
-  datasetsConfig: DoughnutGraphConfigType;
+export interface TAddText {
+  mode: "circle"|"text"|"line"|"rect" = "text",
+  text?: string,
+  editor?: FabricJSEditor,
 }
 
-interface IDAndCreatedAtType {
-  ID: number;
-  CreatedAt: string;
+export interface TLogImageListProps {
+  closeLog: () => void;
+  fabricDrawer: FabricDrawer;
 }
 
-export interface PostStrokeDataType {
+export interface TLogRedoImageDialogProps {
+  dialogIndex: number;
+  closeDialog: () => void;
+  closeLog: () => void;
+  fabricDrawer: FabricDrawer;
+}
+
+export interface TCancelButtonProps {
+  half?: boolean;
+  fontSize?: number;
+  close: () => void;
+}
+
+export interface TPostStrokeData {
   UID: number;
   NID: number;
   StrokeData: any;
   AvgPressure: number;
   PressureList: string;
-  Time?: number;
+  Time: number;
   Mode: string;
   Save: number;
 }
 
-export interface StrokeDataType extends PostStrokeDataType, IDAndCreatedAtType {}
-
-export interface PostUndoCountDataType {
+export interface TPostPPUndoCountsData {
   UID: number;
   NID: number;
-  BeforeUndoNoteImage: string;
-  BeforeUndoStrokeData: any;
-  AfterUndoNoteImage: string;
-  AfterUndoStrokeData: any;
-  LeftStrokeCount: number;
+  AfterPPUndoStrokeData: any;
+  AfterPPUndoImageData: string;
+  BeforePPUndoStrokeCount: number;
+  AfterPPUndoStrokeCount: number;
 }
 
-export interface PostRedoCountDataType {
-  UID: number;
-  NID: number;
-  BeforeRedoNoteImage: string;
-  BeforeRedoStrokeData: any;
-  AfterRedoNoteImage: string;
-  AfterRedoStrokeData: any;
-  LeftStrokeCount: number;
-}
-
-export interface PostLogDataType {
-  UID: number;
-  NID: number;
-  StrokeData: any;
-  LogImage: string;
-  AvgPressureList: string;
-  Save: number;
-  SliderValue: number | number[];
-  BeforeLogRedoSliderValue: number | number[];
-}
-
-export interface LogDataType extends PostLogDataType, IDAndCreatedAtType {}
-
-export interface PostClientLogDataType {
-  NID: number;
-  Data: any;
-}
-
-export interface ClientLogDataType extends PostClientLogDataType, IDAndCreatedAtType {}
-
-export interface PostLogRedoCountsDataType {
+export interface TPostLogRedoCountsData {
   UID: number;
   NID: number;
   BeforeLogRedoNoteImage: string;
@@ -157,11 +112,49 @@ export interface PostLogRedoCountsDataType {
   AfterLogRedoStrokeCount: number;
 }
 
-export interface PostPPUndoCountsDataType {
+export interface TPostLogData {
   UID: number;
   NID: number;
-  AfterPPUndoStrokeData: any;
-  AfterPPUndoImageData: string;
-  BeforePPUndoStrokeCount: number;
-  AfterPPUndoStrokeCount: number;
+  StrokeData: any;
+  LogImage: string;
+  AvgPressureList: string;
+  Save: number;
+  SliderValue: number | number[];
+  BeforeLogRedoSliderValue: number | number[];
 }
+
+export interface TPostUndoCountData {
+  UID: number;
+  NID: number;
+  BeforeUndoNoteImage: string;
+  BeforeUndoStrokeData: any;
+  AfterUndoNoteImage: string;
+  AfterUndoStrokeData: any;
+  LeftStrokeCount: number;
+}
+
+export interface TPostRedoCountData {
+  UID: number;
+  NID: number;
+  BeforeRedoNoteImage: string;
+  BeforeRedoStrokeData: any;
+  AfterRedoNoteImage: string;
+  AfterRedoStrokeData: any;
+  LeftStrokeCount: number;
+}
+
+interface TIDAndCreatedAt {
+  ID: number;
+  CreatedAt: string;
+}
+export interface TPostClientLogData {
+  NID: number;
+  Data: any;
+}
+
+export interface TClientLogData extends TPostClientLogData, TIDAndCreatedAt {}
+
+export interface TStrokeData extends TPostStrokeData, TIDAndCreatedAt {}
+
+
+export interface TLogData extends TPostLogData, TIDAndCreatedAt {}

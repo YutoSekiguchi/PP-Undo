@@ -1,48 +1,46 @@
 import React from "react";
 import { useAtom } from 'jotai'
-import { avgPressureOfStrokeAtom, drawerAtom, undoableCountAtom, removeAvgPressureOfStrokeAtom, setUndoStrokeLogAtom, plusUndoCountAtom } from "@/infrastructures/jotai/drawer";
-import { ButtonStyleType } from "@/@types/note";
+import { TButtonStyle } from "@/@types/note";
+import { addHistoryForRedoAtom, historyAtom, plusUndoCountAtom } from "@/infrastructures/jotai/drawer";
+import { FabricDrawer } from "@/modules/fabricdrawer";
 import { addUndoCount } from "@/infrastructures/services/undoCounts";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
-import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
 
-export const UndoButton: React.FC = () => {
-  const [drawer, setDrawer] = useAtom(drawerAtom);
-  const [undoableCount, setUndoableCount] = useAtom(undoableCountAtom);
-  const [, addLog] = useAtom(setUndoStrokeLogAtom);
-  const [, removeAvgPressureOfStroke] = useAtom(removeAvgPressureOfStrokeAtom);
-  const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom);
+export const UndoButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
+  const [history, setHistory] = useAtom(historyAtom);
   const [, plusUndoCount] = useAtom(plusUndoCountAtom);
-  const [myNote, ] = useAtom(myNoteAtom); // ノート情報の保持
+  const [, addHistoryForRedo] = useAtom(addHistoryForRedoAtom);
+  const [myNote, ] = useAtom(myNoteAtom);
 
-  const buttonStyle: ButtonStyleType = {
-    backgroundColor: `${undoableCount<=0 || drawer.numOfStroke<=0 ?"#eee": "rgb(96, 165, 250)"}`,
-    cursor: `${undoableCount<=0 || drawer.numOfStroke<=0 ?"not-allowed" :"pointer"}`,
+  const buttonStyle: TButtonStyle = {
+    backgroundColor: `${history.length === 0 ?"#eee": "rgb(96, 165, 250)"}`,
+    cursor: `${history.length === 0 ?"not-allowed" :"pointer"}`,
   }
 
+
   const undo = async () => {
-    if (undoableCount <= 0 || drawer.numOfStroke<=0) {
-      return;
-    }
-    addLog({
-      stroke: drawer.currentFigure.strokes[drawer.currentFigure.strokes.length-1],
-      pressure: avgPressureOfStroke[drawer.currentFigure.strokes.length-1]
-    });
-    // const beforeUndoNoteImage = await getCurrentNoteImage();
+    if (history.length === 0) {return;}
     const beforeUndoNoteImage = "";
-    const beforeUndoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
-    removeAvgPressureOfStroke(drawer.currentFigure.strokes.length-1);
-    drawer.undo();
-    plusUndoCount();
-    setDrawer(drawer);
-    setUndoableCount(undoableCount-1);
-    drawer.reDraw();
-    if (myNote != null) {
-      myNote.StrokeData = drawer.currentFigure.strokes.concat();
+    const beforeUndoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
+
+    const lastHistory = history[history.length - 1];
+    if (lastHistory) {
+      if (lastHistory.type === "pen") {
+        fabricDrawer.removeStroke(lastHistory.strokes[0])
+      } else if (lastHistory.type === "erase") {
+        for(var i=0; i<lastHistory.strokes.length; i++) {
+          fabricDrawer.addStroke(lastHistory.strokes[i]);
+        }
+      }
+      addHistoryForRedo(lastHistory);
+      setHistory(history.splice(0, history.length - 1));
+      plusUndoCount();
     }
-    // const afterUndoNoteImage = await getCurrentNoteImage();
+    // if (myNote != null) {
+    //   myNote.StrokeData = drawer.currentFigure.strokes.concat();
+    // }
     const afterUndoNoteImage = "";
-    const afterUndoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
+    const afterUndoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
     await addUndoCount(
       {
         UID: myNote!.UID,
@@ -51,16 +49,9 @@ export const UndoButton: React.FC = () => {
         BeforeUndoStrokeData: beforeUndoStrokeData,
         AfterUndoNoteImage: afterUndoNoteImage,
         AfterUndoStrokeData: afterUndoStrokeData,
-        LeftStrokeCount: drawer.currentFigure.strokes.length,
+        LeftStrokeCount: fabricDrawer.getStrokeLength(),
       }
     )
-  }
-
-  const getCurrentNoteImage  = async () => {
-    const image: string = await drawer.getBase64PngImage().catch((error: unknown) => {
-      console.log(error);
-    });
-    return image? image: "";
   }
 
   const undoIcon = (

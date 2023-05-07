@@ -1,2 +1,6 @@
 @use "./header/NoteHeader.scss";
 @use "./graphAreas/NoteGraphAreas.scss";
+
+.fabric-canvas {
+  background-color: white;
+}

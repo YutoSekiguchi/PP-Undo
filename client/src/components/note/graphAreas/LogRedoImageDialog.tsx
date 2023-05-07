@@ -1,75 +1,66 @@
 import React, { useState } from "react";
-import { LogRedoImageDialogProps, PostLogRedoCountsDataType } from "@/@types/note";
+import { TPostLogRedoCountsData } from "@/@types/note";
 import { useAtom } from "jotai";
-import { Stroke, Point } from "@nkmr-lab/average-figure-drawer";
-import { addAvgPressureOfStrokeAtom, clearAvgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawerAtom, logOfBeforePPUndoAtom, logRedoCountAtom, sliderValueAtom, undoableCountAtom } from "@/infrastructures/jotai/drawer";
+import { historyAtom, historyForRedoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, sliderValueAtom } from "@/infrastructures/jotai/drawer";
 import { Box, Button } from "@mui/material";
 import { CancelButton } from "./CancelButton";
-import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
-import { calcIsShowStrokeCount } from "@/modules/note/CalcIsShowStroke";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { addLogRedoCount } from "@/infrastructures/services/ppUndoLogs/counts";
 import { LoadingScreen } from "@/components/common/LoadingScreen";
+import { TLogRedoImageDialogProps } from "@/@types/note";
+import { rgbToHex } from "@/modules/note/RGBToHex";
+import { NOTE_WIDTH_RATIO } from "@/configs/settings";
 
 
-export const LogRedoImageDialog: React.FC<LogRedoImageDialogProps> = (props) => {
-  const { dialogIndex, closeDialog, closeLog } = props;
-  const [drawer, ] = useAtom(drawerAtom);
+export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) => {
+  const { dialogIndex, closeDialog, closeLog, fabricDrawer } = props;
   const [, setSliderValue] = useAtom(sliderValueAtom);
   const [logOfBeforePPUndo, ] = useAtom(logOfBeforePPUndoAtom);
-  const [, setClearAvgPressureOfStroke] = useAtom(clearAvgPressureOfStrokeAtom);
-  const [, setAddAvgPressureOfStroke] = useAtom(addAvgPressureOfStrokeAtom);
-  const [, setClearUndoStrokeLog] = useAtom(clearUndoStrokeLogAtom);
-  const [, setUndoableCount] = useAtom(undoableCountAtom);
   const [logRedoCount, setLogRedoCount] = useAtom(logRedoCountAtom);
   const [isLoadingScreen, setIsLoadingScreen] = useState<boolean>(false);
+  const [, setHistory] = useAtom(historyAtom);
+  const [, setHistoryForRedo] = useAtom(historyForRedoAtom);
   const [myNote, ] = useAtom(myNoteAtom);
+  const [noteAspectRatio, ] = useAtom(noteAspectRatiotAtom);
 
   const ppRedo = async () => {
     setIsLoadingScreen(true);
-    const beforeLogRedoNoteImage: string = await drawer.getBase64PngImage().catch((error: unknown) => {
-      console.log(error);
-    });
-    const beforeLogRedoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
-    const beforeLogRedoStrokeCount = calcIsShowStrokeCount(drawer.currentFigure.strokes);
-    setClearAvgPressureOfStroke();
-    const numOfStroke = drawer.numOfStroke;
-    if(numOfStroke <= 0) return
-    drawer.currentFigure.strokes = []
-    logOfBeforePPUndo[dialogIndex].strokes.forEach(stroke => {
-      const newStroke = new Stroke(
-        stroke.points.map(point => new Point(point.x, point.y, {z: point.z})),
-        {
-          color: (stroke.color.length == 9 && stroke.color.slice(-2) !== "00")? stroke.color.slice(0, -2): stroke.color,
-          strokeWidth: stroke.strokeWidth,
-        }
-      );
-      newStroke.DFT.pointsToDraw();
-      drawer.currentFigure.add(newStroke);
-      setAddAvgPressureOfStroke(stroke.strokeAvgPressure)
-    });
-    drawer.numOfStroke = drawer.currentFigure.strokes.length;
-    drawer.reDraw();
-    setClearUndoStrokeLog();
-    setUndoableCount(0);
-    setSliderValue(logOfBeforePPUndo[dialogIndex].sliderValue!);
-    setLogRedoCount(logRedoCount + 1);
-    const afterLogRedoNoteImage: string = await drawer.getBase64PngImage().catch((error: unknown) => {
-      console.log(error);
-    });
-    const afterLogRedoStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
-    const afterLogRedoStrokeCount = calcIsShowStrokeCount(drawer.currentFigure.strokes);
-    const postLogRedoCountData: PostLogRedoCountsDataType = {
+
+    const beforeLogRedoNoteImage = fabricDrawer.getImg();
+    const beforeLogRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
+    const beforeLogRedoStrokeCount = fabricDrawer?.getStrokeLength();
+    
+    fabricDrawer.clear();
+    fabricDrawer.setSVGFromString(logOfBeforePPUndo[dialogIndex].svg)
+    for(let i=0; i<logOfBeforePPUndo[dialogIndex].pressureList.length; i++) {
+      if (fabricDrawer.editor.canvas._objects[i].stroke!.slice(0, 3) === "rgb") {
+        fabricDrawer.editor.canvas._objects[i].stroke = rgbToHex(fabricDrawer.editor.canvas._objects[i].stroke!)
+      }
+      Object.assign(fabricDrawer.editor.canvas._objects[i], { pressure: logOfBeforePPUndo[dialogIndex].pressureList[i] });
+    }
+    fabricDrawer?.reDraw();
+    setSliderValue(logOfBeforePPUndo[dialogIndex].sliderValue);
+
+    const afterLogRedoNoteImage = fabricDrawer.getImg();
+    const afterLogRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
+    const afterLogRedoStrokeCount = fabricDrawer.getStrokeLength();
+    const postLogRedoCountData: TPostLogRedoCountsData = {
       UID: myNote?.UID? myNote?.UID: 0,
       NID: myNote?.ID? myNote?.ID: 0,
-      BeforeLogRedoNoteImage: beforeLogRedoNoteImage,
+      // BeforeLogRedoNoteImage: beforeLogRedoNoteImage!,
+      BeforeLogRedoNoteImage: "",
       BeforeLogRedoStrokeData: beforeLogRedoStrokeData,
-      AfterLogRedoNoteImage: afterLogRedoNoteImage,
+      // AfterLogRedoNoteImage: afterLogRedoNoteImage!,
+      AfterLogRedoNoteImage: "",
       AfterLogRedoStrokeData: afterLogRedoStrokeData,
       BeforeLogRedoStrokeCount: beforeLogRedoStrokeCount,
       AfterLogRedoStrokeCount: afterLogRedoStrokeCount,
     };
     await addLogRedoCount(postLogRedoCountData);
+
+    setHistory([]);
+    setHistoryForRedo([]);
+    setLogRedoCount(logRedoCount + 1);
     closeDialog();
     closeLog();
     setIsLoadingScreen(false);
@@ -85,9 +76,27 @@ export const LogRedoImageDialog: React.FC<LogRedoImageDialogProps> = (props) => 
       <CancelButton
         close={closeDialog}
       />
-      <Box className="width100 dialog-image-wrapper">
+      <Box 
+        className="dialog-image-wrapper"
+        sx={{
+          width: window.innerWidth * NOTE_WIDTH_RATIO,
+        }}
+      >
         <Box className="width100">
-        <img className="dialog-image" src={logOfBeforePPUndo[dialogIndex].image}></img>
+          <Box sx={{
+            backgroundImage: `url("${logOfBeforePPUndo[dialogIndex].backgroundImage}")`,
+            backgroundSize: "contain",
+            width: window.innerWidth * NOTE_WIDTH_RATIO,
+            height: window.innerWidth * NOTE_WIDTH_RATIO * noteAspectRatio,
+            backgroundColor: "white"
+            }}
+          >
+            <img
+              className="dialog-image"
+              src={logOfBeforePPUndo[dialogIndex].image}
+            >
+            </img>
+          </Box>
         </Box>
         <Button
           variant="contained"

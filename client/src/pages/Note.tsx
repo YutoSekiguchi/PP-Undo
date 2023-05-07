@@ -1,105 +1,176 @@
-import React, { useState, useEffect, PointerEvent } from "react";
-import { ClientLogDataType, NoteSizeType, Point2Type, PostStrokeDataType } from "@/@types/note";
-import { Drawer, Point, Stroke } from "@nkmr-lab/average-figure-drawer";
-import { DrawerConfig } from "@/configs/DrawerConfig";
-import { NoteHeader } from "@/components/note/header";
-import {
-  Box, Button 
-} from "@mui/material";
-import { useAtom } from 'jotai'
-import { addAvgPressureOfStrokeAtom, avgPressureOfStrokeAtom, clearUndoStrokeLogAtom, drawModeAtom, drawerAtom, undoableCountAtom, removeAvgPressureOfStrokeAtom, setUndoStrokeLogAtom, addPressureOfOneStrokeAtom, clearPressureOfOneStrokeAtom, undoCountAtom, redoCountAtom, logRedoCountAtom, ppUndoCountAtom, allAvgPressureOfStrokeAtom, sliderValueAtom, logOfBeforePPUndoAtom } from "@/infrastructures/jotai/drawer";
-import { sum } from "@/modules/note/SumPressure";
-import { NoteGraphAreas } from "@/components/note/graphAreas";
-import { userDataAtom } from "@/infrastructures/jotai/authentication";
+import { useState, useEffect, PointerEvent } from "react";
+import { useAtom } from 'jotai';
+import { fabric } from "fabric";
+import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
+import { FabricDrawer } from "@/modules/fabricdrawer";
+import { Box } from "@mui/material";
 import { isAuth } from "@/modules/common/isAuth";
-import { Params, useParams } from "react-router-dom";
-import { fetchNoteByID, updateNote } from "@/infrastructures/services/note";
-import { myNoteAtom } from "@/infrastructures/jotai/notes";
-import { NoteDataType } from "@/@types/notefolders";
-import { confirmNumberArrayFromString } from "@/modules/common/confirmArrayFromString";
+import { NoteGraphAreas } from "@/components/note/graphAreas";
 import { averagePressure } from "@/modules/note/AveragePressure";
+import { NewNoteHeader } from "@/components/note/header";
+import { addAvgPressureOfStrokeAtom, addHistoryAtom, avgPressureOfStrokeAtom, backgroundImageAtom, drawModeAtom, historyAtom, historyForRedoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, ppUndoCountAtom, redoCountAtom, resetAtom, undoCountAtom } from "@/infrastructures/jotai/drawer";
+import { isLineSegmentIntersecting } from "@/modules/note/IsLineSegmentIntersecting";
+import { getMinimumPoints } from "@/modules/note/GetMinimumPoints";
+import NoteImg from "@/assets/notesolidb.svg"
+import { Params, useParams } from "react-router-dom";
 import { LoadingScreen } from "@/components/common/LoadingScreen";
-import { TimeoutScreen } from "@/components/common/TimeoutScreen";
-import { calcIsShowStrokeList } from "@/modules/note/CalcIsShowStroke";
+import { myNoteAtom } from "@/infrastructures/jotai/notes";
+import { fetchNoteByID, updateNote } from "@/infrastructures/services/note";
+import { NoteDataType } from "@/@types/notefolders";
+import { TClientLogData, TPostStrokeData } from "@/@types/note";
 import { addStroke } from "@/infrastructures/services/strokes";
+import { rgbToHex } from "@material-ui/core";
 import { fetchClientLogsByNID } from "@/infrastructures/services/ppUndoLogs";
-import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
-import { distanceFromPointToLine } from "@/modules/note/DistanceFromPointToLine";
+import { NOTE_WIDTH_RATIO } from "@/configs/settings";
 
 let drawStartTime: number = 0; // 描画時の時刻
 let drawEndTime: number = 0; // 描画終了時の時刻
+let strokePressureList: number[] = [];
 
-export const Note:React.FC =() => {
+export const Note: () => JSX.Element = () => {
+  const { editor, onReady } = useFabricJSEditor();
+
   const params: Params<string> = useParams();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [noteSize, setNoteSize] = useState<NoteSizeType>({width: "70%", height: "1000px"}); // ノートサイズ(svgのサイズ)
-  const [isDraw, setIsDraw] = useState<boolean>(false); // 書いているかどうか
-  const [myNote, setMyNote] = useAtom(myNoteAtom); // ノート情報の保持
-  const [drawMode, ] = useAtom(drawModeAtom); // penか消しゴムか
-  const [drawer, setDrawer] = useAtom(drawerAtom); // drawerの情報
-  const [, setAddAvgPressureOfStroke] = useAtom(addAvgPressureOfStrokeAtom); // ストロークの平均筆圧を追加する関数
-  const [undoableCount, setUndoableCount] = useAtom(undoableCountAtom); // ストローク数の変更
-  const [, clearUndoStrokeLog] = useAtom(clearUndoStrokeLogAtom); // undoしたストロークのログを空に（redo不可状態に）
-  const [, addLog] = useAtom(setUndoStrokeLogAtom); // undoしたストロークのログの追加
-  const [, removeAvgPressureOfStroke] = useAtom(removeAvgPressureOfStrokeAtom); // ストロークの平均筆圧を削除(消しゴム時やundo時)
-  const [avgPressureOfStroke, setAvgPressureOfStroke] = useAtom(avgPressureOfStrokeAtom); // ストロークの筆圧平均のリストの取得
-  const [allAvgPressureOfStroke, setAllAvgPressureOfStroke] = useAtom(allAvgPressureOfStrokeAtom); // ストロークの筆圧平均のリストの取得（過去全てのストロークについて）
-  const [sliderValue, setSliderValue] = useAtom(sliderValueAtom);
-  const [, addPressureOfOneStroke] = useAtom(addPressureOfOneStrokeAtom);
-  const [, clearPressureOfOneStroke] = useAtom(clearPressureOfOneStrokeAtom);
-  const [, setLogOfBeforePPUndo] = useAtom(logOfBeforePPUndoAtom);
-  const [undoCount, setUndoCount] = useAtom(undoCountAtom);
-  const [redoCount, setRedoCount] = useAtom(redoCountAtom);
-  const [logRedoCount, setLogRedoCount] = useAtom(logRedoCountAtom);
-  const [ppUndoCount, setPPUndoCount] = useAtom(ppUndoCountAtom);
+  const [isDraw, setIsDraw] = useState<boolean>(false);
   const [prevOffset, setPrevOffset] = useState<{x: number, y: number} | null>(null);
-  
-  const [loginUserData, ] = useAtom(userDataAtom);
-  let strokePressureList: number[] = [];
-  let countPoints: number = 0;
-  let erasePressureList: number[] = [];
-  let countErasePoints: number = 0;
-  const drawers: any = {};
-  
+  const [fabricDrawer, setFabricDrawer] = useState<FabricDrawer>();
+  const [eraseStrokes, setEraseStrokes] = useState<any[]>([]);
+  const [myNote, setMyNote] = useAtom(myNoteAtom);
+  const [drawMode, ] = useAtom(drawModeAtom); // penか消しゴムか
+  const [history, ] = useAtom(historyAtom); // 操作の履歴
+  const [, addHistory] = useAtom(addHistoryAtom);
+  const [, setHistoryForRedo] = useAtom(historyForRedoAtom);
+  const [backgroundImage, setBackgroundImage] = useAtom(backgroundImageAtom);
+  const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom);
+  const [, setAddAvgPressureOfStroke] = useAtom(addAvgPressureOfStrokeAtom);
+  const [, setLogOfBeforePPUndo] = useAtom(logOfBeforePPUndoAtom);
+  const [undoCount, ] = useAtom(undoCountAtom);
+  const [redoCount, ] = useAtom(redoCountAtom);
+  const [logRedoCount, ] = useAtom(logRedoCountAtom);
+  const [ppUndoCount, ] = useAtom(ppUndoCountAtom);
+  const [noteAspectRatio, setNoteAspectRatio] = useAtom(noteAspectRatiotAtom);
+  const [, setReset] = useAtom(resetAtom);
+
+  useEffect(() => {
+    if (!editor || !fabric || !(fabricDrawer === undefined && !!editor)) {
+      return;
+    }
+
+    // if (cropImage) {
+    //   editor.canvas.__eventListeners = {};
+    //   return;
+    // }
+
+    // if (!editor.canvas.__eventListeners["mouse:wheel"]) {
+    //   editor.canvas.on("mouse:wheel", function (opt) {
+    //     var delta = opt.e.deltaY;
+    //     var zoom = editor.canvas.getZoom();
+    //     zoom *= 0.999 ** delta;
+    //     if (zoom > 20) zoom = 20;
+    //     if (zoom < 0.01) zoom = 0.01;
+    //     editor.canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+    //     opt.e.preventDefault();
+    //     opt.e.stopPropagation();
+    //   });
+    // }
+
+    // if (!editor.canvas.__eventListeners["mouse:down"]) {
+    //   editor.canvas.on("mouse:down", function (this: any) {
+    //     this.isDragging = true;
+    //     console.log(editor.canvas)
+    //   });
+    // }
+
+    // if (!editor.canvas.__eventListeners["mouse:move"]) {
+    //   editor.canvas.on("mouse:move", function (this: any) {
+    //     if (this.isDragging) {
+    //     }
+    //   });
+    // }
+
+    // if (!editor.canvas.__eventListeners["mouse:up"]) {
+    //   editor.canvas.on("mouse:up", function (this: any) {
+    //     // on mouse up we want to recalculate new interaction
+    //     // for all objects, so we call setViewportTransform
+    //     this.isDragging = false;
+
+    //   });
+    // }
+
+    const firstLoadData = async () => {
+      setReset();
+      const noteData: NoteDataType | null = await getFirstStrokeData();
+      const instance = new FabricDrawer(editor);
+      setFabricDrawer(instance);
+      if (instance?.getStrokeLength() == 0) {
+        instance?.setSVGFromString(noteData!.StrokeData.strokes.svg);
+        for(let i=0; i<editor.canvas._objects.length; i++) {
+          if (editor.canvas._objects[i].stroke!.slice(0, 3) === "rgb") {
+            editor.canvas._objects[i].stroke = rgbToHex(editor.canvas._objects[i].stroke!)
+          }
+          Object.assign(editor.canvas._objects[i], { pressure: noteData!.StrokeData.strokes.pressure[i] });
+        }
+      }
+      finishLoading(2500);
+    }
+    if (fabricDrawer === undefined && !!editor) {
+      firstLoadData();
+    }
+    editor.canvas.renderAll();
+  }, [editor, fabricDrawer]);  
+
+  useEffect(() => {
+    if (!editor || !fabric) {
+      return;
+    }
+    fabricDrawer?.setDrawingMode();
+    fabricDrawer?.changeColor("#1f1f1f");
+    fabricDrawer?.setCanvasSize(window.innerWidth * NOTE_WIDTH_RATIO, window.innerWidth * NOTE_WIDTH_RATIO * noteAspectRatio);
+    setBackgroundImage(NoteImg);
+    fabricDrawer?.reDraw();
+  }, [fabricDrawer, backgroundImage]);
+
+  useEffect(() => {
+    const loadImage = (src: string) => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = (e) => reject(e);
+        img.src = src;
+      });
+    };
+    
+    // promise then/catch
+    loadImage(NoteImg)
+      .then((res: any) => {
+        setNoteAspectRatio(res.height/res.width);
+      })
+      .catch(e => {
+        console.log('onload error', e);
+      });
+
+    return () => {
+      if (isLoading) {
+        return;
+      }
+      console.log(fabricDrawer);
+      save();
+      console.log("cleanup")
+    }
+  }, [isLoading])
+
   const getFirstStrokeData = async () => {
     const data: NoteDataType | null = await fetchNoteByID(Number(params.id));
-    const clientLogData: ClientLogDataType[] | null = await fetchClientLogsByNID(Number(params.id))
     setMyNote(data);
+    const clientLogData: TClientLogData[] | null = await fetchClientLogsByNID(Number(params.id))
     const tmp: any[] = [];
-    clientLogData?.map((clientLog: ClientLogDataType, i: number) => {
+    clientLogData?.map((clientLog: TClientLogData, i: number) => {
       tmp.push(clientLog.Data);
     });
     setLogOfBeforePPUndo(tmp);
     return data
   }
-
-  useEffect(() => {
-    // Drawerの設定
-    const main = async () => {
-      if (drawers["drawer"] == undefined) {
-        const noteData: NoteDataType | null = await getFirstStrokeData();
-        drawers["drawer"] = new Drawer("#drawer", DrawerConfig);
-        if (noteData == null || noteData.StrokeData.strokes == null) {
-          setDrawer(drawers["drawer"]);
-          resetAllData();
-          finishLoading(1000);
-          return;
-        }
-        adaptionResponseStrokeData(noteData);
-        adaptionResponseAvgPressureList(noteData);
-        adaptionResponseAllAvgPressureList(noteData);
-        adaptionResponseSliderValue(noteData);
-        drawers["drawer"].numOfStroke = drawers["drawer"].currentFigure.strokes.length;
-        drawers["drawer"].reDraw();
-        setDrawer(drawers["drawer"])
-        resetDataCount();
-        console.log(drawer)
-      }
-      finishLoading(2000);
-    }
-    
-    main();
-  }, []);
 
   const finishLoading = (time: number) => {
     setTimeout(() => {
@@ -107,304 +178,280 @@ export const Note:React.FC =() => {
     }, time);
   }
 
-  const resetDataCount = () => {
-    setUndoCount(0);
-    setRedoCount(0);
-    setLogRedoCount(0);
-    setPPUndoCount(0);
+  const toggleSize = () => {
+    fabricDrawer?.setStrokeWidth(2);
+  };
+
+  const toggleDraw = () => {
+    fabricDrawer?.setDrawingMode();
+  };
+
+  const togglePoint = () => {
+    fabricDrawer?.setPointingMode();
   }
 
-  const resetAllData = () => {
-    setSliderValue(0);
-    setAvgPressureOfStroke([]);
-    setAllAvgPressureOfStroke([]);
-    setLogOfBeforePPUndo([]);
-    resetDataCount();
-  }
+  const clear = () => {
+    history.splice(0, history.length);
+    fabricDrawer?.clear();
+  };
 
-  const drawError = (error: unknown) => {
-    alert("予期せぬエラーが発生したため，全てのストロークが削除されます。");
-    drawer.clear();
-    setDrawer(drawer);
-    setUndoableCount(0);
-    setIsDraw(false);
-    strokePressureList = [];
-    countPoints = 0;
-    throw error;
-  }
+  const removeSelectedObject = () => {
+    fabricDrawer?.removeSelectedStrokes();
+  };
 
-  const startDraw = () => {
-    drawStartTime = performance.now();
-    clearPressureOfOneStroke();
-    setIsDraw(true);
-  }
+  const onAddCircle = () => {
+    fabricDrawer?.addText({
+      mode: "circle",
+    });
+    fabricDrawer?.addText({
+      mode: "line",
+    });
+  };
+  const onAddRectangle = () => {
+    fabricDrawer?.addText({
+      mode: "rect"
+    });
+  };
+  const addText = () => {
+    fabricDrawer?.addText({
+      mode: "text",
+      text: "aaaa",
+    });
+  };
 
-  const moveDraw = (e: PointerEvent<SVGSVGElement>) => {
-    if (!isDraw || e.pressure == 0) {
+  const addBackground = () => {
+    if (!editor || !fabric) {
       return;
     }
-    strokePressureList.push(e.pressure);
-    const roundStrokePressure =  e.pointerType=="mouse"? Math.random(): Math.round(e.pressure * 100) / 100;
-    addPressureOfOneStroke(roundStrokePressure);
-    countPoints += 1;
-  }
+    const imgUrl = NoteImg;
+    fabricDrawer?.setBackgroundImage(imgUrl, window.innerWidth * NOTE_WIDTH_RATIO, window.innerWidth * NOTE_WIDTH_RATIO * noteAspectRatio);
+  };
 
-  const finishDraw = async (e: PointerEvent<SVGSVGElement>) => {
-    drawEndTime = performance.now();
-    setTimeout(async() => {
-      try {
-        const finalStroke = drawer.currentFigure.strokes[drawer.currentFigure.strokes.length-1];
-        if ("svg" in finalStroke == false || finalStroke.svg == null) {
-          drawer.currentFigure.strokes.pop();
-          drawer.numOfStroke -= 1;
-          setDrawer(drawer);
-          setIsDraw(false);
-          strokePressureList = [];
-          countPoints = 0;
-          return;
-        }
-        const sumPressure = sum(strokePressureList);
-        const averagePressure = e.pointerType=="mouse"? Math.random() :sumPressure / countPoints;
-        setDrawer(drawer);
-        setUndoableCount(undoableCount+1);
-        clearUndoStrokeLog();
-        setIsDraw(false);
-        console.log(drawer);
-        setAddAvgPressureOfStroke(averagePressure);
-        countPoints = 0;
-        if (myNote != null) {
-          myNote.StrokeData = drawer.currentFigure.strokes.concat();
-        }
-        // ストロークデータを取得してAPIに送信
-        const requestStrokeData = await adaptionRequestStrokeData();
-        const postStrokeData: PostStrokeDataType = {
-          UID: myNote!.UID,
-          NID: myNote!.ID,
-          StrokeData: requestStrokeData,
-          AvgPressure: averagePressure,
-          PressureList: strokePressureList.join(','),
-          Time: drawEndTime - drawStartTime,
-          Mode: "pen",
-          Save: 0,
-        }
-        await addStroke(postStrokeData);
-        console.log(postStrokeData);
-        console.log(drawEndTime);
-        console.log(drawStartTime);
-        strokePressureList = [];
-        drawer.reDraw();
-      } catch (error) {
-        drawError(error);
-      }
-    }, 10);
-  }
+  const exportSVG = () => {
+    const svg = fabricDrawer?.getSVG();
+    if (svg === undefined) {
+      alert("svgとして取得できませんでした");
+      return;
+    }
+    console.log(svg);
+  };
 
-  const startEraseDraw = () => {
+  const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    // 前のストロークが要素をはみ出してしまっていた時の処理
+    const finalStroke: any = fabricDrawer?.getFinalStroke();
+    if (finalStroke && typeof finalStroke.pressure === 'undefined') {
+      const resultPressure: number = event.pointerType=="mouse"?Math.random(): averagePressure(strokePressureList);
+      fabricDrawer?.setPressureToStroke(resultPressure);
+      addHistory({
+        type: "pen",
+        strokes: [finalStroke]
+      })
+      postStrokeData(resultPressure, strokePressureList);
+    }
+    //
+    setHistoryForRedo([]);
+    strokePressureList = [];
     drawStartTime = performance.now();
     setIsDraw(true);
   }
 
-  const eraseDraw = (e: PointerEvent<SVGSVGElement>) => {
+  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
     if (!isDraw) { return; }
-    erasePressureList.push(e.pressure);
-    countErasePoints += 1;
-    if (drawMode == "strokeErase") {
-      const offsetXAbout = Math.round(e.nativeEvent.offsetX);
-      const offsetYAbout = Math.round(e.nativeEvent.offsetY);
-      drawer.currentFigure.strokes.map((stroke: any, i: number) => {
-        let isErase = false;
-        if (stroke.color.length != 9) {
-          for(let j=0; j < stroke.DFT.points.length; j++) {
-            if (isErase) {break}
-            const point2: Point2Type = stroke.DFT.points[j];
-            const pointX = Math.round(point2.x);
-            const pointY = Math.round(point2.y);
-            const toleranceRange = 6;
-            if (prevOffset == null) {
-              if (Math.abs(pointX - offsetXAbout) < toleranceRange) {
-                if (Math.abs(pointY - offsetYAbout) < toleranceRange) {
-                  removeStroke(i);
-                  isErase = true;
-                }
-              }
-            } else {
-              const distance = distanceFromPointToLine(pointX, pointY, offsetXAbout, offsetYAbout, prevOffset.x, prevOffset.y);
-              setPrevOffset({"x": offsetXAbout, "y": offsetYAbout})
-              if (distance < toleranceRange) {
-                removeStroke(i);
-                isErase = true;
-              }
+    if (event.pressure !== 0) {
+      strokePressureList = [...strokePressureList, event.pressure];
+    }
+  }
+
+  const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
+    drawEndTime = performance.now();
+    setIsDraw(false);
+    const resultPressure: number = event.pointerType=="mouse"?Math.random(): averagePressure(strokePressureList);
+    setTimeout(() => {
+      if (drawMode == "pen") {
+        setAddAvgPressureOfStroke(resultPressure);
+        const finalStroke = fabricDrawer?.getFinalStroke();
+        if (finalStroke) {
+          fabricDrawer?.setPressureToStroke(resultPressure);
+          addHistory({
+            type: "pen",
+            strokes: [finalStroke]
+          })
+          postStrokeData(resultPressure, strokePressureList);
+        }
+      }
+      console.log(fabricDrawer?.getAllStrokes())
+    }, 100)
+  }
+
+  const postStrokeData = async (pressure: number, strokePressureList: number[]) => {
+    const data: TPostStrokeData = {
+      UID: myNote!.UID,
+      NID: myNote!.ID,
+      StrokeData: {"Strokes": {"pressure": fabricDrawer?.getStrokeLength(), "svg": fabricDrawer?.getSVG()}},
+      AvgPressure: pressure,
+      PressureList: strokePressureList.join(','),
+      Time: drawEndTime - drawStartTime,
+      Mode: drawMode,
+      Save: 0,
+    }
+    await addStroke(data);
+  }
+
+  const handleEraseDown = () => {
+    strokePressureList = [];
+    drawStartTime = performance.now();
+    setIsDraw(true);
+  }
+
+  const handleEraseMove = (event: PointerEvent<SVGSVGElement>) => {
+    if (!isDraw && drawMode === "strokeErase") { return; }
+    strokePressureList = [...strokePressureList, event.pressure];
+    const offsetXAbout = Math.round(event.nativeEvent.offsetX);
+    const offsetYAbout = Math.round(event.nativeEvent.offsetY);
+    const paths = fabricDrawer?.getObjectPaths();
+    paths?.map((path: any, index: number) => {
+      let isErase = false;
+      const stroke = fabricDrawer?.getStroke(index);
+      const minPoints = getMinimumPoints(path);
+      const diffLeft = stroke?.left!==undefined
+      ? Math.round(stroke.left - minPoints.left)
+      : 0;
+      const diffTop = stroke?.top!==undefined
+      ? Math.round(stroke.top - minPoints.top)
+      : 0;
+      for(var j=0; j<path.length; j++) {
+        if (isErase) {break}
+        const points = path[j];
+        if(points.length === 5) {
+          const prevPointX = Math.round(points[1] + diffLeft), prevPointY = Math.round(points[2] + diffTop);
+          const pointX = Math.round(points[3] + diffLeft), pointY = Math.round(points[4] + diffTop);
+          if (prevOffset !== null) {
+            const isIntersect = isLineSegmentIntersecting(
+              prevOffset.x,
+              prevOffset.y,
+              offsetXAbout,
+              offsetYAbout,
+              prevPointX,
+              prevPointY,
+              pointX,
+              pointY,
+            );
+            if ((isIntersect ) && stroke) {
+              fabricDrawer?.removeStroke(stroke);
+              setEraseStrokes(eraseStrokes.concat([stroke]));
+              isErase = true;
             }
           }
         }
-      })
-    }
+      }
+    })
+    setPrevOffset({"x": offsetXAbout, "y": offsetYAbout});
   }
-
-  const removeStroke = (i: number) => {
-    addLog({
-      stroke: drawer.currentFigure.strokes[i],
-      pressure: avgPressureOfStroke[i]
-    });
-    removeAvgPressureOfStroke(i);
-    drawer.numOfStroke -= 1;
-    drawer.currentFigure.strokes.splice(i, 1);
-    setDrawer(drawer);
-    setUndoableCount(undoableCount+1);
-    drawer.reDraw();
-  }
-
-  const finishEraseDraw = async() => {
+  
+  const handleEraseUp = (event: PointerEvent<SVGSVGElement>) => {
     drawEndTime = performance.now();
-    const sumPressure = sum(erasePressureList);
-    const averagePressure = sumPressure / countErasePoints;
-    // 消しゴムストロークデータを取得してAPIに送信
-    const requestStrokeData = await adaptionRequestStrokeData();
-    const postStrokeData: PostStrokeDataType = {
-      UID: myNote!.UID,
-      NID: myNote!.ID,
-      StrokeData: requestStrokeData,
-      AvgPressure: averagePressure,
-      PressureList: erasePressureList.join(','),
-      Time: drawEndTime - drawStartTime,
-      Mode: "erase",
-      Save: 0,
-    }
-    await addStroke(postStrokeData);
-    countErasePoints = 0;
+    setPrevOffset(null);
     setIsDraw(false);
-  }
-
-  const makeRequestData = async () => {
-    await adaptionRequestNoteImage();
-    myNote!.StrokeData = await adaptionRequestStrokeData();
-    myNote!.AvgPressure = averagePressure(avgPressureOfStroke);
-    adaptionRequestAvgPressureList();
-    adaptionRequestAllAvgPressureList();
-    adaptionRequestIsShowStrokeList();
-    myNote!.AllStrokeCount += allAvgPressureOfStroke.length;
-    myNote!.StrokeCount = avgPressureOfStroke.length;
-    myNote!.UndoCount += undoCount;
-    myNote!.RedoCount += redoCount;
-    myNote!.LogRedoCount += logRedoCount;
-    myNote!.PPUndoCount += ppUndoCount;
-    myNote!.SliderValue = sliderValue;
-  } 
-
-  const adaptionRequestNoteImage  = async () => {
-    const image: string = await drawer.getBase64PngImage().catch((error: unknown) => {
-      console.log(error);
-    });
-    myNote!.NoteImage = image? image: "";
-  }
-
-  const adaptionRequestStrokeData = async () => {
-    const res = await getCurrentStrokeData(myNote?.StrokeData);
-    return res;
-  }
-
-  const adaptionResponseStrokeData = (noteData: NoteDataType | null) => {
-    drawers["drawer"].currentFigure.strokes = [];
-    noteData!.StrokeData.strokes.forEach((stroke: any) => {
-      const newStroke = new Stroke(
-        stroke.points.map((point: any) => new Point(point.x, point.y, {z: point.z})),
-        {
-          color: stroke.color,
-          strokeWidth: stroke.strokeWidth,
-        }
-      );
-      newStroke.DFT.pointsToDraw();
-      drawers["drawer"].currentFigure.add(newStroke);
-    });
-  }
-
-  const adaptionRequestAvgPressureList = () => {
-    myNote!.AvgPressureList = avgPressureOfStroke.join(',');
-  }
-
-  const adaptionResponseAvgPressureList = (noteData: NoteDataType | null) => {
-    if (noteData!.AvgPressureList === "") {
-      setAvgPressureOfStroke([]);
-      return;
-    }
-    const newData = confirmNumberArrayFromString(noteData!.AvgPressureList);
-    setAvgPressureOfStroke(newData);
-  }
-
-  const adaptionRequestAllAvgPressureList = () => {
-    myNote!.AllAvgPressureList = allAvgPressureOfStroke.join(',');
-  }
-
-  const adaptionResponseAllAvgPressureList = (noteData: NoteDataType | null) => {
-    if (noteData!.AllAvgPressureList === "") {
-      setAllAvgPressureOfStroke([]);
-      return;
-    }
-    const newData = confirmNumberArrayFromString(noteData!.AllAvgPressureList);
-    setAllAvgPressureOfStroke(newData);
-  }
-
-  const adaptionRequestIsShowStrokeList = () => {
-    const showStrokeList = calcIsShowStrokeList(drawer.currentFigure.strokes);
-    myNote!.IsShowStrokeList = showStrokeList.join(',');
-  }
-
-  const adaptionResponseSliderValue = (noteData: NoteDataType | null) => {
-    setSliderValue(noteData!.SliderValue);
+    const resultPressure: number = event.pointerType=="mouse"?Math.random(): averagePressure(strokePressureList);
+    setTimeout(() => {
+      if (eraseStrokes.length > 0) {
+        addHistory({
+          type: "erase",
+          strokes: eraseStrokes
+        })
+      }
+      postStrokeData(resultPressure, strokePressureList);
+      setEraseStrokes([]);
+    }, 100)
   }
 
   const save = async() => {
-    await makeRequestData();
-    await updateNote(myNote!);
-    console.log("保存しました");
+    try {
+      myNote!.NoteImage = fabricDrawer!.getImg();
+      myNote!.StrokeData = {"Strokes": {"data": editor?.canvas.getObjects(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}};
+      myNote!.AvgPressure = fabricDrawer!.getAveragePressure();
+      myNote!.AvgPressureList = editor!.canvas._objects.join(',');
+      myNote!.AllAvgPressureList = avgPressureOfStroke.join(',');
+      myNote!.AllStrokeCount = avgPressureOfStroke.length;
+      myNote!.StrokeCount = fabricDrawer!.getStrokeLength();
+      myNote!.UndoCount += undoCount;
+      myNote!.RedoCount += redoCount;
+      myNote!.LogRedoCount += logRedoCount;
+      myNote!.PPUndoCount += ppUndoCount;
+      myNote!.BackgroundImage = NoteImg;
+      await updateNote(myNote!);
+      console.log(myNote!.StrokeData)
+    } catch (error) {
+      alert("保存に失敗しました");
+      throw error;
+    }
   }
 
-  const test = () => {
-    console.log(sliderValue)
-    console.log(myNote);
-    console.log(avgPressureOfStroke)
-  }
 
   return (
     <>
-      {
-        (isAuth() && isLoading)&& <LoadingScreen /> 
-      }
-      {
-        isAuth() || loginUserData != null ?
-        <Box className="width100 note">
-          <NoteHeader />
-          <Box sx={{ display: "flex" }} className="width100">
-            <Box className="canvasWrapper" id="canvasWrapper" sx={{ width: noteSize['width'], height: noteSize["height"], position: "relative" }}>
-              <svg
-                id="drawer"
-                className="canvas"
-                style={{ width: `${document.getElementById('canvasWrapper') && document.getElementById('canvasWrapper')!.clientWidth}px`, height: noteSize["height"] }}
-                onPointerDownCapture={startDraw}
-                onPointerMoveCapture={moveDraw}
-                onPointerUpCapture={finishDraw}
-              ></svg>
-              {drawMode == "strokeErase" &&
-                <svg
-                  id="erase-drawer"
-                  className="canvas"
-                  style={{ width: `${document.getElementById('canvasWrapper') && document.getElementById('canvasWrapper')!.clientWidth}px`, height: noteSize["height"] }}
-                  onPointerDownCapture={startEraseDraw}
-                  onPointerMoveCapture={eraseDraw}
-                  onPointerUpCapture={finishEraseDraw}
-                ></svg>
-              }
+    {
+      (isAuth() && isLoading)&& <LoadingScreen /> 
+    }
+    {
+      isAuth()?
+      <Box className="width100 note">
+        {
+          fabricDrawer !== undefined &&
+          <NewNoteHeader fabricDrawer={fabricDrawer} save={save} />
+        }
+        <Box sx={{ display: "flex" }} className="width100">
+          <Box className="canvasWrapper" id="canvasWrapper" 
+            sx={{ 
+              width: window.innerWidth * NOTE_WIDTH_RATIO,
+              height: window.innerWidth * NOTE_WIDTH_RATIO * noteAspectRatio,
+              position: "relative" 
+            }}
+          >
+            <Box
+              className="fabric-canvas-wrapper"
+              sx={{
+                width: window.innerWidth * NOTE_WIDTH_RATIO,
+                height: window.innerWidth * NOTE_WIDTH_RATIO * noteAspectRatio,
+              }}
+              onPointerDownCapture={handlePointerDown}
+              onPointerMoveCapture={handlePointerMove}
+              onPointerUpCapture={handlePointerUp}
+            >
+              <FabricJSCanvas
+                className="fabric-canvas"
+                onReady={onReady}
+                css={{
+                  backgroundImage: `url("${NoteImg}")`,
+                  touchAction: "none",
+                  // display:`${(canvasHeight!=0&&canvasWidth!=0)? "block": "none"}`,
+                  backgroundSize: "contain"
+                }}
+              />
             </Box>
-            <NoteGraphAreas />
+            {drawMode == "strokeErase" &&
+              <svg
+                id="erase-drawer"
+                className="canvas"
+                style={{ 
+                  width: window.innerWidth * NOTE_WIDTH_RATIO,
+                  height: window.innerWidth * NOTE_WIDTH_RATIO * noteAspectRatio
+                }}
+                onPointerDownCapture={handleEraseDown}
+                onPointerMoveCapture={handleEraseMove}
+                onPointerUpCapture={handleEraseUp}
+              ></svg>
+            }
           </Box>
-          <Button onClick={save}>Save</Button>
-          <Button onClick={test}>TEST(出力チェック)</Button>
+          {
+            fabricDrawer !== undefined &&
+            <NoteGraphAreas fabricDrawer={fabricDrawer} />
+          }
         </Box>
-        :
-        <>
-          <TimeoutScreen />
-        </>
-      }
-    </>
+      </Box>
+    :<></>
+    }
+  </>
   );
+  
 }
