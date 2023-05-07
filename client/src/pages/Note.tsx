@@ -379,7 +379,7 @@ export const Note: () => JSX.Element = () => {
       myNote!.BackgroundImage = NoteImg;
       await updateNote(myNote!);
       console.log(myNote!.StrokeData)
-      console.log("保存しました");
+      alert("保存しました");
     } catch (error) {
       alert("保存に失敗しました");
       throw error;
@@ -395,7 +395,7 @@ export const Note: () => JSX.Element = () => {
     {
       isAuth()?
       <Box className="width100 note">
-        <NewNoteHeader fabricDrawer={fabricDrawer} />
+        <NewNoteHeader fabricDrawer={fabricDrawer} save={save} />
         <Box sx={{ display: "flex" }} className="width100">
           <Box className="canvasWrapper" id="canvasWrapper" 
             sx={{ 
@@ -441,8 +441,6 @@ export const Note: () => JSX.Element = () => {
           </Box>
           <NoteGraphAreas fabricDrawer={fabricDrawer} />
         </Box>
-        <Button onClick={save}>Save</Button>
-        {/* <Button onClick={test}>TEST(出力チェック)</Button> */}
       </Box>
     :<></>
     }

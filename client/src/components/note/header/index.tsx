@@ -6,6 +6,7 @@ import {
   Toolbar,
   Typography,
   Paper,
+  Button,
 } from "@mui/material";
 import { penColorList } from "@/configs/PenColorConfig";
 import Spacer from "@/components/common/Spacer";
@@ -20,7 +21,7 @@ import { StrokeEraseButton } from "./StrokeEraseButton";
 import { UndoButton } from "./UndoButton";
 import { RedoButton } from "./RedoButton";
 
-export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
+export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer | null, save: () => void}> = ({ fabricDrawer, save }) => {
   const navigate = useNavigate();
   const colorList: TPenColor[] = penColorList;
   const [color, setColor] = useState<string>(penColorList[0].penColor);
@@ -115,6 +116,14 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fa
               <UndoButton fabricDrawer={fabricDrawer} />
               <Spacer size={4} axis="horizontal" />
               <RedoButton fabricDrawer={fabricDrawer} />
+              <Spacer size={12} axis="horizontal" />
+              <Button
+                variant="outlined"
+                color="warning"
+                onClick={save}
+              >
+                Save
+              </Button>
             </Box>
           </Toolbar>
         </Paper>
