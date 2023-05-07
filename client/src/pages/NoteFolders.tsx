@@ -66,6 +66,9 @@ export const Notefolders: React.FC = () => {
       if (pnfid != 0) { setTreeData(await fetchNoteFoldersTree(pnfid)); } 
     }
     const userData = lscache.get('loginUserData');
+    if (userData === null) {
+      navigate(`/`);
+    }
     const uid = Number(userData.ID);
     const pnfid = Number(params.pnfid);
     func(uid, pnfid);
@@ -74,7 +77,7 @@ export const Notefolders: React.FC = () => {
   return (
     <>
       {
-        isAuth() || loginUserData != null
+        isAuth()
         ? <>
           <AddNoteOrFolderDialog 
             type="folder"
