@@ -2,7 +2,6 @@ import React from "react";
 import { Cancel } from "@mui/icons-material";
 import { CancelButtonProps } from "@/@types/note";
 
-
 export const CancelButton: React.FC<CancelButtonProps> = (props) => {
   const { half, fontSize, close } = props;
   return (

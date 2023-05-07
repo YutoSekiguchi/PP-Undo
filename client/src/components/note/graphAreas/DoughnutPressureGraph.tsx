@@ -15,7 +15,6 @@ import { Doughnut } from 'react-chartjs-2'
 import { Box, Typography } from "@mui/material";
 import { DoughnutGraphConfigType, DoughnutPressureGraphPropsType } from "@/@types/note";
 import { doughnutOptions } from "@/configs/DoughnutPressureGraphConfig";
-import Spacer from "@/components/common/Spacer";
 
 export const DoughnutPressureGraph: React.FC<DoughnutPressureGraphPropsType> = (props) => {
   ChartJS.register(
@@ -54,13 +53,12 @@ export const DoughnutPressureGraph: React.FC<DoughnutPressureGraphPropsType> = (
 
   return (
     <>
-      <Box sx={{ width: "48%", height: "30vh" }}>
-        <Typography component="div">
-          <Box className="big-white-text center">
+      <Box sx={{ width: "48%" }}>
+        <Box className="white-text center">
+          <Typography fontSize={12} fontWeight="bold">
             {title}
-          </Box>
-        </Typography>
-        <Spacer size={8} axis="vertical" />
+          </Typography>
+        </Box>
         <Box sx={{ position: "relative" }}>
           <Typography component="div">
             <Box className="absolute-center-text white-text text-center doughnut-graph-title">

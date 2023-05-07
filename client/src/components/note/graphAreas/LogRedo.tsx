@@ -7,11 +7,12 @@ import {
 import { useAtom } from "jotai";
 import styled from "@emotion/styled";
 import { cyan } from '@mui/material/colors';
-import { LogImageList } from "./LogImageList";
+import { AllLogImageList } from "./AllLogImageList";
 import { logNotifierCountAtom } from "@/infrastructures/jotai/drawer";
+import { FabricDrawer } from "@/modules/fabricdrawer";
 
 
-export const LogRedo: React.FC = () => {
+export const LogRedo: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
   const DisplayLogButton = styled(Button) ({
     backgroundColor:'#fff',
     color: '#1A2939',
@@ -45,8 +46,9 @@ export const LogRedo: React.FC = () => {
         </Badge>
         {
           isShowLog&&
-          <LogImageList
+          <AllLogImageList
             closeLog={closeLog}
+            fabricDrawer={fabricDrawer}
           />
         }
       </Box>

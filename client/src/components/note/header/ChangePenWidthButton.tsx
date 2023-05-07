@@ -1,14 +1,11 @@
 import React, { useState } from "react";
-import { useAtom } from 'jotai'
-import { drawerAtom } from "@/infrastructures/jotai/drawer";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import Spacer from "@/components/common/Spacer";
 import { penWidthList } from "@/configs/PenWidthConfig";
-import { DrawerConfig } from "@/configs/DrawerConfig";
+import { TChangePenWidthButton } from "@/@types/newnote";
 
-export const ChangePenWidthButton: React.FC = () => {
-  const [drawer, setDrawer] = useAtom(drawerAtom);
+export const ChangePenWidthButton: React.FC<TChangePenWidthButton> = ({ strokeWidth, setStrokeWidth }) => {
   const [isShowMenu, setIsShowMenu] = useState<boolean>(false);
   const widthList = penWidthList;
 
@@ -18,34 +15,20 @@ export const ChangePenWidthButton: React.FC = () => {
 
   const changeWidth = (size: number) => {
     const newStrokeSize: number = Math.round((size) * 10)/10;
-    let newDrawerConfig = DrawerConfig;
-    newDrawerConfig.pointRadius = {
-      "originalPoint": newStrokeSize,
-      "spline": newStrokeSize,
-      "dft": newStrokeSize
-    };
-    newDrawerConfig.strokeWidth = {
-      "originalPath": newStrokeSize,
-      "spline": newStrokeSize,
-      "dft": newStrokeSize
-    }
-    drawer.setConfig(newDrawerConfig);
-    drawer.setStrokeWidth(newStrokeSize);
-    setDrawer(drawer);
+    setStrokeWidth(newStrokeSize);
   }
 
 	return (
 		<>
       <button
         className="width-button"
-        // className={drawMode == "pen" ?"mode-button": "no-mode-button"}
         onClick={() => showMenu()}
       >
         <Box className="center">
           <Box>
-            <Box width={drawer.strokeWidth + 2} height={drawer.strokeWidth + 2} className="width-button-circle"></Box>
+            <Box width={strokeWidth + 4} height={strokeWidth + 4} className="width-button-circle"></Box>
             <Spacer size={8} axis="vertical" />
-            <p className="small-text">{drawer.strokeWidth}px</p>
+            <Typography fontSize={6}>{strokeWidth}px</Typography>
           </Box>
           {
             isShowMenu
@@ -57,11 +40,11 @@ export const ChangePenWidthButton: React.FC = () => {
           isShowMenu &&
           <Box className="width-menu">
             {widthList.map((size, i) => (
-              <Box key={i} onClick={() => changeWidth(size)} className={drawer.strokeWidth == size? "choiced-width": ""}>
+              <Box key={i} onClick={() => changeWidth(size)} className={strokeWidth == size? "choiced-width": ""}>
                 <Box>
-                  <Box width={size + 2} height={size + 2} className="width-button-circle"></Box>
+                  <Box width={size + 4} height={size + 4} className="width-button-circle"></Box>
                   <Spacer size={3 + size/20} axis="vertical" />
-                  <p className="small-text white-text">{size}px</p>
+                  <Typography fontSize={12}>{size}px</Typography>
                 </Box>
               </Box>
             ))}

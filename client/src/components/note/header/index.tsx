@@ -1,41 +1,62 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/assets/logo.png'
-import { ColorButton } from "./ColorButton";
-import { UndoButton } from "./UndoButton";
-import { StrokeEraseButton } from "./StrokeEraseButton";
 import { 
   Box,
   Toolbar,
   Typography,
-  Paper
+  Paper,
+  Button
 } from "@mui/material";
-import { PenColorType } from "@/@types/note";
 import { penColorList } from "@/configs/PenColorConfig";
-import { RedoButton } from "./RedoButton";
 import Spacer from "@/components/common/Spacer";
-import { PenButton } from "./PenButton";
+import { TPenColor } from "@/@types/newnote";
+import { FabricDrawer } from "@/modules/fabricdrawer";
+import { ColorButton } from "./ColorButton";
+import { penWidthList } from "@/configs/PenWidthConfig";
 import { ChangePenWidthButton } from "./ChangePenWidthButton";
+import { PenButton } from "./PenButton";
+import { PointerButton } from "./PointerButton";
+import { drawMode } from "@nkmr-lab/average-figure-drawer";
+import { StrokeEraseButton } from "./StrokeEraseButton";
+import { UndoButton } from "./UndoButton";
+import { RedoButton } from "./RedoButton";
 
-export const NoteHeader:React.FC =() => {
-  const [colorList, setColorList] = useState<PenColorType[]>(penColorList);
+export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
   const navigate = useNavigate();
+  const colorList: TPenColor[] = penColorList;
+  const [color, setColor] = useState<string>(penColorList[0].penColor);
+  const [strokeWidth, setStrokeWidth] = useState<number>(penWidthList[1]);
 
-  const colorChange = (index: number) => {
-    let tmp = colorList.slice(0, colorList.length); ;
-    for (let i=0; i<colorList.length; i++) {
-      if (i == index) {
-        tmp[i].useable = true;
-      } else {
-        tmp[i].useable = false;
-      }
-    }
-    setColorList(tmp);
-  }
-
+  
   const backToHome = () => {
     navigate('/notefolders/0');
   }
+
+  // 今の色表示&カラーピッカー
+  const ColorPicker: React.FC = () => {
+
+    return (
+      <Box className="now-color">
+        <input
+          className="color-picker"
+          type="color"
+          value={color}
+          onChange={(e) => setColor(e.target.value)}
+        />
+        <Typography fontSize={6} align="center">Now</Typography>
+      </Box>
+    );
+  }
+  
+
+  useEffect(() => {
+    fabricDrawer?.changeColor(color);
+  }, [color]);
+
+  useEffect(() => {
+    fabricDrawer?.setStrokeWidth(strokeWidth)
+  }, [strokeWidth])
 
   return (
     <>
@@ -63,9 +84,11 @@ export const NoteHeader:React.FC =() => {
 
             <Box className="align-center">
               <Box className="align-center" sx={{ marginRight: "60px"}}>
-                <StrokeEraseButton />
+                <PointerButton fabricDrawer={fabricDrawer} />
                 <Spacer size={6} axis="horizontal" />
-                <PenButton />
+                <StrokeEraseButton fabricDrawer={fabricDrawer} />
+                <Spacer size={6} axis="horizontal" />
+                <PenButton fabricDrawer={fabricDrawer} />
               </Box>
               {colorList.map((el, index) => (
                 <Box 
@@ -74,20 +97,26 @@ export const NoteHeader:React.FC =() => {
                   <ColorButton
                     buttonColor={el.penColor}
                     isChoice={el.useable}
-                    colorChange={colorChange}
-                    index={index}
+                    setColor={setColor}
+                    fabricDrawer={fabricDrawer}
                   />
                 </Box>
               ))}
+              <Spacer size={6} axis="horizontal" />
+              <ColorPicker />
+              
               <Box className="align-center" sx={{ marginLeft: "20px"}}>
-                <ChangePenWidthButton />
+                <ChangePenWidthButton
+                  strokeWidth={strokeWidth}
+                  setStrokeWidth={setStrokeWidth}
+                />
               </Box>
             </Box>
             
             <Box className="align-center">
-              <UndoButton />
+              <UndoButton fabricDrawer={fabricDrawer} />
               <Spacer size={4} axis="horizontal" />
-              <RedoButton />
+              <RedoButton fabricDrawer={fabricDrawer} />
             </Box>
           </Toolbar>
         </Paper>

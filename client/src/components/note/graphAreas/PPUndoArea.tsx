@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom } from 'jotai'
 import {
   addLogOfBeforePPUndoAtom,
-  avgPressureOfStrokeAtom,
-  drawerAtom,
-  getAvgPressureOfStrokeCountAtom,
   sliderValueAtom,
   logNotifierCountAtom,
   ppUndoCountAtom,
+  backgroundImageAtom,
+  historyAtom,
+  historyForRedoAtom,
+  avgPressureOfStrokeAtom,
 } from "@/infrastructures/jotai/drawer";
 import {
   Chart as ChartJS,
@@ -26,18 +27,18 @@ import {
   Box, Typography,
 } from "@mui/material";
 import Spacer from "@/components/common/Spacer";
-import { PPUndoGraphDatasetsConfigType, Point2Type, LogStrokeDataType, PostLogDataType, PostPPUndoCountsDataType } from "@/@types/note";
+import { PPUndoGraphDatasetsConfigType, PostLogDataType, PostPPUndoCountsDataType } from "@/@types/note";
 import { PrettoSlider, datasetsConfig, options, xLabels } from "@/configs/PPUndoGraphConifig";
 import { getJaStringTime } from "@/modules/common/getJaStringTime";
-import { getStrokesIndexWithLowPressure, hideLowPressureStrokes, increaseStrokeColorOpacity, reduceStrokeColorOpacity, getDiffLowerPressureIndexList } from "@/modules/note/PPUndo";
-import { getCurrentStrokeData } from "@/modules/note/GetCurrentStrokeData";
+import { getStrokesIndexWithLowPressure } from "@/modules/note/PPUndo";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { addClientLog, addLog } from "@/infrastructures/services/ppUndoLogs";
-import { calcIsShowStrokeCount } from "@/modules/note/CalcIsShowStroke";
 import { addPPUndoCount } from "@/infrastructures/services/ppUndoCounts";
+import { FabricDrawer } from "@/modules/fabricdrawer";
+import { TLogStrokeData } from "@/@types/newnote";
 
 
-export const PPUndoArea: React.FC = () => {
+export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer | null}> = ({ fabricDrawer }) => {
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -60,7 +61,7 @@ export const PPUndoArea: React.FC = () => {
     datasets: datasetsType[];
   }
 
-  const data: number[] = useAtom(getAvgPressureOfStrokeCountAtom)[0];
+  const [data, setData] = useState<number[]>([]);
   const graphData: graphDataType = {
     labels: xLabels,
     datasets: [
@@ -69,153 +70,119 @@ export const PPUndoArea: React.FC = () => {
   };
 
   const [sliderValue, setSliderValue] = useAtom(sliderValueAtom);
-  const [drawer, setDrawer] = useAtom(drawerAtom);
-  const avgPressureOfStroke = useAtomValue(avgPressureOfStrokeAtom);
   const [, setAddLogOfBeforePPUndo] = useAtom(addLogOfBeforePPUndoAtom);
   const [logNotifierCount, setLogNotifierCount] = useAtom(logNotifierCountAtom);
   const [ppUndoCount, setPPUndoCount] = useAtom(ppUndoCountAtom)
   const [myNote, ] = useAtom(myNoteAtom);
   
   const [lowerPressureIndexList, setLowerPressureIndexList] = useState<number[]>([]);
-  const [logData, setLogData] = useState<LogStrokeDataType | null>(null);
-  const [prevSliderValue, setPrevSliderValue] = useState<number | number[]>(0);
-  const [logStrokeData, setLogStrokeData] = useState<any>({})
+  const [logData, setLogData] = useState<TLogStrokeData | null>(null);
+  const [, setPrevSliderValue] = useState<number | number[]>(0);
   const [defaultSliderValue, setDefaultSliderValue] = useState<number | number[] | undefined>(sliderValue);
+  const [backgroundImage, ] = useAtom(backgroundImageAtom);
+  const [, setHistory] = useAtom(historyAtom);
+  const [, setHistoryForRedo] = useAtom(historyForRedoAtom);
+  const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom);
+
+
+  const setGraphData = () => {
+    let tmp: number[] = [...Array(21)].fill(0);
+    fabricDrawer?.getPressureList().map((pressure, _) => {
+      const j = Math.round(pressure*100)/100;
+      tmp[Math.ceil(j*20)] += 1
+    })
+    setData(tmp);
+  }
+
+  useEffect(() => {
+    setGraphData();
+  }, [fabricDrawer?.getStrokeLength()])
 
   const changeValue = async(event: Event, newValue: number | number[]) => {
-    const newLowerPressureIndexList: number[] = getStrokesIndexWithLowPressure(avgPressureOfStroke, newValue);
     setSliderValue(newValue)
+    if (fabricDrawer?.getStrokeLength() == 0) { return; }
+    const pressureList: number[] = fabricDrawer? fabricDrawer.getPressureList(): [];
+    const newLowerPressureIndexList: number[] = getStrokesIndexWithLowPressure(
+      pressureList,
+      newValue,
+    );
     if (newLowerPressureIndexList.length == lowerPressureIndexList.length) {
       return;
     }
-    // FIXME: 色変更の関数を別で実装しよう！もっとしっかりとした条件分岐で
     // 色を薄く
-    reduceStrokeColorOpacity(
-      newLowerPressureIndexList,
-      drawer.currentFigure.strokes
-    );
+    fabricDrawer?.changeStrokesColorToLight(newLowerPressureIndexList);
     // 色を元に戻す
-    increaseStrokeColorOpacity(
+    fabricDrawer?.changeStrokesColorToDark(
       lowerPressureIndexList,
       newLowerPressureIndexList,
-      drawer.currentFigure.strokes
     );
-    const diff = getDiffLowerPressureIndexList(
-      lowerPressureIndexList,
-      newLowerPressureIndexList,
-    )
     setLowerPressureIndexList(newLowerPressureIndexList);
-    setDrawer(drawer);
-    // drawer.reDraw();
-    const strokes = drawer.currentFigure.strokes;
-    for(let i=0; i < diff.oldOnly.length; i++) {
-      const stroke = strokes[diff.oldOnly[i]];
-      if (stroke.color.length == 9 && stroke.color.slice(-2) == "00") {continue;}
-      await stroke.DFT.draw(drawer, stroke);
-    }
-    for (let i=0; i < diff.newOnly.length; i++) {
-      const stroke = strokes[diff.newOnly[i]];
-      if (stroke.color.length == 9 && stroke.color.slice(-2) == "00") {
-        continue;
-      }
-      const transparentStroke = {
-        DFT: stroke.DFT,
-        originalLength: 0,
-        points: stroke.points,
-        spline: "",
-        svg: "",
-        stime: 0,
-        strokeWidth: stroke.strokeWidth,
-        color: "#ffffffcc"
-      }
-      await stroke.DFT.draw(drawer, transparentStroke);
-    }
   }
 
 
-  useEffect(() => {
-    if(defaultSliderValue != undefined) {return;}
-    const getSliderValue = sliderValue? sliderValue: 0;
-    setDefaultSliderValue(getSliderValue);
-    console.log("defaultSliderValueの更新", sliderValue)
-  }, [sliderValue])
+  // useEffect(() => {
+  //   if(defaultSliderValue != undefined) {return;}
+  //   const getSliderValue = sliderValue? sliderValue: 0;
+  //   setDefaultSliderValue(getSliderValue);
+  //   console.log("defaultSliderValueの更新", sliderValue)
+  // }, [sliderValue])
 
   const actionStart = async () => {
-    const numOfStroke = drawer.numOfStroke;
-    if(numOfStroke <= 0) return
-    const figure = drawer.currentFigure;
-    figure.calculateRect();
-    figure.normalize();
-    figure.adapt();
-    const res: string = await drawer.getBase64PngImage().catch((error: unknown) => {
-      console.log(error);
-    });
+    const img = fabricDrawer?.getImg();
     const now = getJaStringTime();
-    const strokeData: LogStrokeDataType = {
-      image: res? res : undefined,
+    const strokes = fabricDrawer?.getAllStrokes();
+    const svg = fabricDrawer?.getSVG();
+    const strokeData: TLogStrokeData = {
+      image: img,
+      backgroundImage: backgroundImage,
       sliderValue: sliderValue,
       createTime: now,
-      strokes: figure.strokes.map((stroke: any, i: number) => ({
-        points: stroke.points.map((point: Point2Type, _j: number) => ({
-          x: point.x,
-          y: point.y,
-          z: point.z,
-        })),
-        color: stroke!.color,
-        strokeWidth: stroke!.strokeWidth,
-        strokeAvgPressure: avgPressureOfStroke[i]
-      })),
+      strokes: strokes,
+      svg: svg,
+      pressureList: fabricDrawer!.getPressureList(),
     };
     setPrevSliderValue(sliderValue);
+
     await addClientLog(
       {
         NID: myNote?.ID? myNote?.ID: 0,
         Data: strokeData,
       }
     );
-    const _logStrokeData = await getCurrentStrokeData(figure.strokes);
-    setLogStrokeData(_logStrokeData);
     setLogData(strokeData);
   }
 
   const actionFinish = async (event: any) => {
-    // const newSliderValue = Number(event.target.value);
-    // setSliderValue(newSliderValue)
-    hideLowPressureStrokes(
-      lowerPressureIndexList,
-      drawer.currentFigure.strokes
-    )
-    setDrawer(drawer);
+    fabricDrawer?.clearStrokesColor();
     setAddLogOfBeforePPUndo(logData!);
+    setGraphData();
     setLogNotifierCount(logNotifierCount + 1);
-    setPPUndoCount(ppUndoCount + 1);
     const postLogData: PostLogDataType = {
       UID: myNote?.UID? myNote?.UID: 0,
       NID: myNote?.ID? myNote?.ID: 0,
-      StrokeData: logStrokeData,
-      LogImage: logData!.image? logData!.image: "",
+      // StrokeData: {"Strokes": {"data": logData!.strokes, "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}},
+      StrokeData: {"Strokes": {"data": [], "pressure": [], "svg": ""}},
+      // LogImage: logData!.image? logData!.image: "",
+      LogImage: "",
       AvgPressureList: avgPressureOfStroke.join(','),
       Save: 0,
-      // SliderValue: newSliderValue,
       SliderValue: sliderValue,
-      BeforeLogRedoSliderValue: prevSliderValue,
+      BeforeLogRedoSliderValue: 0,
     }
+    setHistory([]);
+    setHistoryForRedo([]);
+    setSliderValue(0);
+    setPPUndoCount(ppUndoCount + 1);
     await addLog(postLogData);
     setTimeout(async() => {
-      await drawer.reDraw();
-      const reqStrokeData = await getCurrentStrokeData(drawer.currentFigure.strokes);
-      const img: string = await drawer.getBase64PngImage().catch((error: unknown) => {
-        console.log(error);
-      });
-      const beforePPUndoStrokeCount: number = calcIsShowStrokeCount(logStrokeData.Strokes);
-      const afterPPUndoStrokeCount: number = calcIsShowStrokeCount(drawer.currentFigure.strokes);
+      const img = fabricDrawer?.getImg();
       const postPPUndoCountsData: PostPPUndoCountsDataType = {
         UID: myNote?.UID? myNote?.UID: 0,
         NID: myNote?.ID? myNote?.ID: 0,
-        AfterPPUndoStrokeData: reqStrokeData,
-        AfterPPUndoImageData: img,
-        BeforePPUndoStrokeCount: beforePPUndoStrokeCount,
-        AfterPPUndoStrokeCount: afterPPUndoStrokeCount,
+        AfterPPUndoStrokeData: {"Strokes": {"data": fabricDrawer?.getAllStrokes(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}},
+        AfterPPUndoImageData: img? img: "",
+        BeforePPUndoStrokeCount: logData!.strokes!.length,
+        AfterPPUndoStrokeCount: fabricDrawer!.getStrokeLength(),
       }
       await addPPUndoCount(postPPUndoCountsData);
     }, 100);
@@ -242,25 +209,6 @@ export const PPUndoArea: React.FC = () => {
             onChangeCommitted={actionFinish}
             onPointerDownCapture={actionStart}
           />
-          {/* {
-            (defaultSliderValue!=undefined)?
-              <input 
-                key={defaultSliderValue}
-                id="large-range" 
-                className="slider"
-                type="range"
-                // value={sliderValue}
-                defaultValue={defaultSliderValue}
-                min="0"
-                step="0.001"
-                max="1" 
-                // onChange={changeValue} 
-                onPointerDownCapture={actionStart}
-                onInput={changeValue}
-                onPointerUpCapture={actionFinish}
-              />
-              :<></>
-          } */}
         </Box>
         <Box className="center">
           <Line
