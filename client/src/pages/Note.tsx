@@ -8,7 +8,7 @@ import { isAuth } from "@/modules/common/isAuth";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 import { averagePressure } from "@/modules/note/AveragePressure";
 import { NewNoteHeader } from "@/components/note/header";
-import { addAvgPressureOfStrokeAtom, addHistoryAtom, avgPressureOfStrokeAtom, backgroundImageAtom, drawModeAtom, historyAtom, historyForRedoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, ppUndoCountAtom, redoCountAtom, undoCountAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, addHistoryAtom, avgPressureOfStrokeAtom, backgroundImageAtom, drawModeAtom, historyAtom, historyForRedoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, ppUndoCountAtom, redoCountAtom, resetAtom, undoCountAtom } from "@/infrastructures/jotai/drawer";
 import { isLineSegmentIntersecting } from "@/modules/note/IsLineSegmentIntersecting";
 import { getMinimumPoints } from "@/modules/note/GetMinimumPoints";
 import NoteImg from "@/assets/notesolidb.svg"
@@ -50,6 +50,7 @@ export const Note: () => JSX.Element = () => {
   const [logRedoCount, ] = useAtom(logRedoCountAtom);
   const [ppUndoCount, ] = useAtom(ppUndoCountAtom);
   const [noteAspectRatio, setNoteAspectRatio] = useAtom(noteAspectRatiotAtom);
+  const [, setReset] = useAtom(resetAtom);
 
   useEffect(() => {
     if (!editor || !fabric || !(fabricDrawer === undefined && !!editor)) {
@@ -98,6 +99,7 @@ export const Note: () => JSX.Element = () => {
     // }
 
     const firstLoadData = async () => {
+      setReset();
       const noteData: NoteDataType | null = await getFirstStrokeData();
       const instance = new FabricDrawer(editor);
       setFabricDrawer(instance);
@@ -110,7 +112,7 @@ export const Note: () => JSX.Element = () => {
           Object.assign(editor.canvas._objects[i], { pressure: noteData!.StrokeData.strokes.pressure[i] });
         }
       }
-      finishLoading(100);
+      finishLoading(2500);
     }
     if (fabricDrawer === undefined && !!editor) {
       firstLoadData();
@@ -379,7 +381,6 @@ export const Note: () => JSX.Element = () => {
       myNote!.BackgroundImage = NoteImg;
       await updateNote(myNote!);
       console.log(myNote!.StrokeData)
-      alert("保存しました");
     } catch (error) {
       alert("保存に失敗しました");
       throw error;
