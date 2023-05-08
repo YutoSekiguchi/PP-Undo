@@ -43,6 +43,7 @@
 .folder-box {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   background-color: variables.$folder-back-dolor;
   border-radius: var(--dt-corner-card,.375rem);
   font-size: 14px;
@@ -50,10 +51,19 @@
   &:hover {
     background-color: #ddd;
   }
-  .folder-icon {
-    margin: 16px 20px;
-    color: variables.$folder-note-color;
+  .folder-box-left {
+    display: flex;
+    align-items: center;
+    .folder-icon {
+      margin: 16px 20px;
+      color: variables.$folder-note-color;
+    }
   }
+}
+
+.more-vert-icon {
+  margin-right: 10px;
+  color: variables.$folder-note-color;
 }
 
 .notefolders-subtitle {
@@ -72,6 +82,15 @@
     width: 90%;
     border-radius: 5%;
     overflow: hidden;
+  }
+  .file-box-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .file-box-header-left {
+      display: flex;
+      align-items: center;
+    }
   }
   .note-background {
     width: 90%;

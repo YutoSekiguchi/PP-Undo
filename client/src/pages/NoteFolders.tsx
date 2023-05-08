@@ -11,6 +11,7 @@ import { Params, useNavigate, useParams } from "react-router-dom";
 import { getFoldersAtom } from "@/infrastructures/jotai/noteFolders";
 import lscache from "lscache";
 import FolderIcon from '@mui/icons-material/Folder';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Spacer from "@/components/common/Spacer";
 import { fetchNoteFoldersTree } from "@/infrastructures/services/noteFolders";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
@@ -148,8 +149,11 @@ export const Notefolders: React.FC = () => {
                     noteFoldersData.map((noteFolderData, i) => {
                       return (
                         <Box key={i} className="text-center folder-box pointer" onClick={() => navigate(`/notefolders/${noteFolderData.ID}`)}>
-                          <FolderIcon sx={{ fontSize: 24 }} className="folder-icon" />
-                          <Typography variant="body2">{truncateString(noteFolderData.Name)}</Typography>
+                          <Box className="folder-box-left">
+                            <FolderIcon sx={{ fontSize: 24 }} className="folder-icon" />
+                            <Typography variant="body2">{truncateString(noteFolderData.Name)}</Typography>
+                          </Box>
+                          <MoreVertIcon className="more-vert-icon" />
                         </Box>
                       );
                     })
@@ -182,9 +186,12 @@ export const Notefolders: React.FC = () => {
                     notesData.map((noteData, i) => {
                       return (
                         <Box key={i} className="text-center file-box pointer" onClick={() => navigate(`/note/${noteData.ID}`)}>
-                          <Box className="flex-start">
-                            <Description sx={{ fontSize: 16 }} className="note-title-icon" />
-                            <Box className="note-text">{noteData.Title}</Box>
+                          <Box className="file-box-header">
+                            <Box className="file-box-header-left">
+                              <Description sx={{ fontSize: 16 }} className="note-title-icon" />
+                              <Box className="note-text">{noteData.Title}</Box>
+                            </Box>
+                            <MoreVertIcon className="more-vert-icon" />
                           </Box>
                           {
                             noteData.NoteImage==""
