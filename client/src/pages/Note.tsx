@@ -222,7 +222,14 @@ export const Note: () => JSX.Element = () => {
     await addStroke(data);
   }
 
-  const handleEraseDown = () => {
+  const handleEraseDown = (event: PointerEvent<SVGSVGElement>) => {
+    if (event.pointerType === "touch") {
+      setIsPointer(false);
+      return;
+    }
+    if (!isPointer) {
+      setIsPointer(true);
+    }
     strokePressureList = [];
     drawStartTime = performance.now();
     setIsDraw(true);
@@ -230,6 +237,7 @@ export const Note: () => JSX.Element = () => {
 
   const handleEraseMove = (event: PointerEvent<SVGSVGElement>) => {
     if (!isDraw && drawMode === "strokeErase") { return; }
+    if (event.pointerType === "touch") { return; }
     strokePressureList = [...strokePressureList, event.pressure];
     const offsetXAbout = Math.round(event.nativeEvent.offsetX);
     const offsetYAbout = Math.round(event.nativeEvent.offsetY);
@@ -274,6 +282,7 @@ export const Note: () => JSX.Element = () => {
   }
   
   const handleEraseUp = (event: PointerEvent<SVGSVGElement>) => {
+    if (event.pointerType === "touch") { return; }
     drawEndTime = performance.now();
     setPrevOffset(null);
     setIsDraw(false);
