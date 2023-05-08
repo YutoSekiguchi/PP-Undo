@@ -153,6 +153,7 @@ export const Note: () => JSX.Element = () => {
   }
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "touch") { return; }
     // 前のストロークが要素をはみ出してしまっていた時の処理
     const finalStroke: any = fabricDrawer?.getFinalStroke();
     if (finalStroke && typeof finalStroke.pressure === 'undefined') {
@@ -172,13 +173,14 @@ export const Note: () => JSX.Element = () => {
   }
 
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
-    if (!isDraw) { return; }
+    if (!isDraw || event.pointerType === "touch") { return; }
     if (event.pressure !== 0) {
       strokePressureList = [...strokePressureList, event.pressure];
     }
   }
 
   const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "touch") { return; }
     drawEndTime = performance.now();
     setIsDraw(false);
     const resultPressure: number = event.pointerType=="mouse"?Math.random(): averagePressure(strokePressureList);
