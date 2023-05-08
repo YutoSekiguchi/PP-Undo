@@ -44,6 +44,7 @@ export const Note: () => JSX.Element = () => {
   const [eraseStrokes, setEraseStrokes] = useState<any[]>([]);
   const [myNote, setMyNote] = useAtom(myNoteAtom);
   const [drawMode, ] = useAtom(drawModeAtom); // penか消しゴムか
+  const [isPointer, setIsPointer] = useState<boolean>(true);
   const [history, ] = useAtom(historyAtom); // 操作の履歴
   const [, addHistory] = useAtom(addHistoryAtom);
   const [, setHistoryForRedo] = useAtom(historyForRedoAtom);
@@ -153,7 +154,13 @@ export const Note: () => JSX.Element = () => {
   }
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType === "touch") { return; }
+    if (event.pointerType === "touch") {
+      setIsPointer(false);
+      return;
+    }
+    if (!isPointer) {
+      setIsPointer(true);
+    }
     // 前のストロークが要素をはみ出してしまっていた時の処理
     const finalStroke: any = fabricDrawer?.getFinalStroke();
     if (finalStroke && typeof finalStroke.pressure === 'undefined') {
@@ -173,7 +180,7 @@ export const Note: () => JSX.Element = () => {
   }
 
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
-    if (!isDraw || event.pointerType === "touch") { return; }
+    if (!isDraw || event.pointerType === "touch") {return;}
     if (event.pressure !== 0) {
       strokePressureList = [...strokePressureList, event.pressure];
     }
@@ -359,6 +366,17 @@ export const Note: () => JSX.Element = () => {
                 onPointerDownCapture={handleEraseDown}
                 onPointerMoveCapture={handleEraseMove}
                 onPointerUpCapture={handleEraseUp}
+              ></svg>
+            }
+            {
+              !isPointer &&
+              <svg
+                id="touch-drawer-cover"
+                className="canvas"
+                style={{ 
+                  width: window.innerWidth * NOTE_WIDTH_RATIO,
+                  height: window.innerWidth * NOTE_WIDTH_RATIO * noteAspectRatio
+                }}
               ></svg>
             }
           </Box>
