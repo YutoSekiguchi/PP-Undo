@@ -78,3 +78,72 @@ func (s NotesService) UpdateNoteByID(db *gorm.DB, c echo.Context) (*Notes, error
 
 	return n, nil
 }
+
+// DELETE
+// ノートの削除
+func (s NotesService) DeleteNoteByID(db * gorm.DB, c echo.Context) ([]Notes, error) {
+	var notes []Notes
+	var clientlogs []ClientLogs
+	var lrc []LogRedoCounts
+	var logs []Logs
+	var puc []PPUndoCounts
+	var rc []RedoCounts
+	var strokes []Strokes
+	var uc []UndoCounts
+	var error error
+	error = nil
+	id := c.Param("id")
+
+	go func() {
+		if err := db.Where("id = ?", id).Delete(&notes).Error; err != nil {
+			error = err
+		}
+	}()
+
+	go func() {
+		if err := db.Where("nid = ?", id).Delete(&clientlogs).Error; err != nil {
+			error = err
+		}
+	}()
+
+	go func() {
+		if err := db.Where("nid = ?", id).Delete(&lrc).Error; err != nil {
+			error = err
+		}
+	}()
+
+	go func() {
+		if err := db.Where("nid = ?", id).Delete(&logs).Error; err != nil {
+			error = err
+		}
+	}()
+
+	go func() {
+		if err := db.Where("nid = ?", id).Delete(&puc).Error; err != nil {
+			error = err
+		}
+	}()
+
+	go func() {
+		if err := db.Where("nid = ?", id).Delete(&rc).Error; err != nil {
+			error = err
+		}
+	}()
+
+	go func() {
+		if err := db.Where("nid = ?", id).Delete(&strokes).Error; err != nil {
+			error = err
+		}
+	}()
+
+	go func() {
+		if err := db.Where("nid = ?", id).Delete(&uc).Error; err != nil {
+			error = err
+		}
+	}()
+
+	if (error != nil) {
+		return nil, error
+	}
+	return notes, nil
+}

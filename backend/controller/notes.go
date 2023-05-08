@@ -53,3 +53,11 @@ func (ctrl Controller) HandleUpdateNoteByID(c echo.Context) error {
 
 	return Res(c, p, err)
 }
+
+// ノートの削除
+func (ctrl Controller) HandleDeleteNoteByID(c echo.Context) error {
+	var s service.NotesService
+	p, err := s.DeleteNoteByID(ctrl.Db, c)
+
+	return Res(c, p, err)
+}

@@ -54,6 +54,7 @@ func InitRouter(db *gorm.DB) {
 		note.GET("/:id", ctrl.HandleGetNoteByID)
 		note.GET("/in/:nfid", ctrl.HandleGetNotesByNFID)
 		note.GET("/user/:uid/in/:nfid", ctrl.HandleGetNotesByNFIDAndUID)
+		note.DELETE("/:id", ctrl.HandleDeleteNoteByID)
 	}
 
 	// Strokes
