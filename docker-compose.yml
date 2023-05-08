@@ -44,9 +44,11 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
+    volumes:
+      - ./client/:/app
     env_file: ./.env
     ports:
-      - 7150:5173
+      - 7150:4173
     networks:
       - ppundo
 

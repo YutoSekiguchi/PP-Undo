@@ -1,6 +1,6 @@
-import { PenColorType } from "@/@types/note";
+import { TPenColor } from "@/@types/note";
 
-export const penColorList: PenColorType[] = [
+export const penColorList: TPenColor[] = [
   {
     penColor: '#000000',
     useable: true,

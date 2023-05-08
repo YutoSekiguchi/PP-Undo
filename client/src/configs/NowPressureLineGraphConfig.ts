@@ -1,6 +1,6 @@
-import { PPUndoGraphDatasetsConfigType } from "@/@types/note";
+import { TPPUndoGraphDatasetsConfig } from "@/@types/note";
 
-export const datasetsConfig: PPUndoGraphDatasetsConfigType = {
+export const datasetsConfig: TPPUndoGraphDatasetsConfig = {
   label: "筆圧",
   borderColor: "#dd77dd",
   backgroundColor: "#fff",

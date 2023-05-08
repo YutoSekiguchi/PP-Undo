@@ -20,10 +20,10 @@ import { fetchNoteByID, updateNote } from "@/infrastructures/services/note";
 import { NoteDataType } from "@/@types/notefolders";
 import { TClientLogData, TPostStrokeData } from "@/@types/note";
 import { addStroke } from "@/infrastructures/services/strokes";
-import { rgbToHex } from "@material-ui/core";
 import { fetchClientLogsByNID } from "@/infrastructures/services/ppUndoLogs";
 import { NOTE_WIDTH_RATIO } from "@/configs/settings";
 import { confirmNumberArrayFromString } from "@/modules/common/confirmArrayFromString";
+import { rgbToHex } from "@/modules/note/RGBToHex";
 
 let drawStartTime: number = 0; // 描画時の時刻
 let drawEndTime: number = 0; // 描画終了時の時刻
