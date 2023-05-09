@@ -154,14 +154,14 @@ export const Note: () => JSX.Element = () => {
   }
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType === "touch") {
-      fabricDrawer?.setPointingMode();
-      setIsPointer(false);
-      return;
-    }
-    if (!isPointer) {
-      setIsPointer(true);
-    }
+    // if (event.pointerType === "touch") {
+    //   fabricDrawer?.setPointingMode();
+    //   setIsPointer(false);
+    //   return;
+    // }
+    // if (!isPointer) {
+    //   setIsPointer(true);
+    // }
     // 前のストロークが要素をはみ出してしまっていた時の処理
     const finalStroke: any = fabricDrawer?.getFinalStroke();
     if (finalStroke && typeof finalStroke.pressure === 'undefined') {
@@ -188,7 +188,7 @@ export const Note: () => JSX.Element = () => {
   }
 
   const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType === "touch") { return; }
+    // if (event.pointerType === "touch") { return; }
     drawEndTime = performance.now();
     setIsDraw(false);
     const resultPressure: number = event.pointerType=="mouse"?Math.random(): averagePressure(strokePressureList);
@@ -224,15 +224,15 @@ export const Note: () => JSX.Element = () => {
   }
 
   const handleEraseDown = (event: PointerEvent<SVGSVGElement>) => {
-    if (event.pointerType === "touch") {
-      fabricDrawer?.setPointingMode();
-      setIsPointer(false);
-      return;
-    }
-    if (!isPointer) {
-      fabricDrawer?.setDrawingMode();
-      setIsPointer(true);
-    }
+    // if (event.pointerType === "touch") {
+    //   fabricDrawer?.setPointingMode();
+    //   setIsPointer(false);
+    //   return;
+    // }
+    // if (!isPointer) {
+    //   fabricDrawer?.setDrawingMode();
+    //   setIsPointer(true);
+    // }
     strokePressureList = [];
     drawStartTime = performance.now();
     setIsDraw(true);
@@ -240,7 +240,7 @@ export const Note: () => JSX.Element = () => {
 
   const handleEraseMove = (event: PointerEvent<SVGSVGElement>) => {
     if (!isDraw && drawMode === "strokeErase") { return; }
-    if (event.pointerType === "touch") { return; }
+    // if (event.pointerType === "touch") { return; }
     strokePressureList = [...strokePressureList, event.pressure];
     const offsetXAbout = Math.round(event.nativeEvent.offsetX);
     const offsetYAbout = Math.round(event.nativeEvent.offsetY);
@@ -285,7 +285,7 @@ export const Note: () => JSX.Element = () => {
   }
   
   const handleEraseUp = (event: PointerEvent<SVGSVGElement>) => {
-    if (event.pointerType === "touch") { return; }
+    // if (event.pointerType === "touch") { return; }
     drawEndTime = performance.now();
     setPrevOffset(null);
     setIsDraw(false);
