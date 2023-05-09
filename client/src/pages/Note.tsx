@@ -155,6 +155,7 @@ export const Note: () => JSX.Element = () => {
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (event.pointerType === "touch") {
+      fabricDrawer?.setPointingMode();
       setIsPointer(false);
       return;
     }
@@ -224,6 +225,7 @@ export const Note: () => JSX.Element = () => {
 
   const handleEraseDown = (event: PointerEvent<SVGSVGElement>) => {
     if (event.pointerType === "touch") {
+      fabricDrawer?.setPointingMode();
       setIsPointer(false);
       return;
     }
@@ -359,7 +361,7 @@ export const Note: () => JSX.Element = () => {
                 css={{
                   backgroundImage: `url("${NoteImg}")`,
                   touchAction: "none",
-                  // display:`${(canvasHeight!=0&&canvasWidth!=0)? "block": "none"}`,
+                  // display:`${isPointer? "block": "none"}`,
                   backgroundSize: "contain"
                 }}
               />
@@ -380,7 +382,7 @@ export const Note: () => JSX.Element = () => {
             {
               !isPointer &&
               <svg
-                id="touch-drawer-cover"
+                id="erase-drawer"
                 className="canvas"
                 style={{ 
                   width: window.innerWidth * NOTE_WIDTH_RATIO,
