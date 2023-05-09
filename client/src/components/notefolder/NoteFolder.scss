@@ -64,6 +64,10 @@
 .more-vert-icon {
   margin-right: 10px;
   color: variables.$folder-note-color;
+  &:hover {
+    border-radius: 100%;
+    background-color: #aaa;
+  }
 }
 
 .notefolders-subtitle {
