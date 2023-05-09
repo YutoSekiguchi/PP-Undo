@@ -230,6 +230,7 @@ export const Note: () => JSX.Element = () => {
       return;
     }
     if (!isPointer) {
+      fabricDrawer?.setDrawingMode();
       setIsPointer(true);
     }
     strokePressureList = [];
@@ -362,6 +363,7 @@ export const Note: () => JSX.Element = () => {
                   backgroundImage: `url("${NoteImg}")`,
                   touchAction: "none",
                   // display:`${isPointer? "block": "none"}`,
+                  overflow: `${drawMode == "strokeErase"? "hidden": ""}`,
                   backgroundSize: "contain"
                 }}
               />
