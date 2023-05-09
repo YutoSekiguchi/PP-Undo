@@ -10,6 +10,7 @@ import { LoadingScreen } from "@/components/common/LoadingScreen";
 import { TLogRedoImageDialogProps } from "@/@types/note";
 import { rgbToHex } from "@/modules/note/RGBToHex";
 import { NOTE_WIDTH_RATIO } from "@/configs/settings";
+import Spacer from "@/components/common/Spacer";
 
 
 export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) => {
@@ -102,6 +103,7 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
             </img>
           </Box>
         </Box>
+        <Spacer size={24} />
         <Button
           variant="contained"
           color="secondary"
@@ -109,6 +111,7 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
         >
           Redo
         </Button>
+        <Spacer size={128} />
       </Box>
     </Box>
   )
