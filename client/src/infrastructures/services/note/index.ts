@@ -65,3 +65,19 @@ export const updateNote = async (data: NoteDataType) => {
     throw(error);
   }
 }
+
+// delete
+export const deleteNote = async (id: number) => {
+  const url = `${API_URL}/notes/${id}`;
+  try {
+    const res = await axios.delete(url);
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      console.log(res);
+      return null;
+    }
+  } catch (error) {
+    throw(error);
+  }
+}
