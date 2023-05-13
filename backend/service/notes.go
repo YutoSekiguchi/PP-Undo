@@ -79,12 +79,11 @@ func (s NotesService) UpdateNoteByID(db *gorm.DB, c echo.Context) (*Notes, error
 	return n, nil
 }
 // タイトルの変更
-func (s NotesService) UpdateNoteTitleByID(db *gorm.DB, c echo.Context) ([]Notes, error) {
-	var n []Notes
-	id := c.Param("id")
-	title := c.QueryParam("title")
+func (s NotesService) UpdateNoteTitleByID(db *gorm.DB, c echo.Context) (*Notes, error) {
+	var n *Notes
+	c.Bind(&n)
 	
-	if err := db.Where("id = ?", id).First(&n).Update("title", title).Error; err != nil {
+	if err := db.Model(&Notes{}).Where("id = ?", n.ID).Update("title", n.Title).Error; err != nil {
 		return nil, err
 	}
 	return n, nil
