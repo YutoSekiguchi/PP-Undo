@@ -14,12 +14,14 @@ export interface NoteFoldersDataType {
   CreatedAt: string;
 }
 
-export interface AddFolderDialogProps {
+export interface TAddFolderDialog {
   type: "folder" | "note";
   open: boolean;
+  edit?: {id: number, title: string};
   closeDialog: () => void;
   setNoteFoldersData?: React.Dispatch<React.SetStateAction<NoteFoldersDataType[]>>;
   setNotesData?: React.Dispatch<React.SetStateAction<NoteDataType[]>>;
+  setIsChange: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface PostNoteType {

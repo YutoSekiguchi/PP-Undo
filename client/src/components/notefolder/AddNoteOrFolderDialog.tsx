@@ -1,7 +1,7 @@
-import { AddFolderDialogProps } from "@/@types/notefolders";
+import { TAddFolderDialog } from "@/@types/notefolders";
 import { getFoldersAtom } from "@/infrastructures/jotai/noteFolders";
 import { getNotesByNFIDAndUIDAtom } from "@/infrastructures/jotai/notes";
-import { addNote } from "@/infrastructures/services/note";
+import { addNote, updateNoteTitle } from "@/infrastructures/services/note";
 import { addNoteFolder } from "@/infrastructures/services/noteFolders";
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { useAtom } from "jotai";
@@ -9,8 +9,8 @@ import lscache from "lscache";
 import React, { useState } from "react";
 import { Params, useParams } from "react-router-dom";
 
-export const AddNoteOrFolderDialog: React.FC<AddFolderDialogProps> = (props) => {
-  const { type, open, closeDialog, setNoteFoldersData, setNotesData } = props;
+export const AddNoteOrFolderDialog: React.FC<TAddFolderDialog> = (props) => {
+  const { type, edit, open, closeDialog, setNoteFoldersData, setNotesData, setIsChange } = props;
   const params: Params<string> = useParams();
   const [title, setTitle] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -76,6 +76,24 @@ export const AddNoteOrFolderDialog: React.FC<AddFolderDialogProps> = (props) => 
     }));
     closeDialog();
   }
+
+  const handleEditNoteTitle = async () => {
+    if (edit === undefined) { return; }
+    if (title === "") {
+      setErrorMessage("タイトルは一文字以上入力してください");
+      return;
+    }
+    setIsChange(true);
+    const userData = lscache.get('loginUserData');
+    const uid = Number(userData.ID);
+    const nfid = Number(params.pnfid);
+    updateNoteTitle(edit.id, title);
+    setNotesData!(await getNotesByNFIDAndUID({
+      UID: uid,
+      PNFID: nfid,
+    }));
+    closeDialog();
+  }
   
   return (
     <>
@@ -99,12 +117,17 @@ export const AddNoteOrFolderDialog: React.FC<AddFolderDialogProps> = (props) => 
             type="text"
             fullWidth
             variant="standard"
+            defaultValue={edit? edit.title: ""}
             onChange={handleChangeTitle}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={closeDialog}>Cancel</Button>
-          <Button onClick={type=="folder"? () => handleAddFolder(): () => handleAddNote()}>作成</Button>
+          {
+            edit?
+            <Button onClick={type=="folder"? () => handleAddFolder(): () => handleEditNoteTitle()}>確定</Button>
+            : <Button onClick={type=="folder"? () => handleAddFolder(): () => handleAddNote()}>作成</Button>
+          }
         </DialogActions>
       </Dialog>
     </>

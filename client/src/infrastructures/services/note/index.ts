@@ -66,6 +66,21 @@ export const updateNote = async (data: NoteDataType) => {
   }
 }
 
+export const updateNoteTitle = async (id: number, title: string) => {
+  const url = `${API_URL}/notes`;
+  try {
+    const res = await axios.put(url, {ID: id, Title: title});
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      console.log(res);
+      return null;
+    }
+  } catch (error) {
+    throw(error);
+  }
+}
+
 // delete
 export const deleteNote = async (id: number) => {
   const url = `${API_URL}/notes/${id}`;
