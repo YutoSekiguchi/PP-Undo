@@ -53,6 +53,14 @@ func (ctrl Controller) HandleUpdateNoteByID(c echo.Context) error {
 
 	return Res(c, p, err)
 }
+// ノートのタイトル変更
+func (ctrl Controller) HandleUpdateNoteTitleByID(c echo.Context) error {
+	var s service.NotesService
+	p, err := s.UpdateNoteTitleByID(ctrl.Db, c)
+
+	return Res(c, p, err)
+}
+
 
 // ノートの削除
 func (ctrl Controller) HandleDeleteNoteByID(c echo.Context) error {
