@@ -2,7 +2,7 @@ import { TAddFolderDialog } from "@/@types/notefolders";
 import { getFoldersAtom } from "@/infrastructures/jotai/noteFolders";
 import { getNotesByNFIDAndUIDAtom } from "@/infrastructures/jotai/notes";
 import { addNote, updateNoteTitle } from "@/infrastructures/services/note";
-import { addNoteFolder } from "@/infrastructures/services/noteFolders";
+import { addNoteFolder, updateNoteFolderTitle } from "@/infrastructures/services/noteFolders";
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { useAtom } from "jotai";
 import lscache from "lscache";
@@ -87,10 +87,28 @@ export const AddNoteOrFolderDialog: React.FC<TAddFolderDialog> = (props) => {
     const userData = lscache.get('loginUserData');
     const uid = Number(userData.ID);
     const nfid = Number(params.pnfid);
-    updateNoteTitle(edit.id, title);
+    await updateNoteTitle(edit.id, title);
     setNotesData!(await getNotesByNFIDAndUID({
       UID: uid,
       PNFID: nfid,
+    }));
+    closeDialog();
+  }
+
+  const handleEditNoteFolderTitle = async () => {
+    if (edit === undefined) { return; }
+    if (title === "") {
+      setErrorMessage("タイトルは一文字以上入力してください");
+      return;
+    }
+    setIsChange(true);
+    const userData = lscache.get('loginUserData');
+    const uid = Number(userData.ID);
+    const pnfid = Number(params.pnfid);
+    await updateNoteFolderTitle(edit.id, title);
+    setNoteFoldersData!(await getFolders({
+      UID: uid,
+      PNFID: pnfid
     }));
     closeDialog();
   }
@@ -125,7 +143,7 @@ export const AddNoteOrFolderDialog: React.FC<TAddFolderDialog> = (props) => {
           <Button onClick={closeDialog}>Cancel</Button>
           {
             edit?
-            <Button onClick={type=="folder"? () => handleAddFolder(): () => handleEditNoteTitle()}>確定</Button>
+            <Button onClick={type=="folder"? () => handleEditNoteFolderTitle(): () => handleEditNoteTitle()}>確定</Button>
             : <Button onClick={type=="folder"? () => handleAddFolder(): () => handleAddNote()}>作成</Button>
           }
         </DialogActions>

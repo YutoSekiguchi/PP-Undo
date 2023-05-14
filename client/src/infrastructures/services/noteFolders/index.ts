@@ -47,3 +47,18 @@ export const addNoteFolder = async (data: PostNoteFolderType) => {
     throw(error);
   }
 }
+
+export const updateNoteFolderTitle = async (id: number, title: string) => {
+  const url = `${API_URL}/notefolders`;
+  try {
+    const res = await axios.put(url, {id: id, name: title});
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      console.log(res);
+      return null;
+    }
+  } catch (error) {
+    throw(error);
+  }
+}

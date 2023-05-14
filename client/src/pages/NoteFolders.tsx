@@ -28,6 +28,7 @@ export const Notefolders: React.FC = () => {
   const [isNewFolderDialog, setIsNewFolderDialog] = useState<boolean>(false);
   const [isNewNoteDialog, setIsNewNoteDialog] = useState<boolean>(false);
   const [isEditNoteDialog, setIsEditNoteDialog] = useState<boolean>(false);
+  const [isEditNoteFolderDialog, setIsEditNoteFolderDialog] = useState<boolean>(false);
   const params: Params<string> = useParams();
   const [noteFoldersData, setNoteFoldersData] = useState<NoteFoldersDataType[]>([]);
   const [notesData, setNotesData] = useState<NoteDataType[]>([]);
@@ -37,9 +38,13 @@ export const Notefolders: React.FC = () => {
   const [, getNotesByNFIDAndUID] = useAtom(getNotesByNFIDAndUIDAtom);
   const [selectedNoteID, setSelectedNoteID] = useState<number | null>(null);
   const [selectedNoteTitle, setSelectedNoteTitle] = useState<string | null>(null);
+  const [selectedNoteFolderID, setSelectedNoteFolderID] = useState<number | null>(null);
+  const [selectedNoteFolderTitle, setSelectedNoteFolderTitle] = useState<string | null>(null);
   const [noteAnchorEl, setNoteAnchorEl] = useState<null | HTMLElement>(null);
+  const [noteFolderAnchorEl, setNoteFolderAnchorEl] = useState<null | HTMLElement>(null);
   const [isChange, setIsChange] = useState<boolean>(false);
   const noteMenuOpen = Boolean(noteAnchorEl);
+  const noteFolderMenuOpen = Boolean(noteFolderAnchorEl);
 
   const navigate = useNavigate();
 
@@ -65,11 +70,28 @@ export const Notefolders: React.FC = () => {
     setIsNewNoteDialog(true);
   }
 
-  const handleOpenMenu = (event: any, id: number, title: string) => {
+  const handleOpenNoteMenu = (event: any, id: number, title: string) => {
     event.stopPropagation();
     setSelectedNoteID(id);
     setSelectedNoteTitle(title)
     setNoteAnchorEl(event.currentTarget);
+  }
+
+  const handleNoteMenuClose = (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    event.stopPropagation();
+    setNoteAnchorEl(null);
+  };
+
+  const handleOpenNoteFolderMenu = (event: any, id: number, title: string) => {
+    event.stopPropagation();
+    setSelectedNoteFolderID(id);
+    setSelectedNoteFolderTitle(title)
+    setNoteFolderAnchorEl(event.currentTarget);
+  }
+
+  const handleNoteFolderMenuClose = (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    event.stopPropagation();
+    setNoteFolderAnchorEl(null);
   }
 
   const openEditNoteDialog = (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
@@ -86,6 +108,19 @@ export const Notefolders: React.FC = () => {
     setIsEditNoteDialog(false);
   }
 
+  const openEditNoteFolderDialog = (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    event.stopPropagation();
+    setIsEditNoteFolderDialog(true);
+  }
+
+  const closeEditNoteFolderDialog = () => {
+    setTimeout(() => {
+      loadData();
+      setNoteFolderAnchorEl(null);
+      setIsChange(false);
+    }, 1000)
+    setIsEditNoteFolderDialog(false);
+  }
   
   const handleDeleteNote = async (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     event.stopPropagation();
@@ -164,6 +199,16 @@ export const Notefolders: React.FC = () => {
               setIsChange={setIsChange}
             />
           }
+          {(selectedNoteFolderID !== null && selectedNoteFolderTitle !== null) &&
+            <AddNoteOrFolderDialog 
+              type="folder"
+              open={isEditNoteFolderDialog}
+              edit={{id: selectedNoteFolderID, title: selectedNoteFolderTitle}}
+              closeDialog={closeEditNoteFolderDialog}
+              setNoteFoldersData={setNoteFoldersData}
+              setIsChange={setIsChange}
+            />
+          }
 
           <Box className="note-folders-page-body">
             <Box className="flex tree">
@@ -224,7 +269,32 @@ export const Notefolders: React.FC = () => {
                               <FolderIcon sx={{ fontSize: 24 }} className="folder-icon" />
                               <Typography variant="body2">{truncateString(noteFolderData.Name)}</Typography>
                             </Box>
-                            <MoreVertIcon className="more-vert-icon" />
+                            <MoreVertIcon
+                              className="more-vert-icon"
+                              onClick={event => handleOpenNoteFolderMenu(event, noteFolderData.ID, noteFolderData.Name)}
+                            />
+                            <Menu
+                              anchorEl={noteFolderAnchorEl}
+                              open={noteFolderMenuOpen}
+                              onClose={ handleNoteFolderMenuClose}
+                              elevation={0}
+                              sx={{
+                                width: 200,
+                              }}
+                            >
+                              <MenuItem
+                                onClick={event => openEditNoteFolderDialog(event)}
+                              >
+                                <DriveFileRenameOutlineIcon />
+                                Edit
+                              </MenuItem>
+                              <MenuItem
+                                onClick={event => handleDeleteNote(event)}
+                              >
+                                <DeleteOutlineIcon />
+                                Delete
+                              </MenuItem>
+                            </Menu>
                           </Box>
                         );
                       })
@@ -255,10 +325,6 @@ export const Notefolders: React.FC = () => {
                 ? <>
                   {
                     notesData.map((noteData, i) => {
-                      const handleNoteMenuClose = (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-                        event.stopPropagation();
-                        setNoteAnchorEl(null);
-                      };
                       return (
                         <Box key={i} className="text-center file-box pointer" onClick={() => navigate(`/note/${noteData.ID}`)}>
                           <Box className="file-box-header">
@@ -268,7 +334,7 @@ export const Notefolders: React.FC = () => {
                             </Box>
                             <MoreVertIcon
                               className="more-vert-icon"
-                              onClick={event => handleOpenMenu(event, noteData.ID, noteData.Title)}
+                              onClick={event => handleOpenNoteMenu(event, noteData.ID, noteData.Title)}
                             />
                             <Menu
                               anchorEl={noteAnchorEl}
