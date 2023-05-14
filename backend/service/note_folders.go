@@ -112,6 +112,16 @@ func (s NoteFoldersService) UpdateNoteFolderByID(db *gorm.DB, c echo.Context) (*
 
 	return nf, nil
 }
+// 名前の変更
+func (s NoteFoldersService) UpdateNoteFolderTitleByID(db *gorm.DB, c echo.Context) (*NoteFolders, error) {
+	var nf *NoteFolders
+	c.Bind(&nf)
+	
+	if err := db.Model(&NoteFolders{}).Where("id = ?", nf.ID).Update("name", nf.Name).Error; err != nil {
+		return nil, err
+	}
+	return nf, nil
+}
 
 // DELETE
 func (s NoteFoldersService) DeleteNoteFolderByID(db *gorm.DB, c echo.Context) (*NoteFolders, error) {

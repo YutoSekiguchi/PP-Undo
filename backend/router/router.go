@@ -42,6 +42,7 @@ func InitRouter(db *gorm.DB) {
 		noteFolder.GET("/hierarchy/:uid/:pnfid", ctrl.HandleGetNoteFoldersByUIDAndParentNFID)
 		noteFolder.GET("/tree/:id", ctrl.HandleGetNoteFoldersTree)
 		noteFolder.PUT("/:id", ctrl.HandleUpdateNoteFolderByID)
+		noteFolder.PUT("", ctrl.HandleUpdateNoteFolderTitleByID)
 		noteFolder.DELETE("/:id", ctrl.HandleDeleteNoteFolderByID)
 	}
 

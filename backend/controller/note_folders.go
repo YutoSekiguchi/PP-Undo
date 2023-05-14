@@ -60,6 +60,13 @@ func (ctrl Controller) HandleUpdateNoteFolderByID(c echo.Context) error {
 
 	return Res(c, p, err)
 }
+// フォルダの名前を変更
+func (ctrl Controller) HandleUpdateNoteFolderTitleByID(c echo.Context) error {
+	var s service.NoteFoldersService
+	p, err := s.UpdateNoteFolderTitleByID(ctrl.Db, c)
+
+	return Res(c, p, err)
+}
 
 // フォルダの削除
 func (ctrl Controller) HandleDeleteNoteFolderByID(c echo.Context) error {
