@@ -259,9 +259,21 @@ export const Note: () => JSX.Element = () => {
         if (isErase) {break}
         const points = path[j];
         if(points.length === 5) {
+          const lastPoints = path[j-1];
+          const prev2PointX = Math.round(lastPoints[3] + diffLeft), prev2PointY = Math.round(lastPoints[4] + diffTop);
           const prevPointX = Math.round(points[1] + diffLeft), prevPointY = Math.round(points[2] + diffTop);
           const pointX = Math.round(points[3] + diffLeft), pointY = Math.round(points[4] + diffTop);
           if (prevOffset !== null) {
+            const isIntersectPrev = isLineSegmentIntersecting(
+              prevOffset.x,
+              prevOffset.y,
+              offsetXAbout,
+              offsetYAbout,
+              prev2PointX,
+              prev2PointY,
+              prevPointX,
+              prevPointY,
+            );
             const isIntersect = isLineSegmentIntersecting(
               prevOffset.x,
               prevOffset.y,
@@ -272,7 +284,7 @@ export const Note: () => JSX.Element = () => {
               pointX,
               pointY,
             );
-            if ((isIntersect ) && stroke) {
+            if ((isIntersect || isIntersectPrev) && stroke) {
               fabricDrawer?.removeStroke(stroke);
               setEraseStrokes(eraseStrokes.concat([stroke]));
               isErase = true;
