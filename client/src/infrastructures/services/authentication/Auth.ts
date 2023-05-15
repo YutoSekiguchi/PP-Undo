@@ -1,4 +1,4 @@
-import { PostUserType } from "@/@types/authentication";
+import { TPostUser } from "@/@types/authentication";
 import { API_URL } from "@/configs/settings";
 import axios from "axios";
 
@@ -17,7 +17,7 @@ export const fetchUserDataByNameAndPassword = async(name: string, password: stri
   }
 }
 
-export const addUser = async (data: PostUserType) => {
+export const addUser = async (data: TPostUser) => {
   const url = `${API_URL}/examusers`;
   try {
     const res = await axios.post(url, data);

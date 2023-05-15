@@ -3,7 +3,7 @@ import { isAuth } from "@/modules/common/isAuth";
 import { Box, Button, Typography } from "@mui/material";
 import { useAtom } from "jotai";
 import lscache from "lscache";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { AccountCircle } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { LoginDialog } from "@/components/common/authentication/LoginDialog";

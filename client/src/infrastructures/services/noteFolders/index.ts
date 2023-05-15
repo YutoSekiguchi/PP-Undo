@@ -1,4 +1,4 @@
-import { PostNoteFolderType } from "@/@types/notefolders";
+import { TPostNoteFolder } from "@/@types/notefolders";
 import { API_URL } from "@/configs/settings";
 import axios from "axios";
 
@@ -33,7 +33,7 @@ export const fetchNoteFoldersTree = async (nfid: number) => {
   }
 }
 
-export const addNoteFolder = async (data: PostNoteFolderType) => {
+export const addNoteFolder = async (data: TPostNoteFolder) => {
   const url = `${API_URL}/notefolders`;
   try {
     const res = await axios.post(url, data);

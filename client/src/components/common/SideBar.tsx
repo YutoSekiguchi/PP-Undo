@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation, Location } from "react-router-dom";
-import { SideBarMenuType } from "@/@types/common";
+import { TSideBarMenu } from "@/@types/common";
 import { notShowPathList } from "@/configs/NotShowPath";
 import { 
   Box,
@@ -21,7 +21,7 @@ import Spacer from "@/components/common/Spacer";
 
 export const SideBar:React.FC =() => {
   const location: Location = useLocation();
-  const menuList: SideBarMenuType[] = [
+  const menuList: TSideBarMenu[] = [
     {
       label: "My Folder",
       icon: <FolderCopyOutlined />,

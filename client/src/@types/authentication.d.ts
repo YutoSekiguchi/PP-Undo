@@ -1,15 +1,15 @@
-export interface LoginDialogPropsType {
+export interface TLoginDialogProps {
   closeLoginDialog: () => void;
 }
 
-export interface PostUserType {
+export interface TPostUser {
   Name: string;
   Password: string;
   Gender: string;
   Age: number;
 }
 
-export interface UserDataType {
+export interface TUserData {
   ID: number;
   Name: string;
   Password: string;

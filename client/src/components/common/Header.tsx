@@ -13,7 +13,7 @@ import {
 import { LoginDialog } from "./authentication/LoginDialog";
 import { userDataAtom } from "@/infrastructures/jotai/authentication";
 import { Person } from "@mui/icons-material";
-import { UserDataType } from "@/@types/authentication";
+import { TUserData } from "@/@types/authentication";
 import lscache from "lscache";
 import { isAuth } from "@/modules/common/isAuth";
 
@@ -21,7 +21,7 @@ export const Header:React.FC =() => {
   const location: Location = useLocation();
 
   const [isLoginDialog, setIsLoginDialog] = useState<boolean>(false);
-  const [userData, setUserData] = useState<UserDataType | null>(null);
+  const [userData, setUserData] = useState<TUserData | null>(null);
   const [loginUserData, ] = useAtom(userDataAtom);
 
   const openLoginDialog = () => {

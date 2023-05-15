@@ -1,8 +1,8 @@
 import { atom } from 'jotai';
 import { fetchNoteFoldersByUIDAndParentNFID } from '../services/noteFolders';
-import { NoteFoldersDataType } from '@/@types/notefolders';
+import { TNoteFoldersData } from '@/@types/notefolders';
 
-export const foldersAtom = atom<NoteFoldersDataType[]>([]);
+export const foldersAtom = atom<TNoteFoldersData[]>([]);
 
 export interface FolderObjType {
   UID: number;
@@ -10,7 +10,7 @@ export interface FolderObjType {
 }
 
 export const getFoldersAtom = atom(null, async (_get, set, obj: FolderObjType) => {
-  const foldersData: NoteFoldersDataType[] = await fetchNoteFoldersByUIDAndParentNFID(
+  const foldersData: TNoteFoldersData[] = await fetchNoteFoldersByUIDAndParentNFID(
     obj.UID,
     obj.PNFID,
   );

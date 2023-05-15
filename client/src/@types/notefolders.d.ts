@@ -1,12 +1,12 @@
 import React from "react";
 
-export interface PostNoteFolderType {
+export interface TPostNoteFolder {
   UID: number;
   Name: string;
   ParentNFID: number;
 }
 
-export interface NoteFoldersDataType {
+export interface TNoteFoldersData {
   ID: number;
   UID: number;
   Name: string;
@@ -24,7 +24,7 @@ export interface TAddFolderDialog {
   setIsChange: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export interface PostNoteType {
+export interface TPostNote {
   NFID: number;
   UID: number;
   Title: string;
@@ -46,7 +46,7 @@ export interface PostNoteType {
   BackgroundImage: string;
 }
 
-export interface NoteDataType {
+export interface TNoteData {
   ID: number;
   NFID: number;
   UID: number;

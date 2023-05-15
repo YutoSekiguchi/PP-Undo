@@ -1,8 +1,8 @@
 const dates = ["year", "month", "day", "hour", "min", "sec"] as const;
 const finishString = ["/", "/", " ", ":", ":", ""];
-type DateType = typeof dates[number];
+type TDate = typeof dates[number];
 
-export const getJaStringTime = (from: DateType = "year", until: DateType = "sec") => {
+export const getJaStringTime = (from: TDate = "year", until: TDate = "sec") => {
   const now = new Date();
 
   const Year = now.getFullYear();

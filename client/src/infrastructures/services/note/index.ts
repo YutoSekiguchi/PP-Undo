@@ -1,4 +1,4 @@
-import { NoteDataType, PostNoteType } from "@/@types/notefolders";
+import { TNoteData, TPostNote } from "@/@types/notefolders";
 import { API_URL } from "@/configs/settings";
 import axios from "axios";
 
@@ -36,7 +36,7 @@ export const fetchNoteByID = async (id: number) => {
 
 
 // ノートの追加
-export const addNote = async (data: PostNoteType) => {
+export const addNote = async (data: TPostNote) => {
   const url = `${API_URL}/notes`;
   try {
     const res = await axios.post(url, data);
@@ -51,7 +51,7 @@ export const addNote = async (data: PostNoteType) => {
   }
 }
 
-export const updateNote = async (data: NoteDataType) => {
+export const updateNote = async (data: TNoteData) => {
   const url = `${API_URL}/notes/${data.ID}`;
   try {
     const res = await axios.put(url, data);

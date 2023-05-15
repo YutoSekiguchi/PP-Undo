@@ -8,7 +8,7 @@ import lscache from 'lscache';
  */
 export const userDataAtom = atom<any>(null);
 
-export interface AuthType {
+export interface TAuth {
   userName: string;
   password: string;
 }
@@ -17,7 +17,7 @@ export interface AuthType {
  * @description
  * サインイン
  */
-export const signinAtom = atom(null, async (_get, set, obj: AuthType) => {
+export const signinAtom = atom(null, async (_get, set, obj: TAuth) => {
   const userData = await fetchUserDataByNameAndPassword(obj.userName, obj.password);
   if (userData == null) {
     // 追加処理
@@ -43,7 +43,7 @@ export const signinAtom = atom(null, async (_get, set, obj: AuthType) => {
  * @description
  * ログイン
  */
-export const loginAtom = atom(null, async (_get, set, obj: AuthType) => {
+export const loginAtom = atom(null, async (_get, set, obj: TAuth) => {
   const userData = await fetchUserDataByNameAndPassword(obj.userName, obj.password);
   set(userDataAtom, userData);
   lscache.set('loginUserData', userData, 180);

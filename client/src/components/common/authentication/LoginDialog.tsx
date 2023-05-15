@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import { Alert, Box, Button, TextField, Typography } from "@mui/material";
-import { LoginDialogPropsType } from "@/@types/authentication";
+import { TLoginDialogProps } from "@/@types/authentication";
 import { userDataAtom, loginAtom, signinAtom } from "@/infrastructures/jotai/authentication";
 import Spacer from "../Spacer";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
 
-export const LoginDialog: React.FC<LoginDialogPropsType> = (props) => {
+export const LoginDialog: React.FC<TLoginDialogProps> = (props) => {
   const { closeLoginDialog } = props;
   const [, signin] = useAtom(signinAtom);
   const [, login] = useAtom(loginAtom);

@@ -17,7 +17,7 @@ import { Location, Params, useLocation, useNavigate, useParams } from "react-rou
 import { LoadingScreen } from "@/components/common/LoadingScreen";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { fetchNoteByID, updateNote } from "@/infrastructures/services/note";
-import { NoteDataType } from "@/@types/notefolders";
+import { TNoteData } from "@/@types/notefolders";
 import { TClientLogData, TPostStrokeData } from "@/@types/note";
 import { addStroke } from "@/infrastructures/services/strokes";
 import { fetchClientLogsByNID } from "@/infrastructures/services/ppUndoLogs";
@@ -66,7 +66,7 @@ export const Note: () => JSX.Element = () => {
 
     const firstLoadData = async () => {
       setReset();
-      const noteData: NoteDataType | null = await getFirstStrokeData();
+      const noteData: TNoteData | null = await getFirstStrokeData();
       const instance = new FabricDrawer(editor);
       setFabricDrawer(instance);
       if (instance?.getStrokeLength() == 0) {
@@ -133,7 +133,7 @@ export const Note: () => JSX.Element = () => {
       return null;
     }
     const userData = lscache.get('loginUserData');
-    const data: NoteDataType | null = await fetchNoteByID(Number(params.id));
+    const data: TNoteData | null = await fetchNoteByID(Number(params.id));
     if(data?.UID !== Number(userData.ID)) {
       navigate('/notefolders/0');
     }

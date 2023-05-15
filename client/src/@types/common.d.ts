@@ -1,4 +1,4 @@
-export interface SideBarMenuType {
+export interface TSideBarMenu {
   label: string;
   icon: OverridableComponent<SvgIconTypeMap<{}, "svg">> & {
     muiName: string;
