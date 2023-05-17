@@ -28,7 +28,7 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => voi
   const navigate = useNavigate();
   const colorList: TPenColor[] = penColorList;
   const [color, setColor] = useState<string>(penColorList[0].penColor);
-  const [strokeWidth, setStrokeWidth] = useState<number>(penWidthList[2]);
+  const [strokeWidth, setStrokeWidth] = useState<number>(penWidthList[3]);
   const [isDemo, ] = useAtom(isDemoAtom);
 
   
