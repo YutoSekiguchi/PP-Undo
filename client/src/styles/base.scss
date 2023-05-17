@@ -9,6 +9,13 @@
   @include mixins.tl-static-position($position: absolute);
 }
 
+.no_scroll {
+  position: fixed;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+}
+
 .fixed {
   position: fixed;
 }

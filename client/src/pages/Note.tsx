@@ -28,6 +28,7 @@ import { rgbToHex } from "@/modules/note/RGBToHex";
 let drawStartTime: number = 0; // 描画時の時刻
 let drawEndTime: number = 0; // 描画終了時の時刻
 let strokePressureList: number[] = [];
+let scrollTop = 0;
 
 export const Note: () => JSX.Element = () => {
   const { editor, onReady } = useFabricJSEditor();
@@ -130,15 +131,16 @@ export const Note: () => JSX.Element = () => {
   
   useEffect(() => {
     if(drawMode === "strokeErase") {
-      window.addEventListener('touchmove', function(event) {
-        event.preventDefault();
-      });
+      const body = document.getElementsByTagName('body')[0];
+      scrollTop = window.scrollY;
+      body.style.top = (scrollTop * -1) + 'px';
+      body.classList.add('no_scroll');
+    } else if (drawMode === "pen" && document.getElementsByTagName('body')[0].classList.contains("no_scroll")) {
+      const body = document.getElementsByTagName('body')[0];
+      body.style.top = '';
+      body.classList.remove('no_scroll');
+      window.scrollTo(0, scrollTop);
     }
-    // } else if (drawMode === "pen") {
-    //   window.removeEventListener('touchmove', function(event) {
-    //     event.preventDefault();
-    //   });
-    // }
   }, [drawMode])
 
   const getFirstStrokeData = async () => {
