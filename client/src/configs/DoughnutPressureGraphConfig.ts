@@ -28,7 +28,7 @@ export const doughnutOptions: {} =
   },
   cutout: 45,
   radius: "90%",
-  maintainAspectRatio: false,
+  maintainAspectRatio: true,
   animation: {
     animateScale: true,
   }

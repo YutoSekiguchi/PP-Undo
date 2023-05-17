@@ -7,13 +7,14 @@
   min-width: 280px;
   min-height: calc(100vh - 65px);
   position: fixed;
+  bottom: 0;
   right: 0;
 }
 
 .graph-wrapper {
   background-color: variables.$dark-blue-color;
   min-height: 280px;
-  height: 35vh;
+  height: 25vh;
   max-height: 400px;
   margin: 20px 20px;
   padding: 10px 5px;
@@ -26,7 +27,7 @@
 
 .graph-wrapper-height {
   min-height: 280px;
-  height: 43vh;
+  height: 42vh;
   max-height: 500px;
   position: relative;
 }
@@ -40,7 +41,7 @@
 
 .display-button-wrapper {
   display: flex;
-  height: 6vh;
+  height: 4vh;
   justify-content: space-around;
   align-items: center;
   .display-button {
