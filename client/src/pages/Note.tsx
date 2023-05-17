@@ -205,7 +205,8 @@ export const Note: () => JSX.Element = () => {
           postStrokeData(resultPressure, strokePressureList);
         }
       }
-    }, 100)
+      fabricDrawer?.reDraw();
+    }, 100);
   }
 
   const postStrokeData = async (pressure: number, strokePressureList: number[]) => {
@@ -223,7 +224,7 @@ export const Note: () => JSX.Element = () => {
     await addStroke(data);
   }
 
-  const handleEraseDown = (event: PointerEvent<SVGSVGElement>) => {
+  const handleEraseDown = (event: PointerEvent<HTMLCanvasElement>) => {
     // if (event.pointerType === "touch") {
     //   fabricDrawer?.setPointingMode();
     //   setIsPointer(false);
@@ -238,7 +239,7 @@ export const Note: () => JSX.Element = () => {
     setIsDraw(true);
   }
 
-  const handleEraseMove = (event: PointerEvent<SVGSVGElement>) => {
+  const handleEraseMove = (event: PointerEvent<HTMLCanvasElement>) => {
     if (!isDraw && drawMode === "strokeErase") { return; }
     // if (event.pointerType === "touch") { return; }
     strokePressureList = [...strokePressureList, event.pressure];
@@ -296,7 +297,7 @@ export const Note: () => JSX.Element = () => {
     setPrevOffset({"x": offsetXAbout, "y": offsetYAbout});
   }
   
-  const handleEraseUp = (event: PointerEvent<SVGSVGElement>) => {
+  const handleEraseUp = (event: PointerEvent<HTMLCanvasElement>) => {
     // if (event.pointerType === "touch") { return; }
     drawEndTime = performance.now();
     setPrevOffset(null);
@@ -381,7 +382,7 @@ export const Note: () => JSX.Element = () => {
               />
             </Box>
             {drawMode == "strokeErase" &&
-              <svg
+              <canvas
                 id="erase-drawer"
                 className="canvas"
                 style={{ 
@@ -391,7 +392,7 @@ export const Note: () => JSX.Element = () => {
                 onPointerDownCapture={handleEraseDown}
                 onPointerMoveCapture={handleEraseMove}
                 onPointerUpCapture={handleEraseUp}
-              ></svg>
+              ></canvas>
             }
             {
               !isPointer &&
