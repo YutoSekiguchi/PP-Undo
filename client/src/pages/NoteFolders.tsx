@@ -156,12 +156,6 @@ export const Notefolders: React.FC = () => {
 
 
   useEffect(() => {
-    // const userData = lscache.get('loginUserData');
-    // if (userData === null) {
-    //   navigate(`/`);
-    // }
-    // const uid = Number(userData.ID);
-    // const pnfid = Number(params.pnfid);
     loadData();
   }, [params])
 
