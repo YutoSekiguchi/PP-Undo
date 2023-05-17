@@ -22,6 +22,7 @@ import { UndoButton } from "./UndoButton";
 import { RedoButton } from "./RedoButton";
 import { useAtom } from "jotai";
 import { isDemoAtom } from "@/infrastructures/jotai/drawer";
+import { isAuth } from "@/modules/common/isAuth";
 
 export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => void}> = ({ fabricDrawer, save }) => {
   const navigate = useNavigate();
@@ -32,7 +33,11 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => voi
 
   
   const backToHome = () => {
-    navigate('/notefolders/0');
+    if (isAuth()) {
+      navigate('/notefolders/0');
+    } else {
+      navigate('/')
+    }
   }
 
   // 今の色表示&カラーピッカー
