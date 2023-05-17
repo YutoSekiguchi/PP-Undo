@@ -127,6 +127,19 @@ export const Note: () => JSX.Element = () => {
       save();
     }
   }, [isLoading])
+  
+  useEffect(() => {
+    if(drawMode === "strokeErase") {
+      window.addEventListener('touchmove', function(event) {
+        event.preventDefault();
+      });
+    }
+    // } else if (drawMode === "pen") {
+    //   window.removeEventListener('touchmove', function(event) {
+    //     event.preventDefault();
+    //   });
+    // }
+  }, [drawMode])
 
   const getFirstStrokeData = async () => {
     if (isDemo) {
@@ -394,7 +407,7 @@ export const Note: () => JSX.Element = () => {
                 onPointerUpCapture={handleEraseUp}
               ></canvas>
             }
-            {
+            {/* {
               !isPointer &&
               <svg
                 id="erase-drawer"
@@ -404,7 +417,7 @@ export const Note: () => JSX.Element = () => {
                   height: window.innerWidth * NOTE_WIDTH_RATIO * noteAspectRatio
                 }}
               ></svg>
-            }
+            } */}
           </Box>
           {
             fabricDrawer !== undefined &&
