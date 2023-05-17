@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
 import { TLogStrokeData } from '@/@types/note';
+import { SPLIT_PRESSURE_COUNT } from '@/configs/PPUndoGraphConifig';
 
 
 /**
@@ -126,10 +127,10 @@ export const clearAvgPressureOfStrokeAtom = atom(null, (_get, set) => {
 })
 // PPUndoグラフ用に筆圧とストロークの長さを返す
 export const getAvgPressureOfStrokeCountAtom = atom((get) => {
-  let tmp: number[] = [...Array(21)].fill(0);
+  let tmp: number[] = [...Array(SPLIT_PRESSURE_COUNT + 1)].fill(0);
   get(avgPressureOfStrokeAtom).map((pressure, _) => {
     const j = Math.round(pressure*100)/100;
-    tmp[Math.ceil(j*20)] += 1
+    tmp[Math.ceil(j*SPLIT_PRESSURE_COUNT)] += 1
   })
   return tmp;
 })

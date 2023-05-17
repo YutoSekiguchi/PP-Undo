@@ -2,7 +2,9 @@ import { TPPUndoGraphDatasetsConfig } from "@/@types/note";
 import { styled } from '@mui/material/styles';
 import { Slider } from "@mui/material";
 
-export const xLabels: number[] = [...Array(21)].map((_, i) => Math.round((i*0.05)*100)/100);
+export const SPLIT_PRESSURE_COUNT = 20;
+
+export const xLabels: number[] = [...Array(SPLIT_PRESSURE_COUNT + 1)].map((_, i) => Math.round((i*(1/SPLIT_PRESSURE_COUNT))*100)/100);
 
 export const datasetsConfig: TPPUndoGraphDatasetsConfig = {
   label: "ストローク数",
@@ -15,7 +17,7 @@ export const datasetsConfig: TPPUndoGraphDatasetsConfig = {
 }
 
 export const options: {} = {
-  maintainAspectRatio: false,
+  maintainAspectRatio: true,
   plugins: {
     legend:{
       display:false,

@@ -29,7 +29,7 @@ import {
 } from "@mui/material";
 import Spacer from "@/components/common/Spacer";
 import { TPPUndoGraphDatasetsConfig, TPostLogData, TPostPPUndoCountsData} from "@/@types/note";
-import { PrettoSlider, datasetsConfig, options, xLabels } from "@/configs/PPUndoGraphConifig";
+import { PrettoSlider, SPLIT_PRESSURE_COUNT, datasetsConfig, options, xLabels } from "@/configs/PPUndoGraphConifig";
 import { getJaStringTime } from "@/modules/common/getJaStringTime";
 import { getStrokesIndexWithLowPressure } from "@/modules/note/PPUndo";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
@@ -88,10 +88,10 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
 
 
   const setGraphData = () => {
-    let tmp: number[] = [...Array(21)].fill(0);
+    let tmp: number[] = [...Array(SPLIT_PRESSURE_COUNT + 1)].fill(0);
     fabricDrawer?.getPressureList().map((pressure, _) => {
       const j = Math.round(pressure*100)/100;
-      tmp[Math.ceil(j*20)] += 1
+      tmp[Math.ceil(j*SPLIT_PRESSURE_COUNT)] += 1
     })
     setData(tmp);
   }
