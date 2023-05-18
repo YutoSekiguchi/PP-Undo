@@ -45,8 +45,6 @@ export const Note: () => JSX.Element = () => {
   const [eraseStrokes, setEraseStrokes] = useState<any[]>([]);
   const [myNote, setMyNote] = useAtom(myNoteAtom);
   const [drawMode, ] = useAtom(drawModeAtom); // penか消しゴムか
-  const [isPointer, setIsPointer] = useState<boolean>(true);
-  const [history, ] = useAtom(historyAtom); // 操作の履歴
   const [, addHistory] = useAtom(addHistoryAtom);
   const [, setHistoryForRedo] = useAtom(historyForRedoAtom);
   const [backgroundImage, setBackgroundImage] = useAtom(backgroundImageAtom);
@@ -155,7 +153,7 @@ export const Note: () => JSX.Element = () => {
     setMyNote(data);
     const clientLogData: TClientLogData[] | null = await fetchClientLogsByNID(Number(params.id))
     const tmp: any[] = [];
-    clientLogData?.map((clientLog: TClientLogData, i: number) => {
+    clientLogData?.map((clientLog: TClientLogData, _: number) => {
       tmp.push(clientLog.Data);
     });
     setLogOfBeforePPUndo(tmp);
@@ -219,8 +217,8 @@ export const Note: () => JSX.Element = () => {
           })
           postStrokeData(resultPressure, strokePressureList);
         }
+        fabricDrawer?.reDraw();
       }
-      fabricDrawer?.reDraw();
     }, 100);
   }
 
