@@ -5,6 +5,10 @@
 @use "./mixins.scss";
 @use "./variables.scss";
 
+html {
+  background-color: variables.$base-color;
+}
+
 .canvas {
   @include mixins.tl-static-position($position: absolute);
 }
