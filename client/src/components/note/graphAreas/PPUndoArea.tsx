@@ -221,7 +221,7 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
             height={200}
             data={graphData}
             options={options}
-            id="chart-key"
+            id="pressure-line-graph"
           />
         </Box>
       </Box>

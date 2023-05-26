@@ -11,6 +11,15 @@
   right: 0;
 }
 
+#pressure-line-graph {
+  max-height: 220px;
+}
+
+.css-79elbk {
+  max-width: 145px;
+  max-height: 145px;
+}
+
 .graph-wrapper {
   background-color: variables.$dark-blue-color;
   min-height: 300px;
