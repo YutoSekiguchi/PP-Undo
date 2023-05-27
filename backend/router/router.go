@@ -50,6 +50,7 @@ func InitRouter(db *gorm.DB) {
 	note := e.Group("/notes")
 	{
 		note.GET("", ctrl.HandleGetAllNotes)
+		note.GET("/short", ctrl.HandleGetAllNotesWithoutLongData)
 		note.POST("", ctrl.HandlePostNote)
 		note.PUT("/:id", ctrl.HandleUpdateNoteByID)
 		note.PUT("", ctrl.HandleUpdateNoteTitleByID)

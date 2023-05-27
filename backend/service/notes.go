@@ -17,6 +17,15 @@ func (s NotesService) GetAllNotes(db *gorm.DB) ([]Notes, error) {
 	return n, nil
 }
 
+// 全てのノートからimageとstrokedata以外取得
+func (s NotesService) GetAllNotesWithoutLongData(db *gorm.DB) ([]NotesWithoutLongData, error) {
+	var n []NotesWithoutLongData
+	if err := db.Raw("SELECT id, nfid, uid, title, avg_pressure,avg_pressure_list, all_avg_pressure_list, is_show_stroke_list, all_stroke_count, stroke_count, undo_count, redo_count, log_redo_count, ppundo_count FROM `notes`").Scan(&n).Error; err != nil {
+		return nil, err
+	}
+	return n, nil
+}
+
 // idからノートの取得
 func (s NotesService) GetNoteByID(db *gorm.DB, c echo.Context) (*Notes, error) {
 	n := new(Notes)

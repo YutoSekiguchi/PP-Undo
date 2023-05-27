@@ -5,6 +5,7 @@ import "github.com/YutoSekiguchi/ppundo/model"
 type ExamUser model.ExamUser
 type NoteFolders model.NoteFolders
 type Notes model.Notes
+type NotesWithoutLongData model.NotesWithoutLongData
 type Strokes model.Strokes
 type Logs model.Logs
 type ClientLogs model.ClientLogs

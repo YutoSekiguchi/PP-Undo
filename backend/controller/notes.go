@@ -14,6 +14,14 @@ func (ctrl Controller) HandleGetAllNotes(c echo.Context) error {
 	return Res(c, p, err)
 }
 
+// imageとstrokeData以外ノートを全て取得
+func (ctrl Controller) HandleGetAllNotesWithoutLongData(c echo.Context) error {
+	var s service.NotesService
+	p, err := s.GetAllNotesWithoutLongData(ctrl.Db)
+	
+	return Res(c, p, err)
+}
+
 // idからノートの取得
 func (ctrl Controller) HandleGetNoteByID(c echo.Context) error {
 	var s service.NotesService
