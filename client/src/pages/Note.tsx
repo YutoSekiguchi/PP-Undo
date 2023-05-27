@@ -38,6 +38,7 @@ export const Note: () => JSX.Element = () => {
   const params: Params<string> = useParams();
   const isDemo = (location.pathname.indexOf("/demo/")>-1 || location.pathname.indexOf("/demo")>-1);
   const [, setIsDemo] = useAtom(isDemoAtom)
+  const [isReset, setIsReset] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isDraw, setIsDraw] = useState<boolean>(false);
   const [prevOffset, setPrevOffset] = useState<{x: number, y: number} | null>(null);
@@ -64,14 +65,20 @@ export const Note: () => JSX.Element = () => {
     }
 
     const firstLoadData = async () => {
-      setReset();
+      if (!isReset) {
+        setReset();
+        setIsReset(true);
+      }
       const noteData: TNoteData | null = await getFirstStrokeData();
       const instance = new FabricDrawer(editor);
       setFabricDrawer(instance);
       if (instance?.getStrokeLength() == 0) {
         if (noteData !== null) {
           instance?.setSVGFromString(noteData.StrokeData.strokes.svg);
-          setAvgPressureOfStroke(confirmNumberArrayFromString(noteData.AllAvgPressureList));
+          if (noteData.AllAvgPressureList !== "") {
+            setAvgPressureOfStroke(confirmNumberArrayFromString(noteData.AllAvgPressureList));
+            console.log(confirmNumberArrayFromString(noteData.AllAvgPressureList));
+          }
           for(let i=0; i<editor.canvas._objects.length; i++) {
             if (editor.canvas._objects[i].stroke!.slice(0, 3) === "rgb") {
               editor.canvas._objects[i].stroke = rgbToHex(editor.canvas._objects[i].stroke!)
@@ -87,7 +94,7 @@ export const Note: () => JSX.Element = () => {
       firstLoadData();
     }
     editor.canvas.renderAll();
-  }, [editor, fabricDrawer]);  
+  }, [editor, fabricDrawer]);
 
   useEffect(() => {
     if (!editor || !fabric) {
@@ -123,7 +130,7 @@ export const Note: () => JSX.Element = () => {
       if (isLoading) {
         return;
       }
-      save();
+      // save();
     }
   }, [isLoading])
   
@@ -329,12 +336,13 @@ export const Note: () => JSX.Element = () => {
   }
 
   const save = async() => {
+    console.log(avgPressureOfStroke)
     if (isDemo) { return; }
     try {
       myNote!.NoteImage = fabricDrawer!.getImg();
       myNote!.StrokeData = {"Strokes": {"data": editor?.canvas.getObjects(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}};
       myNote!.AvgPressure = fabricDrawer!.getAveragePressure();
-      myNote!.AvgPressureList = editor!.canvas._objects.join(',');
+      myNote!.AvgPressureList = fabricDrawer!.getPressureListAsString();
       myNote!.AllAvgPressureList = avgPressureOfStroke.join(',');
       myNote!.AllStrokeCount = avgPressureOfStroke.length;
       myNote!.StrokeCount = fabricDrawer!.getStrokeLength();
@@ -350,7 +358,6 @@ export const Note: () => JSX.Element = () => {
       throw error;
     }
   }
-
 
   return (
     <>

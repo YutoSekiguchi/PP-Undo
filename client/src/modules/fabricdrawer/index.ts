@@ -333,6 +333,15 @@ export class FabricDrawer {
     return res;
   }
 
+  getPressureListAsString = (): string => {
+    const li: number[] = [];
+    this.editor.canvas._objects.map((object: any, _: number) => {
+      li.push(object.pressure);
+    })
+
+    return li.join(',')
+  }
+
   /**
    * @description 現在描かれてるストロークの平均筆圧
    * @return {number}
