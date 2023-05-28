@@ -6,7 +6,7 @@ import { Box } from '@mui/material'
 import { Home } from "@/pages/Home";
 import { Note } from "@/pages/Note";
 import { Notefolders } from "@/pages/NoteFolders";
-import { AdminPage } from "@/pages/Admin";
+import { Analytics } from "@/pages/Analytics";
 
 export const RouterConfig:React.FC =() => {
   return (
