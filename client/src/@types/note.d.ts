@@ -1,6 +1,29 @@
 import { FabricDrawer } from "@/modules/fabricdrawer";
 import { FabricJSEditor } from "fabricjs-react";
 
+
+export interface TNoteDataWithoutLongData {
+  ID: number;
+  NFID: number;
+  UID: number;
+  Title: string;
+  Width: number;
+  Height: number;
+  AvgPressure: number;
+  AvgPressureList: string;
+  AllAvgPressureList: string;
+  IsShowStrokeList: string;
+  AllStrokeCount: number;
+  StrokeCount: number;
+  UndoCount: number;
+  RedoCount: number;
+  LogRedoCount: number;
+  PPUndoCount: number;
+  SliderValue: number | number[];
+  BackgroundImage: string;
+  CreatedAt: string;
+}
+
 export interface TDoughnutGraphConfig {
   backgroundColor?: string | string[];
   borderColor?: string;

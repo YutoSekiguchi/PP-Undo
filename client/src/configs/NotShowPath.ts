@@ -3,4 +3,5 @@ export const notShowPathList: string[] = [
   "/note/",
   "/newnote/",
   "/demo",
+  "/analytics",
 ];

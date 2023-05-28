@@ -6,6 +6,7 @@ import { Box } from '@mui/material'
 import { Home } from "@/pages/Home";
 import { Note } from "@/pages/Note";
 import { Notefolders } from "@/pages/NoteFolders";
+import { AdminPage } from "@/pages/Admin";
 
 export const RouterConfig:React.FC =() => {
   return (
@@ -19,6 +20,7 @@ export const RouterConfig:React.FC =() => {
               <Route path="/notefolders/:pnfid" element={<Notefolders />} />
               <Route path='/note/:id' element={<Note />} />
               <Route path='/demo' element={<Note />} />
+              <Route path='/analytics' element={ <Analytics /> } />
             </Routes>
           </Box>
       </BrowserRouter>
