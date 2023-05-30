@@ -79,11 +79,12 @@ export class FabricDrawer {
   }
 
   setDrawingMode = () => {
-    this.editor.canvas.isDrawingMode =  true;
+    this.editor.canvas.isDrawingMode = true;
+    this.cancelSelectedObjects();
   }
 
   setPointingMode = () => {
-    this.editor.canvas.isDrawingMode =  false;
+    this.editor.canvas.isDrawingMode = false;
   }
 
   /**
@@ -136,18 +137,30 @@ export class FabricDrawer {
     this.editor.canvas.remove(stroke);
   }
 
+  cancelSelectedObjects = () => {
+    this.editor.canvas.discardActiveObject();
+  }
+
   /**
    * @return {fabric.Object}
    */
-  getSelectedObjects = (): fabric.Object | null | undefined => {
+  getSelectedObject = (): fabric.Object | null | undefined => {
     return this.editor.canvas.getActiveObject();
   }
 
+  getSelectedObjects = (): fabric.Object[] | null | undefined => {
+    return this.editor.canvas.getActiveObjects();
+  }
+
   removeSelectedStrokes = () => {
-    const obj = this.getSelectedObjects();
-    if (obj !== null && obj !== undefined) {
-      this.removeStroke(obj);
+    const li = this.getSelectedObjects();
+    console.log(li);
+    if (li !== null && li !== undefined) {
+      li.map((obj, i) => {
+        this.removeStroke(obj);
+      })
     }
+    this.cancelSelectedObjects();
   }
 
   /**
