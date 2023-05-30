@@ -24,7 +24,6 @@ import { useAtom } from "jotai";
 import { addHistoryAtom, drawModeAtom, isDemoAtom } from "@/infrastructures/jotai/drawer";
 import { isAuth } from "@/modules/common/isAuth";
 import styled from "@emotion/styled";
-import { cyan } from '@mui/material/colors';
 
 export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => void}> = ({ fabricDrawer, save }) => {
   const navigate = useNavigate();
