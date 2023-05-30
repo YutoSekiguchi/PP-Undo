@@ -21,7 +21,7 @@ import { StrokeEraseButton } from "./StrokeEraseButton";
 import { UndoButton } from "./UndoButton";
 import { RedoButton } from "./RedoButton";
 import { useAtom } from "jotai";
-import { isDemoAtom } from "@/infrastructures/jotai/drawer";
+import { addHistoryAtom, drawModeAtom, isDemoAtom } from "@/infrastructures/jotai/drawer";
 import { isAuth } from "@/modules/common/isAuth";
 
 export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => void}> = ({ fabricDrawer, save }) => {
@@ -30,7 +30,8 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => voi
   const [color, setColor] = useState<string>(penColorList[0].penColor);
   const [strokeWidth, setStrokeWidth] = useState<number>(penWidthList[0]);
   const [isDemo, ] = useAtom(isDemoAtom);
-
+  const [drawMode, ] = useAtom(drawModeAtom);
+  const [, addHistory] = useAtom(addHistoryAtom);
   
   const backToHome = () => {
     if (isAuth()) {
@@ -54,6 +55,16 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => voi
         <Typography fontSize={6} align="center">Now</Typography>
       </Box>
     );
+  }
+
+  const eraseSelectedObjects = () => {
+    if (fabricDrawer.getSelectedObjects()!.length > 0) {
+      addHistory({
+        type: "erase",
+        strokes: fabricDrawer.getSelectedObjects()!,
+      })
+      fabricDrawer.removeSelectedStrokes();
+    }
   }
 
   const handleSave = () => {
@@ -102,27 +113,35 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => voi
                 <Spacer size={6} axis="horizontal" />
                 <PenButton fabricDrawer={fabricDrawer} />
               </Box>
-              {colorList.map((el, index) => (
-                <Box 
-                  key={index}
-                >
-                  <ColorButton
-                    buttonColor={el.penColor}
-                    isChoice={el.useable}
-                    setColor={setColor}
-                    fabricDrawer={fabricDrawer}
-                  />
-                </Box>
-              ))}
-              <Spacer size={6} axis="horizontal" />
-              <ColorPicker />
+              {
+                drawMode=="pointer"
+                ? <>
+                    <button onClick={eraseSelectedObjects}>削除</button>
+                  </>
+                : <>
+                  {colorList.map((el, index) => (
+                    <Box 
+                      key={index}
+                    >
+                      <ColorButton
+                        buttonColor={el.penColor}
+                        isChoice={el.useable}
+                        setColor={setColor}
+                        fabricDrawer={fabricDrawer}
+                      />
+                    </Box>
+                  ))}
+                  <Spacer size={6} axis="horizontal" />
+                  <ColorPicker />
+                  <Box className="align-center" sx={{ marginLeft: "20px"}}>
+                    <ChangePenWidthButton
+                      strokeWidth={strokeWidth}
+                      setStrokeWidth={setStrokeWidth}
+                    />
+                  </Box>
+                </>
+              }
               
-              <Box className="align-center" sx={{ marginLeft: "20px"}}>
-                <ChangePenWidthButton
-                  strokeWidth={strokeWidth}
-                  setStrokeWidth={setStrokeWidth}
-                />
-              </Box>
             </Box>
             
             <Box className="align-center">
