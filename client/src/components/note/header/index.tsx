@@ -23,6 +23,8 @@ import { RedoButton } from "./RedoButton";
 import { useAtom } from "jotai";
 import { addHistoryAtom, drawModeAtom, isDemoAtom } from "@/infrastructures/jotai/drawer";
 import { isAuth } from "@/modules/common/isAuth";
+import styled from "@emotion/styled";
+import { cyan } from '@mui/material/colors';
 
 export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => void}> = ({ fabricDrawer, save }) => {
   const navigate = useNavigate();
@@ -32,6 +34,15 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => voi
   const [isDemo, ] = useAtom(isDemoAtom);
   const [drawMode, ] = useAtom(drawModeAtom);
   const [, addHistory] = useAtom(addHistoryAtom);
+
+  const EraseSelectedObjectsButton = styled(Button) ({
+    backgroundColor:'#1A2939',
+    color: '#fff',
+    '&:hover': {
+      backgroundColor: "#777",
+      color: '#fff',
+    },
+  })
   
   const backToHome = () => {
     if (isAuth()) {
@@ -116,7 +127,11 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => voi
               {
                 drawMode=="pointer"
                 ? <>
-                    <button onClick={eraseSelectedObjects}>削除</button>
+                    <EraseSelectedObjectsButton
+                      onClick={eraseSelectedObjects}
+                    >
+                      DELETE SELECTING STROKES
+                    </EraseSelectedObjectsButton>
                   </>
                 : <>
                   {colorList.map((el, index) => (
