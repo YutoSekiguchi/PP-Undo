@@ -1,3 +1,5 @@
+import { PRESSURE_ROUND_VALUE } from "@/configs/settings";
+
 export const averagePressure = (li: number[]) => {
   if (li.length == 0) { return 0; }
   let sum = 0;
@@ -5,5 +7,5 @@ export const averagePressure = (li: number[]) => {
     sum += li[i];
   }
 
-  return sum/li.length;
+  return Math.round((sum/li.length) * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE;
 }
