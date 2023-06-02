@@ -21,7 +21,7 @@ import { TNoteData } from "@/@types/notefolders";
 import { TClientLogData, TPostStrokeData } from "@/@types/note";
 import { addStroke } from "@/infrastructures/services/strokes";
 import { fetchClientLogsByNID } from "@/infrastructures/services/ppUndoLogs";
-import { NOTE_WIDTH_RATIO } from "@/configs/settings";
+import { NOTE_WIDTH_RATIO, PRESSURE_ROUND_VALUE } from "@/configs/settings";
 import { confirmNumberArrayFromString } from "@/modules/common/confirmArrayFromString";
 import { rgbToHex } from "@/modules/note/RGBToHex";
 
@@ -72,6 +72,7 @@ export const Note: () => JSX.Element = () => {
       const noteData: TNoteData | null = await getFirstStrokeData();
       const instance = new FabricDrawer(editor);
       setFabricDrawer(instance);
+      console.log(noteData);
       if (instance?.getStrokeLength() == 0) {
         if (noteData !== null) {
           instance?.setSVGFromString(noteData.StrokeData.strokes.svg);
@@ -175,6 +176,7 @@ export const Note: () => JSX.Element = () => {
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     // 前のストロークが要素をはみ出してしまっていた時の処理
+    drawStartTime = Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE;
     const finalStroke: any = fabricDrawer?.getFinalStroke();
     if (finalStroke && typeof finalStroke.pressure === 'undefined') {
       const resultPressure: number = event.pointerType=="mouse"?Math.random(): averagePressure(strokePressureList);
@@ -188,22 +190,21 @@ export const Note: () => JSX.Element = () => {
     //
     setHistoryForRedo([]);
     strokePressureList = [];
-    drawStartTime = performance.now();
     setIsDraw(true);
   }
 
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
     if (!isDraw || event.pointerType === "touch") {return;}
     if (event.pressure !== 0) {
-      strokePressureList = [...strokePressureList, event.pressure];
+      strokePressureList = [...strokePressureList, Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE];
     }
   }
 
   const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
     // if (event.pointerType === "touch") { return; }
-    drawEndTime = performance.now();
+    drawEndTime = Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE;
     setIsDraw(false);
-    const resultPressure: number = event.pointerType=="mouse"?Math.random(): averagePressure(strokePressureList);
+    const resultPressure: number = event.pointerType=="mouse"?Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: averagePressure(strokePressureList);
     setTimeout(() => {
       if (drawMode == "pen") {
         setAddAvgPressureOfStroke(resultPressure);
@@ -226,9 +227,11 @@ export const Note: () => JSX.Element = () => {
     const data: TPostStrokeData = {
       UID: myNote!.UID,
       NID: myNote!.ID,
-      StrokeData: {"Strokes": {"pressure": fabricDrawer?.getStrokeLength(), "svg": ""}},
+      StrokeData: {"Strokes": {"pressure": fabricDrawer?.getPressureList(), "svg": fabricDrawer?.getSVG(), "data": ""}},
       AvgPressure: pressure,
       PressureList: strokePressureList.join(','),
+      StartTime: drawStartTime,
+      EndTime: drawEndTime,
       Time: drawEndTime - drawStartTime,
       Mode: drawMode,
       Save: 0,
@@ -246,8 +249,8 @@ export const Note: () => JSX.Element = () => {
     //   fabricDrawer?.setDrawingMode();
     //   setIsPointer(true);
     // }
+    drawStartTime = Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE;
     strokePressureList = [];
-    drawStartTime = performance.now();
     setIsDraw(true);
   }
 
@@ -311,7 +314,7 @@ export const Note: () => JSX.Element = () => {
   
   const handleEraseUp = (event: PointerEvent<HTMLCanvasElement>) => {
     // if (event.pointerType === "touch") { return; }
-    drawEndTime = performance.now();
+    drawEndTime = Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE;
     setPrevOffset(null);
     setIsDraw(false);
     const resultPressure: number = event.pointerType=="mouse"?Math.random(): averagePressure(strokePressureList);
