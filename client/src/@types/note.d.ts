@@ -110,6 +110,8 @@ export interface TPostStrokeData {
   StrokeData: any;
   AvgPressure: number;
   PressureList: string;
+  StartTime: number;
+  EndTime: number;
   Time: number;
   Mode: string;
   Save: number;
