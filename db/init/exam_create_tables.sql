@@ -55,6 +55,8 @@ CREATE TABLE IF NOT EXISTS strokes (
   avg_pressure FLOAT NOT NULL,
   pressure_list TEXT NOT NULL,
   time FLOAT,
+  start_time FLOAT,
+  end_time FLOAT,
   mode TEXT NOT NULL,
   save INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
