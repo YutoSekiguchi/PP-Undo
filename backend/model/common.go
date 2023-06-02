@@ -11,7 +11,7 @@ type StrokeData struct {
 }
 
 type StrokeDataStrokes struct {
-	Data []interface{} `json:"data" gorm:"not null;"`
+	Data []interface{} `json:"data"`
 	Pressure []float64 `json:"pressure"`
 	Svg string `json:"svg"`
 }

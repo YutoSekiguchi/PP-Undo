@@ -10,6 +10,8 @@ type Strokes struct {
 	AvgPressure  float64    `gorm:"not null;column:avg_pressure"`
 	PressureList string     `gorm:"not null;column:pressure_list"`
 	Time         float64    `gorm:"column:time"`
+	StartTime    float64    `gorm:"column:start_time"`
+	EndTime      float64    `gorm:"column:end_time"`
 	Mode         string     `gorm:"not null;column:mode"`
 	Save         int        `gorm:"not null;column:save" `
 	CreatedAt    time.Time  `sql:"DEFALUT:current_timestamp;column:created_at"`
