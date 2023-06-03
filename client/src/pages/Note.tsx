@@ -227,7 +227,15 @@ export const Note: () => JSX.Element = () => {
     const data: TPostStrokeData = {
       UID: myNote!.UID,
       NID: myNote!.ID,
-      StrokeData: {"Strokes": {"pressure": fabricDrawer?.getPressureList(), "svg": fabricDrawer?.getSVG(), "data": ""}},
+      StrokeData: {
+        "Strokes": 
+          {
+            "pressure": fabricDrawer?.getPressureList(),
+            // "svg": fabricDrawer?.getSVG(),
+            "svg": fabricDrawer?.getImg(),
+            "data": "",
+          }
+      },
       AvgPressure: pressure,
       PressureList: strokePressureList.join(','),
       StartTime: drawStartTime,
