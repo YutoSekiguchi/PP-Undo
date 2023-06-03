@@ -396,7 +396,7 @@ export const Note: () => JSX.Element = () => {
                 className="fabric-canvas"
                 onReady={onReady}
                 css={{
-                  backgroundImage: `url("${NoteImg}")`,
+                  // backgroundImage: `url("${NoteImg}")`,
                   touchAction: "none",
                   // display:`${isPointer? "block": "none"}`,
                   overflow: `${drawMode == "strokeErase"? "hidden": ""}`,
