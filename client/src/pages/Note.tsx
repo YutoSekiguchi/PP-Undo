@@ -232,7 +232,8 @@ export const Note: () => JSX.Element = () => {
           {
             "pressure": fabricDrawer?.getPressureList(),
             // "svg": fabricDrawer?.getSVG(),
-            "svg": fabricDrawer?.getImg(),
+            // "svg": fabricDrawer?.getImg(),
+            "svg": "",
             "data": "",
           }
       },
@@ -355,7 +356,6 @@ export const Note: () => JSX.Element = () => {
       myNote!.PPUndoCount += ppUndoCount;
       myNote!.BackgroundImage = NoteImg;
       await updateNote(myNote!);
-      console.log(myNote!.StrokeData)
     } catch (error) {
       alert("保存に失敗しました");
       throw error;

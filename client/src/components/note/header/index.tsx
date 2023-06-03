@@ -25,7 +25,7 @@ import { addHistoryAtom, drawModeAtom, isDemoAtom } from "@/infrastructures/jota
 import { isAuth } from "@/modules/common/isAuth";
 import styled from "@emotion/styled";
 
-export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => void}> = ({ fabricDrawer, save }) => {
+export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => Promise<void>}> = ({ fabricDrawer, save }) => {
   const navigate = useNavigate();
   const colorList: TPenColor[] = penColorList;
   const [color, setColor] = useState<string>(penColorList[0].penColor);
@@ -77,8 +77,8 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => voi
     }
   }
 
-  const handleSave = () => {
-    save();
+  const handleSave = async () => {
+    await save();
     alert("保存しました");
   }
   
