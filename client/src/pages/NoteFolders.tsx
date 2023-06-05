@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import { styled } from '@mui/system';
 import { AddNoteOrFolderDialog } from "@/components/notefolder/AddNoteOrFolderDialog";
-import { TNoteData, TNoteFoldersData } from "@/@types/notefolders";
+import { TNoteFoldersData, TNoteNameIDData } from "@/@types/notefolders";
 import { Params, useNavigate, useParams } from "react-router-dom";
 import { getFoldersAtom } from "@/infrastructures/jotai/noteFolders";
 import lscache from "lscache";
@@ -31,7 +31,7 @@ export const Notefolders: React.FC = () => {
   const [isEditNoteFolderDialog, setIsEditNoteFolderDialog] = useState<boolean>(false);
   const params: Params<string> = useParams();
   const [noteFoldersData, setNoteFoldersData] = useState<TNoteFoldersData[]>([]);
-  const [notesData, setNotesData] = useState<TNoteData[]>([]);
+  const [notesData, setNotesData] = useState<TNoteNameIDData[]>([]);
   const [treeData, setTreeData] = useState<TNoteFoldersData[]>([]);
   const [loginUserData, ] = useAtom(userDataAtom);
   const [, getFolders] = useAtom(getFoldersAtom);

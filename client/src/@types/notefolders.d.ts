@@ -69,3 +69,15 @@ export interface TNoteData {
   BackgroundImage: string;
   CreatedAt: string;
 }
+
+export interface TNoteNameIDData {
+  ID: number;
+  NFID: number;
+  UID: number;
+  Title: string;
+  Width: number;
+  Height: number;
+  NoteImage: string;
+  BackgroundImage: string;
+  CreatedAt: string;
+}

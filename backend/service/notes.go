@@ -1,6 +1,7 @@
 package service
 
 import (
+	"time"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
@@ -48,13 +49,26 @@ func (s NotesService) GetNotesByNFID(db *gorm.DB, c echo.Context) ([]Notes, erro
 	return n, nil
 }
 
+type NoteNameAndIDData struct {
+	ID                 int       `gorm:"primary_key;not null;autoIncrement:true"`
+	NFID               int       `gorm:"not null;column:nfid"`
+	UID                int       `gorm:"not null;column:uid"`
+	Title              string    `gorm:"not null;column:title"`
+	Width              float64   `gorm:"not null;column:width"`
+	Height             float64   `gorm:"not null;column:height"`
+	NoteImage          string    `gorm:"not null;column:note_image"`
+	BackgroundImage    string    `gorm:"column:background_image"`
+	CreatedAt          time.Time `sql:"DEFALUT:current_timestamp;column:created_at"`
+}
+
+
 // nfidとuidからノートを全て取得
-func (s NotesService) GetNotesByNFIDAndUID(db *gorm.DB, c echo.Context) ([]Notes, error) {
-	var n []Notes
+func (s NotesService) GetNotesByNFIDAndUID(db *gorm.DB, c echo.Context) ([]NoteNameAndIDData, error) {
+	var n []NoteNameAndIDData
 	nfid := c.Param("nfid")
 	uid := c.Param("uid")
 
-	if err := db.Raw("SELECT * FROM `notes` WHERE nfid = ? AND uid = ?", nfid, uid).Scan(&n).Error; err != nil {
+	if err := db.Raw("SELECT id, nfid, uid, title, width, height, note_image, background_image, created_at FROM `notes` WHERE nfid = ? AND uid = ?", nfid, uid).Scan(&n).Error; err != nil {
 		return nil, err
 	}
 	return n, nil
