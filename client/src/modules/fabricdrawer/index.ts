@@ -40,6 +40,10 @@ export class FabricDrawer {
   }
 
   /**
+   * @return {string}
+   */
+
+  /**
    * @returns {string}
    */
   getImg = (): string => {
@@ -331,7 +335,11 @@ export class FabricDrawer {
    * @param {number} pressure
    * @description これ破壊的変更すぎてやばいからいつか直せたら直して
    */
-  setPressureToStroke = (pressure: number) => {
+  setAveragePressureToStroke = (pressure: number) => {
+    Object.assign(this.editor.canvas._objects[this.editor.canvas._objects.length - 1], { averagePressure: pressure });
+  }
+
+  setTransformPressureToStroke = (pressure: number) => {
     Object.assign(this.editor.canvas._objects[this.editor.canvas._objects.length - 1], { pressure: pressure });
   }
 

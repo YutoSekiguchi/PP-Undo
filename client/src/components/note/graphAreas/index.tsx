@@ -11,7 +11,7 @@ import { useTheme } from '@mui/material/styles';
 import { styled } from '@mui/system';
 import { DoughnutPressureGraph } from "./DoughnutPressureGraph";
 import { avgDatasetsConfig, avgGraphLabel, nowDatasetsConfig, nowGraphLabel } from "@/configs/DoughnutPressureGraphConfig";
-import { averagePressure } from "@/modules/note/AveragePressure";
+import { getAveragePressure } from "@/modules/note/GetAveragePressure";
 import { NowPressure } from "@/modules/note/NowPressure";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 
@@ -60,7 +60,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
             </Box>
             <Box sx={{display: "flex", justifyContent: "space-around", alignItems: "center"}}>
               <DoughnutPressureGraph
-                pressureValue={averagePressure(avgPressureOfStroke)}
+                pressureValue={getAveragePressure(avgPressureOfStroke)}
                 title="All Average"
                 graphLabel={avgGraphLabel}
                 datasetsConfig={avgDatasetsConfig}

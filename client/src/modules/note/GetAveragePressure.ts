@@ -1,6 +1,6 @@
 import { PRESSURE_ROUND_VALUE } from "@/configs/settings";
 
-export const averagePressure = (li: number[]) => {
+export const getAveragePressure = (li: number[]) => {
   if (li.length == 0) { return 0; }
   let sum = 0;
   for (let i=0; i<li.length; i++) {

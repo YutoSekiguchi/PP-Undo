@@ -7,6 +7,7 @@ type Strokes struct {
 	UID          int        `gorm:"not null;column:uid"`
 	NID          int        `gorm:"not null;column:nid"`
 	StrokeData   StrokeData `gorm:"not null;column:stroke_data"`
+	TransformPressure float64 `gorm:"column:transform_pressure"`;
 	AvgPressure  float64    `gorm:"not null;column:avg_pressure"`
 	PressureList string     `gorm:"not null;column:pressure_list"`
 	Time         float64    `gorm:"column:time"`
