@@ -37,6 +37,7 @@ import { addClientLog, addLog } from "@/infrastructures/services/ppUndoLogs";
 import { addPPUndoCount } from "@/infrastructures/services/ppUndoCounts";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 import { TLogStrokeData } from "@/@types/note";
+import { PRESSURE_ROUND_VALUE } from "@/configs/settings";
 
 
 export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
@@ -176,8 +177,8 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
     setHistoryForRedo([]);
     setSliderValue(0);
     setPPUndoCount(ppUndoCount + 1);
-
     if(isDemo) { return; }
+    console.log(logData)
     await addLog(postLogData);
     setTimeout(async() => {
       const img = fabricDrawer.getImg();
@@ -188,6 +189,7 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
         AfterPPUndoImageData: "",
         BeforePPUndoStrokeCount: logData!.strokes.length,
         AfterPPUndoStrokeCount: fabricDrawer.getStrokeLength(),
+        Now: Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE,
       }
       await addPPUndoCount(postPPUndoCountsData);
     }, 100);

@@ -8,5 +8,6 @@ type WatchLogsCounts struct {
 	NID          int       `gorm:"not null;column:nid"`
 	LogCount     int       `gorm:"not null;column:log_count"`
 	WatchTime    float64   `gorm:"not null;column:watch_time"`
+	Now          float64   `gorm:"column:now"`
 	CreatedAt    time.Time `sql:"DEFALUT:current_timestamp;column:created_at"`
 }

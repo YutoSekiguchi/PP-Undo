@@ -14,3 +14,4 @@ type LogRedoCounts model.LogRedoCounts
 type UndoCounts model.UndoCounts
 type RedoCounts model.RedoCounts
 type PPUndoCounts model.PPUndoCounts
+type EraseSelectedObjectsCounts model.EraseSelectedObjectsCounts

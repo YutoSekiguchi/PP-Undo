@@ -115,6 +115,12 @@ func InitRouter(db *gorm.DB) {
 		logRedoCounts.POST("", ctrl.HandlePostLogRedoCount)
 	}
 
+	// EraseSelectedObjectsCounts
+	eraseSelectedObjectsCounts := e.Group("/eraseselectedobjectscounts")
+	{
+		eraseSelectedObjectsCounts.POST("", ctrl.HandlePostEraseSelectedObjectsCount)
+	}
+
 	// WatchLogsCounts
 	watchLogsCounts := e.Group("/watchlogscounts")
 	{

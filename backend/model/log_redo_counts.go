@@ -12,5 +12,6 @@ type LogRedoCounts struct {
 	AfterLogRedoStrokeData   StrokeData    `gorm:"not null;column:after_log_redo_stroke_data"`
 	BeforeLogRedoStrokeCount int       `gorm:"not null;column:before_log_redo_stroke_count"`
 	AfterLogRedoStrokeCount  int       `gorm:"not null;column:after_log_redo_stroke_count"`
+	Now                      float64   `gorm:"column:now"`
 	CreatedAt                time.Time `sql:"DEFALUT:current_timestamp;column:created_at"`
 }

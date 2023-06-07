@@ -5,6 +5,7 @@ import { addHistoryForRedoAtom, historyAtom, isDemoAtom, plusUndoCountAtom } fro
 import { FabricDrawer } from "@/modules/fabricdrawer";
 import { addUndoCount } from "@/infrastructures/services/undoCounts";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
+import { PRESSURE_ROUND_VALUE } from "@/configs/settings";
 
 export const UndoButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
   const [history, setHistory] = useAtom(historyAtom);
@@ -53,6 +54,7 @@ export const UndoButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
         AfterUndoNoteImage: afterUndoNoteImage,
         AfterUndoStrokeData: afterUndoStrokeData,
         LeftStrokeCount: fabricDrawer.getStrokeLength(),
+        Now: Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE,
       }
     )
   }

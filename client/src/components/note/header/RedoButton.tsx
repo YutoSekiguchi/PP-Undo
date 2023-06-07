@@ -5,6 +5,7 @@ import { TButtonStyle } from "@/@types/note";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 import { addRedoCount } from "@/infrastructures/services/redoCounts";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
+import { PRESSURE_ROUND_VALUE } from "@/configs/settings";
 
 export const RedoButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
   const [historyForRedo, setHistoryForRedo] = useAtom(historyForRedoAtom);
@@ -53,6 +54,7 @@ export const RedoButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
         AfterRedoNoteImage: afterRedoNoteImage,
         AfterRedoStrokeData: afterRedoStrokeData,
         LeftStrokeCount: fabricDrawer.getStrokeLength(),
+        Now: Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE,
       }
     )
   }

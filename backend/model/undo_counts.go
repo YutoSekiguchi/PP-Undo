@@ -11,5 +11,6 @@ type UndoCounts struct {
 	AfterUndoNoteImage   string    `gorm:"not null;column:after_undo_note_image"`
 	AfterUndoStrokeData  StrokeData   `gorm:"not null;column:after_undo_stroke_data"`
 	LeftStrokeCount      int       `gorm:"not null;column:left_stroke_count"`
+	Now                  float64   `gorm:"column:now"`
 	CreatedAt            time.Time `sql:"DEFALUT:current_timestamp;column:created_at"`
 }

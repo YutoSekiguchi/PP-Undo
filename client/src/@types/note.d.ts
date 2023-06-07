@@ -125,6 +125,7 @@ export interface TPostPPUndoCountsData {
   AfterPPUndoImageData: string;
   BeforePPUndoStrokeCount: number;
   AfterPPUndoStrokeCount: number;
+  Now: number;
 }
 
 export interface TPostLogRedoCountsData {
@@ -136,6 +137,7 @@ export interface TPostLogRedoCountsData {
   AfterLogRedoStrokeData: any;
   BeforeLogRedoStrokeCount: number;
   AfterLogRedoStrokeCount: number;
+  Now: number;
 }
 
 export interface TPostLogData {
@@ -157,6 +159,7 @@ export interface TPostUndoCountData {
   AfterUndoNoteImage: string;
   AfterUndoStrokeData: any;
   LeftStrokeCount: number;
+  Now: number;
 }
 
 export interface TPostRedoCountData {
@@ -167,6 +170,19 @@ export interface TPostRedoCountData {
   AfterRedoNoteImage: string;
   AfterRedoStrokeData: any;
   LeftStrokeCount: number;
+  Now: number;
+}
+
+export interface TPostEraseSelectedObjectsCountData {
+  UID: number;
+  NID: number;
+  BeforeEraseSelectedObjectsNoteImage: string;
+  BeforeEraseSelectedObjectsStrokeData: any;
+  AfterEraseSelectedObjectsNoteImage: string;
+  AfterEraseSelectedObjectsStrokeData: any;
+  BeforeEraseSelectedObjectsStrokeCount: number;
+  AfterEraseSelectedObjectsStrokeCount: Number;
+  Now: number;
 }
 
 interface TIDAndCreatedAt {

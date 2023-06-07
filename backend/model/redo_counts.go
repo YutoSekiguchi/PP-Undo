@@ -11,5 +11,6 @@ type RedoCounts struct {
 	AfterRedoNoteImage   string    `gorm:"not null;column:after_redo_note_image"`
 	AfterRedoStrokeData  StrokeData    `gorm:"not null;column:after_redo_stroke_data"`
 	LeftStrokeCount      int       `gorm:"not null;column:left_stroke_count"`
+	Now                  float64   `gorm:"column:now"`
 	CreatedAt            time.Time `sql:"DEFALUT:current_timestamp;column:created_at"`
 }

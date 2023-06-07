@@ -9,7 +9,7 @@ import { addLogRedoCount } from "@/infrastructures/services/ppUndoLogs/counts";
 import { LoadingScreen } from "@/components/common/LoadingScreen";
 import { TLogRedoImageDialogProps } from "@/@types/note";
 import { rgbToHex } from "@/modules/note/RGBToHex";
-import { NOTE_WIDTH_RATIO } from "@/configs/settings";
+import { NOTE_WIDTH_RATIO, PRESSURE_ROUND_VALUE } from "@/configs/settings";
 import Spacer from "@/components/common/Spacer";
 
 
@@ -59,6 +59,7 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
         AfterLogRedoStrokeData: afterLogRedoStrokeData,
         BeforeLogRedoStrokeCount: beforeLogRedoStrokeCount,
         AfterLogRedoStrokeCount: afterLogRedoStrokeCount,
+        Now: Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE
       };
       await addLogRedoCount(postLogRedoCountData);
     }

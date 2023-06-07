@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { penColorList } from "@/configs/PenColorConfig";
 import Spacer from "@/components/common/Spacer";
-import { TPenColor } from "@/@types/note";
+import { TPenColor, TPostEraseSelectedObjectsCountData } from "@/@types/note";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 import { ColorButton } from "./ColorButton";
 import { penWidthList } from "@/configs/PenWidthConfig";
@@ -24,12 +24,16 @@ import { useAtom } from "jotai";
 import { addHistoryAtom, drawModeAtom, isDemoAtom } from "@/infrastructures/jotai/drawer";
 import { isAuth } from "@/modules/common/isAuth";
 import styled from "@emotion/styled";
+import { myNoteAtom } from "@/infrastructures/jotai/notes";
+import { addEraseSelectedObjectsCount } from "@/infrastructures/services/erase/selectedObjectsCounts";
+import { PRESSURE_ROUND_VALUE } from "@/configs/settings";
 
 export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => Promise<void>}> = ({ fabricDrawer, save }) => {
   const navigate = useNavigate();
   const colorList: TPenColor[] = penColorList;
   const [color, setColor] = useState<string>(penColorList[0].penColor);
   const [strokeWidth, setStrokeWidth] = useState<number>(penWidthList[0]);
+  const [myNote, ] = useAtom(myNoteAtom);
   const [isDemo, ] = useAtom(isDemoAtom);
   const [drawMode, ] = useAtom(drawModeAtom);
   const [, addHistory] = useAtom(addHistoryAtom);
@@ -67,13 +71,33 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => Pro
     );
   }
 
-  const eraseSelectedObjects = () => {
+  const eraseSelectedObjects = async () => {
     if (fabricDrawer.getSelectedObjects()!.length > 0) {
+      const beforeEraseSelectedObjectsData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
+      const beforeEraseSelectedObjectsStrokeCount = fabricDrawer?.getStrokeLength();
+
       addHistory({
         type: "erase",
         strokes: fabricDrawer.getSelectedObjects()!,
       })
       fabricDrawer.removeSelectedStrokes();
+
+      const afterEraseSelectedObjectsData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
+      const afterEraseSelectedObjectsStrokeCount = fabricDrawer?.getStrokeLength();
+      console.log("fefe")
+      
+      const postEraseSelectedObjectsCountData: TPostEraseSelectedObjectsCountData = {
+        UID: myNote?.UID? myNote?.UID: 0,
+        NID: myNote?.ID? myNote?.ID: 0,
+        BeforeEraseSelectedObjectsNoteImage: "",
+        BeforeEraseSelectedObjectsStrokeData: beforeEraseSelectedObjectsData,
+        AfterEraseSelectedObjectsNoteImage: "",
+        AfterEraseSelectedObjectsStrokeData: afterEraseSelectedObjectsData,
+        BeforeEraseSelectedObjectsStrokeCount: beforeEraseSelectedObjectsStrokeCount,
+        AfterEraseSelectedObjectsStrokeCount: afterEraseSelectedObjectsStrokeCount,
+        Now: Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE
+      };
+      await addEraseSelectedObjectsCount(postEraseSelectedObjectsCountData)
     }
   }
 

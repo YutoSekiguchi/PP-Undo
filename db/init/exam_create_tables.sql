@@ -73,6 +73,7 @@ CREATE TABLE IF NOT EXISTS undo_counts (
   after_undo_note_image LONGTEXT NOT NULL,
   after_undo_stroke_data JSON NOT NULL,
   left_stroke_count INT NOT NULL,
+  now FLOAT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
@@ -86,6 +87,7 @@ CREATE TABLE IF NOT EXISTS redo_counts (
   after_redo_note_image LONGTEXT NOT NULL,
   after_redo_stroke_data LONGTEXT NOT NULL,
   left_stroke_count INT NOT NULL,
+  now FLOAT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
@@ -122,6 +124,7 @@ CREATE TABLE IF NOT EXISTS log_redo_counts (
   after_log_redo_stroke_data JSON NOT NULL,
   before_log_redo_stroke_count INT NOT NULL,
   after_log_redo_stroke_count INT NOT NULL,
+  now FLOAT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
@@ -132,6 +135,7 @@ CREATE TABLE IF NOT EXISTS watch_logs_counts (
   nid INT NOT NULL,
   log_count INT NOT NULL,
   watch_time FLOAT NOT NULL,
+  now FLOAT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
@@ -144,6 +148,22 @@ CREATE TABLE IF NOT EXISTS pp_undo_counts (
   after_ppundo_image_data LONGTEXT NOT NULL,
   before_ppundo_stroke_count INT NOT NULL,
   after_ppundo_stroke_count INT NOT NULL,
+  now FLOAT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- 選択したストロークをまとめて削除した回数
+CREATE TABLE IF NOT EXISTS erase_selected_objects_counts (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  uid INT NOT NULL,
+  nid INT NOT NULL,
+  before_erase_selected_objects_note_image LONGTEXT NOT NULL,
+  before_erase_selected_objects_stroke_data JSON NOT NULL,
+  after_erase_selected_objects_note_image LONGTEXT NOT NULL,
+  after_erase_selected_objects_stroke_data JSON NOT NULL,
+  before_erase_selected_objects_stroke_count INT NOT NULL,
+  after_erase_selected_objects_stroke_count INT NOT NULL,
+  now FLOAT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
