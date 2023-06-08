@@ -222,7 +222,7 @@ export const Note: () => JSX.Element = () => {
         }
         fabricDrawer?.reDraw();
       }
-    }, 10);
+    }, 50);
   }
 
   const postStrokeData = async (averagePressure: number, transformPressure: number, strokePressureList: number[]) => {
