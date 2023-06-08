@@ -349,7 +349,7 @@ export class FabricDrawer {
   getPressureList = (): number[] => {
     const res: number[] = [];
     this.editor.canvas._objects.map((object: any, _: number) => {
-      res.push(object.pressure);
+      res.push(object.averagePressure);
     })
     return res;
   }
@@ -357,7 +357,7 @@ export class FabricDrawer {
   getPressureListAsString = (): string => {
     const li: number[] = [];
     this.editor.canvas._objects.map((object: any, _: number) => {
-      li.push(object.pressure);
+      li.push(object.averagePressure);
     })
 
     return li.join(',')
@@ -371,7 +371,7 @@ export class FabricDrawer {
     let total: number = 0;
     let count: number = 0;
     this.editor.canvas._objects.map((object: any, _: number) => {
-      total += object.pressure;
+      total += object.averagePressure;
       count += 1
     })
     return Math.round((total / count) * 100) / 100;

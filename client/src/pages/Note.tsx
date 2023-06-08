@@ -202,11 +202,12 @@ export const Note: () => JSX.Element = () => {
     }
   }
 
-  const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
+  const handlePointerUp = async(event: PointerEvent<HTMLDivElement>) => {
     // if (event.pointerType === "touch") { return; }
     setIsDraw(false);
     const averagePressure: number = event.pointerType=="mouse"?Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: getAveragePressure(strokePressureList);
     const transformPressure: number = event.pointerType=="mouse"?Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: getAveragePressure(strokePressureList);
+    await postStrokeData(averagePressure, transformPressure, strokePressureList);
     setTimeout(() => {
       if (drawMode == "pen") {
         setAddAvgPressureOfStroke(averagePressure);
@@ -218,11 +219,10 @@ export const Note: () => JSX.Element = () => {
             type: "pen",
             strokes: [finalStroke]
           })
-          postStrokeData(averagePressure, transformPressure, strokePressureList);
         }
         fabricDrawer?.reDraw();
       }
-    }, 50);
+    }, 10);
   }
 
   const postStrokeData = async (averagePressure: number, transformPressure: number, strokePressureList: number[]) => {
