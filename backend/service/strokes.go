@@ -60,7 +60,6 @@ func (s StrokesService) UpdateStrokesGroup(db *gorm.DB, c echo.Context) ([]Strok
 	id1 := c.Param("id1")
 	id2 := c.Param("id2")
 	gnum := c.Param("gnum")
-	
 	if err := db.Table("strokes").Where("id >= ?", id1).Where("id <= ?", id2).Updates(map[string]interface{}{"group_num": gnum}).Scan(&st).Error; err != nil {
 		return nil, err
 	}
