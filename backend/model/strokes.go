@@ -15,5 +15,6 @@ type Strokes struct {
 	EndTime      float64    `gorm:"column:end_time"`
 	Mode         string     `gorm:"not null;column:mode"`
 	Save         int        `gorm:"not null;column:save" `
+	GroupNum     int        `gorm:"column:group_num"`
 	CreatedAt    time.Time  `sql:"DEFALUT:current_timestamp;column:created_at"`
 }

@@ -67,6 +67,7 @@ func InitRouter(db *gorm.DB) {
 		strokes.GET("/in/note/:nid", ctrl.HandleGetStrokesByNID)
 		strokes.POST("", ctrl.HandlePostStrokes)
 		strokes.PUT("/save/:nid", ctrl.HandleUpdateNotSaveStrokes)
+		strokes.PUT("/group/:id1/:id2/:gnum", ctrl.HandleUpdateStrokesGroup)
 		strokes.DELETE("/notsave/:nid", ctrl.HandleDeleteNotSaveStrokes)
 	}
 

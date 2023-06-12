@@ -39,6 +39,14 @@ func (ctrl Controller) HandleUpdateNotSaveStrokes(c echo.Context) error {
 	return Res(c, p, err)
 }
 
+// Group番号を付与
+func (ctrl Controller) HandleUpdateStrokesGroup(c echo.Context) error {
+	var s service.StrokesService
+	p, err := s.UpdateStrokesGroup(ctrl.Db, c)
+
+	return Res(c, p, err)
+}
+
 // DELETE 
 // 保存済以外の削除
 func (ctrl Controller) HandleDeleteNotSaveStrokes(c echo.Context) error {

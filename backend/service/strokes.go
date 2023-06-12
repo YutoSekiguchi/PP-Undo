@@ -54,6 +54,20 @@ func (s StrokesService) UpdateNotSaveStrokes(db *gorm.DB, c echo.Context) ([]Str
 	return st, nil
 }
 
+// PUT Group番号を付与
+func (s StrokesService) UpdateStrokesGroup(db *gorm.DB, c echo.Context) ([]Strokes, error) {
+	var st []Strokes
+	id1 := c.Param("id1")
+	id2 := c.Param("id2")
+	gnum := c.Param("gnum")
+	
+	if err := db.Table("strokes").Where("id >= ?", id1).Where("id <= ?", id2).Updates(map[string]interface{}{"group_num": gnum}).Scan(&st).Error; err != nil {
+		return nil, err
+	}
+
+	return st, nil
+}
+
 // DELETE
 // 保存してないストロークの削除
 func (s StrokesService) DeleteNotSaveStrokes(db *gorm.DB, c echo.Context) ([]Strokes, error) {
