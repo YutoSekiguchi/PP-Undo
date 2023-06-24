@@ -39,6 +39,7 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
         fabricDrawer.editor.canvas._objects[i].stroke = rgbToHex(fabricDrawer.editor.canvas._objects[i].stroke!)
       }
       Object.assign(fabricDrawer.editor.canvas._objects[i], { pressure: logOfBeforePPUndo[dialogIndex].pressureList[i] });
+      Object.assign(fabricDrawer.editor.canvas._objects[i], { averagePressure: logOfBeforePPUndo[dialogIndex].pressureList[i] });
     }
     fabricDrawer?.reDraw();
     setSliderValue(logOfBeforePPUndo[dialogIndex].sliderValue);

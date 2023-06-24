@@ -177,18 +177,18 @@ export const Note: () => JSX.Element = () => {
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     // 前のストロークが要素をはみ出してしまっていた時の処理
     drawStartTime = Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE;
-    // const finalStroke: any = fabricDrawer?.getFinalStroke();
-    // if (finalStroke && typeof finalStroke.pressure === 'undefined') {
-    //   const averagePressure: number = event.pointerType=="mouse"?Math.random(): getAveragePressure(strokePressureList);
-    //   const resultPressure: number = event.pointerType=="mouse"?Math.random(): getAveragePressure(strokePressureList);
-    //   fabricDrawer?.setAveragePressureToStroke(averagePressure);
-    //   fabricDrawer?.setTransformPressureToStroke(resultPressure);
-    //   addHistory({
-    //     type: "pen",
-    //     strokes: [finalStroke]
-    //   })
-    //   postStrokeData(resultPressure, resultPressure, strokePressureList);
-    // }
+    const finalStroke: any = fabricDrawer?.getFinalStroke();
+    if (finalStroke && typeof finalStroke.pressure === 'undefined') {
+      const averagePressure: number = event.pointerType=="mouse"?Math.random(): getAveragePressure(strokePressureList);
+      const resultPressure: number = event.pointerType=="mouse"?Math.random(): getAveragePressure(strokePressureList);
+      fabricDrawer?.setAveragePressureToStroke(averagePressure);
+      fabricDrawer?.setTransformPressureToStroke(resultPressure);
+      addHistory({
+        type: "pen",
+        strokes: [finalStroke]
+      })
+      postStrokeData(resultPressure, resultPressure, strokePressureList);
+    }
     //
     setHistoryForRedo([]);
     strokePressureList = [];
@@ -222,7 +222,7 @@ export const Note: () => JSX.Element = () => {
         }
         fabricDrawer?.reDraw();
       }
-    }, 50);
+    }, 80);
   }
 
   const postStrokeData = async (averagePressure: number, transformPressure: number, strokePressureList: number[]) => {

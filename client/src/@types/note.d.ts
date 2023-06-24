@@ -116,6 +116,7 @@ export interface TPostStrokeData {
   Time: number;
   Mode: string;
   Save: number;
+  GroupNum?: number;
 }
 
 export interface TPostPPUndoCountsData {
