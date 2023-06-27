@@ -9,7 +9,7 @@ type Strokes struct {
 	StrokeData   StrokeData `gorm:"not null;column:stroke_data"`
 	TransformPressure float64 `gorm:"column:transform_pressure"`;
 	AvgPressure  float64    `gorm:"not null;column:avg_pressure"`
-	PointDataList PointData `gorm:"not null;column:stroke_data"`
+	PointDataList PointData `gorm:"not null;column:point_data_list"`
 	PressureList string     `gorm:"not null;column:pressure_list"`
 	Time         float64    `gorm:"column:time"`
 	StartTime    float64    `gorm:"column:start_time"`
