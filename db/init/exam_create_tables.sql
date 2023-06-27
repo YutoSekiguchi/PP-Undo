@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS strokes (
   nid INT NOT NULL,
   stroke_data JSON NOT NULL,
   avg_pressure FLOAT NOT NULL,
+  point_data_list JSON NOT NULL,
   transform_pressure FLOAT NOT NULL,
   pressure_list TEXT NOT NULL,
   time FLOAT,
