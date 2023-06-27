@@ -18,7 +18,7 @@ import { LoadingScreen } from "@/components/common/LoadingScreen";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { fetchNoteByID, updateNote } from "@/infrastructures/services/note";
 import { TNoteData } from "@/@types/notefolders";
-import { TClientLogData, TPostStrokeData } from "@/@types/note";
+import { TClientLogData, TPointDataList, TPostStrokeData } from "@/@types/note";
 import { addStroke } from "@/infrastructures/services/strokes";
 import { fetchClientLogsByNID } from "@/infrastructures/services/ppUndoLogs";
 import { NOTE_WIDTH_RATIO, PRESSURE_ROUND_VALUE } from "@/configs/settings";
@@ -29,6 +29,7 @@ let drawStartTime: number = 0; // 描画時の時刻
 let drawEndTime: number = 0; // 描画終了時の時刻
 let strokePressureList: number[] = [];
 let scrollTop = 0;
+let pointDataList: TPointDataList[] = [];
 
 export const Note: () => JSX.Element = () => {
   const { editor, onReady } = useFabricJSEditor();
@@ -192,6 +193,7 @@ export const Note: () => JSX.Element = () => {
     //
     setHistoryForRedo([]);
     strokePressureList = [];
+    pointDataList = [];
     setIsDraw(true);
   }
 
@@ -199,6 +201,22 @@ export const Note: () => JSX.Element = () => {
     if (!isDraw || event.pointerType === "touch") {return;}
     if (event.pressure !== 0) {
       strokePressureList = [...strokePressureList, Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE];
+      const pointerX = Math.round(event.clientX*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE;
+      const pointerY = Math.round((event.clientY - 65)*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE;
+      const tiltX = Math.round(event.tiltX*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE;
+      const tiltY = Math.round(event.tiltY*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE;
+      const canvasWidth = event.target.clientWidth;
+      const canvasHeight = event.target.clientHeight;
+      const pointData = {
+        "pointerX": pointerX,
+        "pointerY": pointerY,
+        "tiltX": tiltX,
+        "tiltY": tiltY,
+        "pressure": Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE,
+        "canvasWidth": canvasWidth,
+        "canvasHeight": canvasHeight,
+      }
+      pointDataList = [...pointDataList, pointData]
     }
   }
 
@@ -245,8 +263,10 @@ export const Note: () => JSX.Element = () => {
           }
       },
       AvgPressure: averagePressure,
+      PointDataList: {"data": pointDataList},
       TransformPressure: transformPressure,
-      PressureList: strokePressureList.join(','),
+      // PressureList: strokePressureList.join(','),
+      PressureList: "",
       StartTime: drawStartTime,
       EndTime: drawEndTime,
       Time: drawEndTime - drawStartTime,

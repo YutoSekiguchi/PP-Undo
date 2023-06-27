@@ -104,12 +104,23 @@ export interface TCancelButtonProps {
   close: () => void;
 }
 
+export interface TPointDataList {
+  pointerX: number;
+  pointerY: number;
+  tiltX: number;
+  tiltY: number;
+  pressure: number;
+  canvasWidth: number;
+  canvasHeight: number;
+}
+
 export interface TPostStrokeData {
   UID: number;
   NID: number;
   StrokeData: any;
-  TransformPressure: number;
   AvgPressure: number;
+  PointDataList: {"data": TPointDataList[]};
+  TransformPressure: number;
   PressureList: string;
   StartTime: number;
   EndTime: number;
