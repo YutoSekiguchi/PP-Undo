@@ -197,7 +197,7 @@ export const Note: () => JSX.Element = () => {
     setIsDraw(true);
   }
 
-  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+  const handlePointerMove = (event: any) => {
     if (!isDraw || event.pointerType === "touch") {return;}
     if (event.pressure !== 0) {
       strokePressureList = [...strokePressureList, Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE];
