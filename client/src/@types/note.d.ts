@@ -110,6 +110,7 @@ export interface TPointDataList {
   tiltX: number;
   tiltY: number;
   pressure: number;
+  time: number;
   canvasWidth: number;
   canvasHeight: number;
 }

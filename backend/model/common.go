@@ -41,6 +41,7 @@ type Point struct {
 	TiltX float64 `json:"tiltX"`
 	TiltY float64 `json:"tiltY"`
 	Pressure float64 `json:"pressure"`
+	Time float64 `json:"time"`
 	CanvasWidth float64 `json:"canvasWidth"`
 	CanvasHeight float64 `json:"canvasHeight"`
 }

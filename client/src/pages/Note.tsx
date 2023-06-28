@@ -213,6 +213,7 @@ export const Note: () => JSX.Element = () => {
         "tiltX": tiltX,
         "tiltY": tiltY,
         "pressure": Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE,
+        "time": Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE,
         "canvasWidth": canvasWidth,
         "canvasHeight": canvasHeight,
       }
