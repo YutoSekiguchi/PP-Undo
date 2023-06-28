@@ -217,6 +217,7 @@ export const Note: () => JSX.Element = () => {
         "canvasHeight": canvasHeight,
       }
       pointDataList = [...pointDataList, pointData]
+      console.log(pointDataList)
     }
   }
 
@@ -248,6 +249,7 @@ export const Note: () => JSX.Element = () => {
     // const lastStrokeSVG = fabricDrawer?.getSVG().match(regex)
     // console.log(lastStrokeSVG[lastStrokeSVG.length - 1])
     if(isDemo) {return;}
+    console.log(pointDataList)
     drawEndTime = Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE;
     const data: TPostStrokeData = {
       UID: myNote!.UID,
