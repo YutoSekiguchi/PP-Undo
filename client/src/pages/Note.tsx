@@ -31,6 +31,7 @@ let basePressure: number = 0;
 let strokePressureList: number[] = [];
 let scrollTop = 0;
 let pointDataList: TPointDataList[] = [];
+let isIncreasing: -1 | 0 | 1 = 0;
 
 export const Note: () => JSX.Element = () => {
   const { editor, onReady } = useFabricJSEditor();
@@ -216,9 +217,14 @@ export const Note: () => JSX.Element = () => {
       if (strokePressureList.length == 1) {
         basePressure = strokePressureList[0];
       } else {
-        if (Math.abs(basePressure - strokePressureList[strokePressureList.length -1]) >= BORDER_WAVE_PRESSURE) {
+        if (basePressure - strokePressureList[strokePressureList.length -1] >= BORDER_WAVE_PRESSURE && isIncreasing != 1) {
           basePressure = strokePressureList[strokePressureList.length -1]
           setWaveCount(waveCount + 1)
+          isIncreasing = 1
+        } else if (basePressure - strokePressureList[strokePressureList.length -1] <= -BORDER_WAVE_PRESSURE && isIncreasing != -1) {
+          basePressure = strokePressureList[strokePressureList.length -1]
+          setWaveCount(waveCount + 1)
+          isIncreasing = -1
         }
       }
       for (let i = 0; i < strokePressureList.length; i++) {
