@@ -217,7 +217,8 @@ export const Note: () => JSX.Element = () => {
       if (storePressureVal === 0) {
         setBasisPressure(event.pointerType=="mouse"
         ? Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE
-        : Math.round(sum/strokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
+        // : Math.round(sum/strokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
+        :Math.round(strokePressureList[strokePressureList.length - 1]*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
       }
       const pointerX = Math.round(event.clientX*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE;
       const pointerY = Math.round((event.clientY - 65)*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE;
@@ -293,7 +294,7 @@ export const Note: () => JSX.Element = () => {
         base = arr[i]
       }
   
-      if (waveCount >= 6) {
+      if (waveCount >= 2) {
         return true;
       }
     }
