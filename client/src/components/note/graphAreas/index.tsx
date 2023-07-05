@@ -160,7 +160,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
                   {`${nowPointPressure.toString()}${6-nowPointPressure.toString().length != 0 ? (nowPointPressure ==0 || nowPointPressure ==1)? (".0000"): ("0".repeat(6-nowPointPressure.toString().length)): ""}`}
                 </Typography>
               
-              <BorderLinearProgress
+              <NowBorderLinearProgress
                 variant="determinate"
                 value={nowPointPressure*100}
               />

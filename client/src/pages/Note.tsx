@@ -289,8 +289,9 @@ export const Note: () => JSX.Element = () => {
           }
           fabricDrawer?.reDraw();
         }
-      }, 80);
+      }, 100);
     }
+    setWaveCount(0)
   }
 
   const isWave = () => {
