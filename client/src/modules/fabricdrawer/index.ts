@@ -284,6 +284,12 @@ export class FabricDrawer {
     this.reDraw();
   }
 
+  changeStrokesC = (color: string) => {
+    this.editor.canvas._objects[this.editor.canvas._objects.length -1].set({stroke: color});
+    this.reDraw();
+  }
+
+
   /**
    * @param {number[]} [lowerIndexList]
    * @param {number[]} [newLowerIndexList]

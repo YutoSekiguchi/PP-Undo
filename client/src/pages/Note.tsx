@@ -217,7 +217,7 @@ export const Note: () => JSX.Element = () => {
       if (strokePressureList.length == 1) {
         basePressure = strokePressureList[0];
       } else {
-        if (Math.abs(basePressure - strokePressureList[strokePressureList.length -1]) >= 0.3) {
+        if (Math.abs(basePressure - strokePressureList[strokePressureList.length -1]) >= 0.2) {
           basePressure = strokePressureList[strokePressureList.length -1]
           setWaveCount(waveCount + 1)
         }
@@ -280,6 +280,8 @@ export const Note: () => JSX.Element = () => {
           setAddAvgPressureOfStroke(averagePressure);
           const finalStroke = fabricDrawer?.getFinalStroke();
           if (finalStroke) {
+            finalStroke.stroke = "#f00"
+            
             fabricDrawer?.setAveragePressureToStroke(averagePressure);
             fabricDrawer?.setTransformPressureToStroke(transformPressure);
             fabricDrawer?.setIsGrouping(false);
@@ -287,6 +289,16 @@ export const Note: () => JSX.Element = () => {
               type: "pen",
               strokes: [finalStroke]
             })
+          }
+          if (averagePressure >= 0.7) {
+            fabricDrawer?.changeStrokesC("#ff0000");
+          } else if (averagePressure <= 0.25) {
+            fabricDrawer?.changeStrokesC("#0000ff");
+          } else {
+            fabricDrawer?.changeStrokesC("#00ff00");
+          }
+          if (waveCount >= 6) {
+            fabricDrawer?.changeStrokesC("#ff00ff");
           }
           fabricDrawer?.reDraw();
         }
