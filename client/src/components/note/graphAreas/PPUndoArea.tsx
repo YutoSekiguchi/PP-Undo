@@ -109,6 +109,7 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
 
   useEffect(() => {
     setGraphData();
+    alert("fff")
   }, [fabricDrawer.getStrokeLength(), getPressureMode, historyGroupPressure])
 
   const changeValue = async(event: Event, newValue: number | number[]) => {
