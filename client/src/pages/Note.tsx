@@ -217,7 +217,7 @@ export const Note: () => JSX.Element = () => {
       if (strokePressureList.length == 1) {
         basePressure = strokePressureList[0];
       } else {
-        if (Math.abs(basePressure - strokePressureList[strokePressureList.length -1]) >= 0.2) {
+        if (Math.abs(basePressure - strokePressureList[strokePressureList.length -1]) >= 0.5) {
           basePressure = strokePressureList[strokePressureList.length -1]
           setWaveCount(waveCount + 1)
         }
@@ -296,7 +296,7 @@ export const Note: () => JSX.Element = () => {
 
   const isWave = () => {
     basePressure = 0
-    if (waveCount >= 4) {
+    if (waveCount >= 6) {
       setWaveCount(0)
       return true;
     }
