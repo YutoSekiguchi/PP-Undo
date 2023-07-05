@@ -47,7 +47,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
     backgroundColor: "#063852",
     [`& .${linearProgressClasses.bar}`]: {
       borderRadius: 5,
-      backgroundColor: waveCount/6 <= 1? '#eee': waveCount/6 <= 2? "#4682b4": waveCount == 2? "#66cdaa": waveCount/6<3 ? "#ffd700": "#ff7f50",
+      backgroundColor: waveCount <= 1? '#eee': waveCount <= 3? "#4682b4": waveCount <= 4? "#66cdaa": waveCount < 6? "#ffd700": "#ff7f50",
     },
   }));
 
