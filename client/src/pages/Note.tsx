@@ -30,7 +30,7 @@ let drawEndTime: number = 0; // 描画終了時の時刻
 let strokePressureList: number[] = [];
 let scrollTop = 0;
 let pointDataList: TPointDataList[] = [];
-const BORDER_FINISH_POINT = 3;
+const BORDER_FINISH_POINT = 6;
 
 export const Note: () => JSX.Element = () => {
   const { editor, onReady } = useFabricJSEditor();
