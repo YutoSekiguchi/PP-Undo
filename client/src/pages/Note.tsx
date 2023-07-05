@@ -187,9 +187,9 @@ export const Note: () => JSX.Element = () => {
     drawStartTime = Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE;
     const finalStroke: any = fabricDrawer?.getFinalStroke();
     if (finalStroke && typeof finalStroke.pressure === 'undefined') {
-      if (strokePressureList.length < BORDER_WAVE_COUNT) {
-        fabricDrawer?.removeStroke(finalStroke!)
-      } else {
+      // if (strokePressureList.length < BORDER_WAVE_COUNT) {
+      //   fabricDrawer?.removeStroke(finalStroke!)
+      // } else {
         const averagePressure: number = event.pointerType=="mouse"?Math.random(): getAveragePressure(strokePressureList);
         const resultPressure: number = event.pointerType=="mouse"?Math.random(): getAveragePressure(strokePressureList);
         fabricDrawer?.setAveragePressureToStroke(averagePressure);
@@ -199,7 +199,7 @@ export const Note: () => JSX.Element = () => {
           strokes: [finalStroke]
         })
         postStrokeData(resultPressure, resultPressure, strokePressureList);
-      }
+      // }
     }
     //
     setHistoryForRedo([]);
@@ -301,16 +301,16 @@ export const Note: () => JSX.Element = () => {
           // }
           fabricDrawer?.reDraw();
         }
-      }, 100);
-      if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE) {
-        fabricDrawer?.isGrouping(true, storePressureVal);
-        addHistoryGroupPressure(storePressureVal);
-        if (!isDemo) {
-          await updateTransformPressures(myNote!.ID, storePressureVal)
+        if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE) {
+          fabricDrawer?.isGrouping(true, storePressureVal);
+          addHistoryGroupPressure(storePressureVal);
+          if (!isDemo) {
+            updateTransformPressures(myNote!.ID, storePressureVal)
+          }
+          setStorePressureVal(0);
+          setBasisPressure(0);
         }
-        setStorePressureVal(0);
-        setBasisPressure(0);
-      }
+      }, 100);
     setWaveCount(0)
   }
 
