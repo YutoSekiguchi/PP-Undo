@@ -7,6 +7,7 @@ import { Home } from "@/pages/Home";
 import { Note } from "@/pages/Note";
 import { Notefolders } from "@/pages/NoteFolders";
 import { Analytics } from "@/pages/Analytics";
+import { Annotation } from "@/pages/Annotation";
 
 export const RouterConfig:React.FC =() => {
   return (
@@ -21,6 +22,7 @@ export const RouterConfig:React.FC =() => {
               <Route path='/note/:id' element={<Note />} />
               <Route path='/demo' element={<Note />} />
               <Route path='/analytics' element={ <Analytics /> } />
+              <Route path='/annotation/:nid' element={<Annotation />} />
             </Routes>
           </Box>
       </BrowserRouter>
