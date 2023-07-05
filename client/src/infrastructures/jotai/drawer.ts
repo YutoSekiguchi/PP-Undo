@@ -150,7 +150,7 @@ export const sliderValueAtom = atom<number | number[]>(0);
 export const historyGroupPressureAtom = atom<number[]>([]);
 // 追加処理
 export const addHistoryGroupPressureAtom = atom(null, (get, set, val: number) => {
-  set(historyGroupPressureAtom, get(historyGroupPressureAtom).concat([val]));
+  set(historyGroupPressureAtom, [val].concat(get(historyGroupPressureAtom)));
 })
 
 export const getPressureModeAtom = atom<"avg" | "transform">("avg");

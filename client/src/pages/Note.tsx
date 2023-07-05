@@ -288,7 +288,7 @@ export const Note: () => JSX.Element = () => {
     let base = arr[0];
     for (let i = 1; i < arr.length; i++) {
 
-      if (Math.abs(arr[i] - base) >= 0.5) {
+      if (Math.abs(arr[i] - base) >= 0.2) {
         waveCount += 1
         base = arr[i]
       }
