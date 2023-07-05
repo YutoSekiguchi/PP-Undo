@@ -258,13 +258,13 @@ export const Note: () => JSX.Element = () => {
     const averagePressure: number = event.pointerType=="mouse"?Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: getAveragePressure(strokePressureList);
     const transformPressure: number = event.pointerType=="mouse"?averagePressure: getAveragePressure(strokePressureList);
     if (strokePressureList.length < BORDER_FINISH_POINT && storePressureVal !== 0) {
-      console.log(fabricDrawer?.getFinalStroke())
       fabricDrawer?.isGrouping(true, storePressureVal);
       addHistoryGroupPressure(storePressureVal);
       if (!isDemo) {
         await updateTransformPressures(myNote!.ID, storePressureVal)
       }
       setStorePressureVal(0);
+      setBasisPressure(0);
     }
     else {
       if (storePressureVal === 0) {
