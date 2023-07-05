@@ -265,16 +265,8 @@ export const Note: () => JSX.Element = () => {
     //   setStorePressureVal(0);
     //   setBasisPressure(0);
     // }
-    if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE) {
-      fabricDrawer?.isGrouping(true, storePressureVal);
-      addHistoryGroupPressure(storePressureVal);
-      if (!isDemo) {
-        await updateTransformPressures(myNote!.ID, storePressureVal)
-      }
-      setStorePressureVal(0);
-      setBasisPressure(0);
-    }
-    else {
+    
+    if (!(storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE)) {
       if (storePressureVal === 0) {
         setStorePressureVal(averagePressure);
       } else if (isWave()) {
@@ -310,6 +302,15 @@ export const Note: () => JSX.Element = () => {
           fabricDrawer?.reDraw();
         }
       }, 100);
+      if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE) {
+        fabricDrawer?.isGrouping(true, storePressureVal);
+        addHistoryGroupPressure(storePressureVal);
+        if (!isDemo) {
+          await updateTransformPressures(myNote!.ID, storePressureVal)
+        }
+        setStorePressureVal(0);
+        setBasisPressure(0);
+      }
     setWaveCount(0)
   }
 
