@@ -20,6 +20,14 @@
   max-height: 145px;
 }
 
+.mode-text {
+  border-radius: 10px;
+  padding: 10px 5px;
+  box-shadow:
+    0 0 0px #aaa,
+    0 0 20px #00f,
+}
+
 .graph-wrapper {
   background-color: variables.$dark-blue-color;
   min-height: 300px;
@@ -33,6 +41,7 @@
     0 0 7px #aaa,
     0 0 20px #00f,
 }
+
 
 .graph-wrapper-height {
   min-height: 280px;

@@ -73,7 +73,7 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => Pro
 
   const eraseSelectedObjects = async () => {
     if (fabricDrawer.getSelectedObjects()!.length > 0) {
-      const beforeEraseSelectedObjectsData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
+      const beforeEraseSelectedObjectsData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getAveragePressureList(), "svg": fabricDrawer.getSVG()}};
       const beforeEraseSelectedObjectsStrokeCount = fabricDrawer?.getStrokeLength();
 
       addHistory({
@@ -82,7 +82,7 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => Pro
       })
       fabricDrawer.removeSelectedStrokes();
 
-      const afterEraseSelectedObjectsData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
+      const afterEraseSelectedObjectsData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getAveragePressureList(), "svg": fabricDrawer.getSVG()}};
       const afterEraseSelectedObjectsStrokeCount = fabricDrawer?.getStrokeLength();
       console.log("fefe")
       

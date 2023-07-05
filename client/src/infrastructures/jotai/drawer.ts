@@ -92,6 +92,8 @@ export const plusRedoCountAtom = atom(null, (get, set) => {
 
 export const noteAspectRatiotAtom = atom<number>(1);
 
+export const basisPressureAtom = atom<number>(0);
+
 
 /**
  * @description
@@ -141,6 +143,17 @@ export const getAvgPressureOfStrokeCountAtom = atom((get) => {
  */
 export const sliderValueAtom = atom<number | number[]>(0);
 
+/**
+ * @description
+ * 過去の筆圧Groupの保持
+ */
+export const historyGroupPressureAtom = atom<number[]>([]);
+// 追加処理
+export const addHistoryGroupPressureAtom = atom(null, (get, set, val: number) => {
+  set(historyGroupPressureAtom, get(historyGroupPressureAtom).concat([val]));
+})
+
+export const getPressureModeAtom = atom<"avg" | "transform">("avg");
 
 /**
  * @description
@@ -155,4 +168,5 @@ export const resetAtom = atom(null, (_get, set) => {
   set(historyAtom, []);
   set(historyForRedoAtom, []);
   set(avgPressureOfStrokeAtom, []);
+  set(historyGroupPressureAtom, []);
 })

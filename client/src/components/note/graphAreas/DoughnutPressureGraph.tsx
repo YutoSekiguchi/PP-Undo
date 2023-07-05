@@ -59,7 +59,7 @@ export const DoughnutPressureGraph: React.FC<TDoughnutPressureGraphProps> = (pro
             {title}
           </Typography>
         </Box>
-        <Box sx={{ position: "relative" }}>
+        <Box sx={{ position: "relative", width: "100%" }} className="center">
           <Typography component="div">
             <Box className="absolute-center-text white-text text-center doughnut-graph-title">
               {Math.round(pressureValue*100)/100}

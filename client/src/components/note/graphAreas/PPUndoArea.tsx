@@ -10,6 +10,8 @@ import {
   historyForRedoAtom,
   avgPressureOfStrokeAtom,
   isDemoAtom,
+  getPressureModeAtom,
+  historyGroupPressureAtom,
 } from "@/infrastructures/jotai/drawer";
 import {
   Chart as ChartJS,
@@ -86,25 +88,37 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
   const [, setHistoryForRedo] = useAtom(historyForRedoAtom);
   const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom);
   const [isDemo, ] = useAtom(isDemoAtom);
-
+  const [getPressureMode, ] = useAtom(getPressureModeAtom);
+  const [historyGroupPressure, ] = useAtom(historyGroupPressureAtom);
 
   const setGraphData = () => {
     let tmp: number[] = [...Array(SPLIT_PRESSURE_COUNT + 1)].fill(0);
-    fabricDrawer?.getPressureList().map((pressure, _) => {
-      const j = Math.round(pressure*100)/100;
-      tmp[Math.ceil(j*SPLIT_PRESSURE_COUNT)] += 1
-    })
+    if (getPressureMode == "transform") {
+      fabricDrawer?.getTransformPressureList().map((pressure, _) => {
+        const j = Math.round(pressure*100)/100;
+        tmp[Math.ceil(j*SPLIT_PRESSURE_COUNT)] += 1
+      })
+    } else if (getPressureMode == "avg") {
+      fabricDrawer?.getAveragePressureList().map((pressure, _) => {
+        const j = Math.round(pressure*100)/100;
+        tmp[Math.ceil(j*SPLIT_PRESSURE_COUNT)] += 1
+      })
+    }
     setData(tmp);
   }
 
   useEffect(() => {
     setGraphData();
-  }, [fabricDrawer.getStrokeLength()])
+  }, [fabricDrawer.getStrokeLength(), getPressureMode, historyGroupPressure])
 
   const changeValue = async(event: Event, newValue: number | number[]) => {
     setSliderValue(newValue)
     if (fabricDrawer.getStrokeLength() == 0) { return; }
-    const pressureList: number[] = fabricDrawer? fabricDrawer.getPressureList(): [];
+    const pressureList: number[] = fabricDrawer
+    ? getPressureMode === "transform"
+      ? fabricDrawer.getTransformPressureList()
+      : fabricDrawer.getAveragePressureList()
+    : [];
     const newLowerPressureIndexList: number[] = getStrokesIndexWithLowPressure(
       pressureList,
       newValue,
@@ -142,7 +156,7 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
       createTime: now,
       strokes: [],
       svg: svg,
-      pressureList: fabricDrawer.getPressureList(),
+      pressureList: fabricDrawer.getAveragePressureList(),
     };
     setPrevSliderValue(sliderValue);
     setLogData(strokeData);
@@ -185,7 +199,7 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
       const postPPUndoCountsData: TPostPPUndoCountsData = {
         UID: myNote?.UID? myNote?.UID: 0,
         NID: myNote?.ID? myNote?.ID: 0,
-        AfterPPUndoStrokeData: {"Strokes": {"data": fabricDrawer.getAllStrokes(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}},
+        AfterPPUndoStrokeData: {"Strokes": {"data": fabricDrawer.getAllStrokes(), "pressure": fabricDrawer.getAveragePressureList(), "svg": fabricDrawer.getSVG()}},
         AfterPPUndoImageData: "",
         BeforePPUndoStrokeCount: logData!.strokes.length,
         AfterPPUndoStrokeCount: fabricDrawer.getStrokeLength(),

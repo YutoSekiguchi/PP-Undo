@@ -23,7 +23,7 @@ export const UndoButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
   const undo = async () => {
     if (history.length === 0) {return;}
     const beforeUndoNoteImage = "";
-    const beforeUndoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
+    const beforeUndoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getAveragePressureList(), "svg": fabricDrawer.getSVG()}};
 
     const lastHistory = history[history.length - 1];
     if (lastHistory) {
@@ -44,7 +44,7 @@ export const UndoButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
     if (isDemo) { return; }
     
     const afterUndoNoteImage = "";
-    const afterUndoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
+    const afterUndoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getAveragePressureList(), "svg": fabricDrawer.getSVG()}};
     await addUndoCount(
       {
         UID: myNote!.UID,

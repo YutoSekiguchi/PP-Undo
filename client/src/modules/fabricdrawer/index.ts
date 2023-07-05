@@ -343,13 +343,37 @@ export class FabricDrawer {
     Object.assign(this.editor.canvas._objects[this.editor.canvas._objects.length - 1], { pressure: pressure });
   }
 
+  setIsGrouping = (v: boolean) => {
+    Object.assign(this.editor.canvas._objects[this.editor.canvas._objects.length - 1], { isGrouping: v });
+  }
+
+  isGrouping = (v: boolean, pressure: number) => {
+    this.editor.canvas._objects.map((object: any, _: number) => {
+      if (object["isGrouping"] === false) {
+        object["isGrouping"] = true;
+        object["pressure"] = pressure;
+      }
+    })
+  }
+
   /**
    * @return {number[]}
    */
-  getPressureList = (): number[] => {
+  getAveragePressureList = (): number[] => {
     const res: number[] = [];
     this.editor.canvas._objects.map((object: any, _: number) => {
       res.push(object.averagePressure);
+    })
+    return res;
+  }
+
+  /**
+   * @return {number[]}
+   */
+  getTransformPressureList = (): number[] => {
+    const res: number[] = [];
+    this.editor.canvas._objects.map((object: any, _: number) => {
+      res.push(object.pressure);
     })
     return res;
   }

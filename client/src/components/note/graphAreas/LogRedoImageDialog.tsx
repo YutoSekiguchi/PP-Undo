@@ -29,7 +29,7 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
     setIsLoadingScreen(true);
 
     const beforeLogRedoNoteImage = fabricDrawer.getImg();
-    const beforeLogRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
+    const beforeLogRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getAveragePressureList(), "svg": fabricDrawer.getSVG()}};
     const beforeLogRedoStrokeCount = fabricDrawer?.getStrokeLength();
     
     fabricDrawer.clear();
@@ -45,7 +45,7 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
     setSliderValue(logOfBeforePPUndo[dialogIndex].sliderValue);
 
     const afterLogRedoNoteImage = fabricDrawer.getImg();
-    const afterLogRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
+    const afterLogRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getAveragePressureList(), "svg": fabricDrawer.getSVG()}};
     const afterLogRedoStrokeCount = fabricDrawer.getStrokeLength();
     
     if(!isDemo) {

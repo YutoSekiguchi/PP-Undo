@@ -9,7 +9,7 @@ import { isAuth } from "@/modules/common/isAuth";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 import { getAveragePressure } from "@/modules/note/GetAveragePressure";
 import { NewNoteHeader } from "@/components/note/header";
-import { addAvgPressureOfStrokeAtom, addHistoryAtom, avgPressureOfStrokeAtom, backgroundImageAtom, drawModeAtom, historyForRedoAtom, isDemoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, ppUndoCountAtom, redoCountAtom, resetAtom, undoCountAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, addHistoryAtom, addHistoryGroupPressureAtom, avgPressureOfStrokeAtom, backgroundImageAtom, basisPressureAtom, drawModeAtom, historyForRedoAtom, isDemoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, ppUndoCountAtom, redoCountAtom, resetAtom, undoCountAtom } from "@/infrastructures/jotai/drawer";
 import { isLineSegmentIntersecting } from "@/modules/note/IsLineSegmentIntersecting";
 import { getMinimumPoints } from "@/modules/note/GetMinimumPoints";
 import NoteImg from "@/assets/notesolidb.svg"
@@ -19,7 +19,7 @@ import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { fetchNoteByID, updateNote } from "@/infrastructures/services/note";
 import { TNoteData } from "@/@types/notefolders";
 import { TClientLogData, TPointDataList, TPostStrokeData } from "@/@types/note";
-import { addStroke } from "@/infrastructures/services/strokes";
+import { addStroke, updateTransformPressures } from "@/infrastructures/services/strokes";
 import { fetchClientLogsByNID } from "@/infrastructures/services/ppUndoLogs";
 import { NOTE_WIDTH_RATIO, PRESSURE_ROUND_VALUE } from "@/configs/settings";
 import { confirmNumberArrayFromString } from "@/modules/common/confirmArrayFromString";
@@ -30,6 +30,7 @@ let drawEndTime: number = 0; // 描画終了時の時刻
 let strokePressureList: number[] = [];
 let scrollTop = 0;
 let pointDataList: TPointDataList[] = [];
+const BORDER_FINISH_POINT = 3;
 
 export const Note: () => JSX.Element = () => {
   const { editor, onReady } = useFabricJSEditor();
@@ -52,6 +53,7 @@ export const Note: () => JSX.Element = () => {
   const [backgroundImage, setBackgroundImage] = useAtom(backgroundImageAtom);
   const [avgPressureOfStroke, setAvgPressureOfStroke] = useAtom(avgPressureOfStrokeAtom);
   const [, setAddAvgPressureOfStroke] = useAtom(addAvgPressureOfStrokeAtom);
+  const [, setBasisPressure] = useAtom(basisPressureAtom);
   const [, setLogOfBeforePPUndo] = useAtom(logOfBeforePPUndoAtom);
   const [undoCount, ] = useAtom(undoCountAtom);
   const [redoCount, ] = useAtom(redoCountAtom);
@@ -59,6 +61,9 @@ export const Note: () => JSX.Element = () => {
   const [ppUndoCount, ] = useAtom(ppUndoCountAtom);
   const [noteAspectRatio, setNoteAspectRatio] = useAtom(noteAspectRatiotAtom);
   const [, setReset] = useAtom(resetAtom);
+  const [storePressureVal, setStorePressureVal] = useState<number>(0);
+  const [, addHistoryGroupPressure] = useAtom(addHistoryGroupPressureAtom);
+  
 
   useEffect(() => {
     if (!editor || !fabric || !(fabricDrawer === undefined && !!editor)) {
@@ -180,15 +185,19 @@ export const Note: () => JSX.Element = () => {
     drawStartTime = Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE;
     const finalStroke: any = fabricDrawer?.getFinalStroke();
     if (finalStroke && typeof finalStroke.pressure === 'undefined') {
-      const averagePressure: number = event.pointerType=="mouse"?Math.random(): getAveragePressure(strokePressureList);
-      const resultPressure: number = event.pointerType=="mouse"?Math.random(): getAveragePressure(strokePressureList);
-      fabricDrawer?.setAveragePressureToStroke(averagePressure);
-      fabricDrawer?.setTransformPressureToStroke(resultPressure);
-      addHistory({
-        type: "pen",
-        strokes: [finalStroke]
-      })
-      postStrokeData(resultPressure, resultPressure, strokePressureList);
+      if (strokePressureList.length < BORDER_FINISH_POINT) {
+        fabricDrawer?.removeStroke(finalStroke!)
+      } else {
+        const averagePressure: number = event.pointerType=="mouse"?Math.random(): getAveragePressure(strokePressureList);
+        const resultPressure: number = event.pointerType=="mouse"?Math.random(): getAveragePressure(strokePressureList);
+        fabricDrawer?.setAveragePressureToStroke(averagePressure);
+        fabricDrawer?.setTransformPressureToStroke(resultPressure);
+        addHistory({
+          type: "pen",
+          strokes: [finalStroke]
+        })
+        postStrokeData(resultPressure, resultPressure, strokePressureList);
+      }
     }
     //
     setHistoryForRedo([]);
@@ -201,6 +210,15 @@ export const Note: () => JSX.Element = () => {
     if (!isDraw || event.pointerType === "touch") {return;}
     if (event.pressure !== 0) {
       strokePressureList = [...strokePressureList, Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE];
+      let sum = 0;
+      for (let i = 0; i < strokePressureList.length; i++) {
+        sum += strokePressureList[i];
+      }
+      if (storePressureVal === 0) {
+        setBasisPressure(event.pointerType=="mouse"
+        ? Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE
+        : Math.round(sum/strokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
+      }
       const pointerX = Math.round(event.clientX*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE;
       const pointerY = Math.round((event.clientY - 65)*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE;
       const tiltX = Math.round(event.tiltX*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE;
@@ -225,23 +243,38 @@ export const Note: () => JSX.Element = () => {
     // if (event.pointerType === "touch") { return; }
     setIsDraw(false);
     const averagePressure: number = event.pointerType=="mouse"?Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: getAveragePressure(strokePressureList);
-    const transformPressure: number = event.pointerType=="mouse"?Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: getAveragePressure(strokePressureList);
-    await postStrokeData(averagePressure, transformPressure, strokePressureList);
-    setTimeout(() => {
-      if (drawMode == "pen") {
-        setAddAvgPressureOfStroke(averagePressure);
-        const finalStroke = fabricDrawer?.getFinalStroke();
-        if (finalStroke) {
-          fabricDrawer?.setAveragePressureToStroke(averagePressure);
-          fabricDrawer?.setTransformPressureToStroke(transformPressure);
-          addHistory({
-            type: "pen",
-            strokes: [finalStroke]
-          })
-        }
-        fabricDrawer?.reDraw();
+    const transformPressure: number = event.pointerType=="mouse"?averagePressure: getAveragePressure(strokePressureList);
+    if (strokePressureList.length < BORDER_FINISH_POINT && storePressureVal !== 0) {
+      console.log(fabricDrawer?.getFinalStroke())
+      fabricDrawer?.isGrouping(true, storePressureVal);
+      addHistoryGroupPressure(storePressureVal);
+      if (!isDemo) {
+        await updateTransformPressures(myNote!.ID, storePressureVal)
       }
-    }, 80);
+      setStorePressureVal(0);
+    }
+    else {
+      if (storePressureVal === 0) {
+        setStorePressureVal(averagePressure);
+      }
+      await postStrokeData(averagePressure, transformPressure, strokePressureList);
+      setTimeout(() => {
+        if (drawMode == "pen") {
+          setAddAvgPressureOfStroke(averagePressure);
+          const finalStroke = fabricDrawer?.getFinalStroke();
+          if (finalStroke) {
+            fabricDrawer?.setAveragePressureToStroke(averagePressure);
+            fabricDrawer?.setTransformPressureToStroke(transformPressure);
+            fabricDrawer?.setIsGrouping(false);
+            addHistory({
+              type: "pen",
+              strokes: [finalStroke]
+            })
+          }
+          fabricDrawer?.reDraw();
+        }
+      }, 80);
+    }
   }
 
   const postStrokeData = async (averagePressure: number, transformPressure: number, strokePressureList: number[]) => {
@@ -256,7 +289,7 @@ export const Note: () => JSX.Element = () => {
       StrokeData: {
         "Strokes": 
           {
-            "pressure": fabricDrawer?.getPressureList(),
+            "pressure": fabricDrawer?.getAveragePressureList(),
             "svg": fabricDrawer?.getSVG(),
             // "svg": fabricDrawer?.getImg(),
             // "svg": "",
@@ -373,7 +406,7 @@ export const Note: () => JSX.Element = () => {
     if (isDemo) { return; }
     try {
       myNote!.NoteImage = fabricDrawer!.getImg();
-      myNote!.StrokeData = {"Strokes": {"data": editor?.canvas.getObjects(), "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}};
+      myNote!.StrokeData = {"Strokes": {"data": editor?.canvas.getObjects(), "pressure": fabricDrawer!.getAveragePressureList(), "svg": fabricDrawer?.getSVG()}};
       myNote!.AvgPressure = fabricDrawer!.getAveragePressure();
       myNote!.AvgPressureList = fabricDrawer!.getPressureListAsString();
       myNote!.AllAvgPressureList = avgPressureOfStroke.join(',');

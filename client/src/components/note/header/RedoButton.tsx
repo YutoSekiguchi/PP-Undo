@@ -22,7 +22,7 @@ export const RedoButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
   const redo = async () => {
     if (historyForRedo.length === 0) {return;}
     const beforeRedoNoteImage = "";
-    const beforeRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
+    const beforeRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getAveragePressureList(), "svg": fabricDrawer.getSVG()}};
 
     const lastHistoryForRedo = historyForRedo[historyForRedo.length - 1];
     if (lastHistoryForRedo) {
@@ -44,7 +44,7 @@ export const RedoButton: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
     if (isDemo) {return;}
     
     const afterRedoNoteImage = "";
-    const afterRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getPressureList(), "svg": fabricDrawer.getSVG()}};
+    const afterRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getAveragePressureList(), "svg": fabricDrawer.getSVG()}};
     await addRedoCount(
       {
         UID: myNote!.UID,
