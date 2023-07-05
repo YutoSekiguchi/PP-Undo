@@ -259,6 +259,7 @@ export const Note: () => JSX.Element = () => {
         setStorePressureVal(averagePressure);
       } else if (isWaveArray(strokePressureList)) {
         setStorePressureVal(0);
+        setBasisPressure(0);
       }
       await postStrokeData(averagePressure, transformPressure, strokePressureList);
       setTimeout(() => {
