@@ -256,6 +256,8 @@ export const Note: () => JSX.Element = () => {
     else {
       if (storePressureVal === 0) {
         setStorePressureVal(averagePressure);
+      } else if (isWaveArray(strokePressureList)) {
+        setStorePressureVal(0);
       }
       await postStrokeData(averagePressure, transformPressure, strokePressureList);
       setTimeout(() => {
@@ -275,6 +277,28 @@ export const Note: () => JSX.Element = () => {
         }
       }, 80);
     }
+  }
+
+  const isWaveArray = (arr: number[]) => {
+    if (arr.length < 3) {
+      return false;
+    }
+  
+    let waveCount = 0;
+    let base = arr[0];
+    for (let i = 1; i < arr.length; i++) {
+
+      if (Math.abs(arr[i] - base) >= 0.5) {
+        waveCount += 1
+        base = arr[i]
+      }
+  
+      if (waveCount >= 6) {
+        return true;
+      }
+    }
+  
+    return false;
   }
 
   const postStrokeData = async (averagePressure: number, transformPressure: number, strokePressureList: number[]) => {
