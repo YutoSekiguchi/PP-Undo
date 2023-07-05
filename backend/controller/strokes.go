@@ -39,6 +39,14 @@ func (ctrl Controller) HandleUpdateNotSaveStrokes(c echo.Context) error {
 	return Res(c, p, err)
 }
 
+// transform_pressureの更新
+func (ctrl Controller) HandleUpdateTransformPressures(c echo.Context) error {
+	var s service.StrokesService
+	p, err := s.UpdateTransformPressures(ctrl.Db, c)
+
+	return Res(c, p, err)
+}
+
 // Group番号を付与
 func (ctrl Controller) HandleUpdateStrokesGroup(c echo.Context) error {
 	var s service.StrokesService

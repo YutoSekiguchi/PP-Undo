@@ -67,6 +67,18 @@ func (s StrokesService) UpdateStrokesGroup(db *gorm.DB, c echo.Context) ([]Strok
 	return st, nil
 }
 
+func (s StrokesService) UpdateTransformPressures(db *gorm.DB, c echo.Context) ([]Strokes, error) {
+	var st []Strokes
+	// nid := c.Param("nid")
+	// tfp := c.Param("tfp")
+	nid := c.QueryParam("nid")
+	pressure := c.QueryParam("pressure")
+	if err := db.Table("strokes").Select("transform_pressure", "save").Where("nid = ?", nid).Where("save = 0").Updates(map[string]interface{}{"transform_pressure": pressure, "save": 1}).Scan(&st).Error; err != nil {
+		return nil, err
+	}
+	return st, nil
+}
+
 // DELETE
 // 保存してないストロークの削除
 func (s StrokesService) DeleteNotSaveStrokes(db *gorm.DB, c echo.Context) ([]Strokes, error) {
