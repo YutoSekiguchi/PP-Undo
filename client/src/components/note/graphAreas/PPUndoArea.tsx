@@ -108,8 +108,9 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
   }
 
   useEffect(() => {
+    console.log(fabricDrawer.getAveragePressureList().length)
     setGraphData();
-  }, [fabricDrawer.getStrokeLength(), getPressureMode])
+  }, [getPressureMode, fabricDrawer.getAveragePressureList().length])
 
   const changeValue = async(event: Event, newValue: number | number[]) => {
     setSliderValue(newValue)
