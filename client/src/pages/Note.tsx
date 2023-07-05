@@ -297,7 +297,7 @@ export const Note: () => JSX.Element = () => {
         return true;
       }
     }
-  
+
     return false;
   }
 
@@ -334,6 +334,7 @@ export const Note: () => JSX.Element = () => {
     await addStroke(data);
   }
 
+  
   const handleEraseDown = (event: PointerEvent<HTMLCanvasElement>) => {
     // if (event.pointerType === "touch") {
     //   fabricDrawer?.setPointingMode();
