@@ -217,7 +217,7 @@ export const Note: () => JSX.Element = () => {
       if (strokePressureList.length == 1) {
         basePressure = strokePressureList[0];
       } else {
-        if (Math.abs(basePressure - strokePressureList[strokePressureList.length -1]) >= 0.5) {
+        if (Math.abs(basePressure - strokePressureList[strokePressureList.length -1]) >= 0.3) {
           basePressure = strokePressureList[strokePressureList.length -1]
           setWaveCount(waveCount + 1)
         }
@@ -274,6 +274,7 @@ export const Note: () => JSX.Element = () => {
         setBasisPressure(0);
       }
       await postStrokeData(averagePressure, transformPressure, strokePressureList);
+      
       setTimeout(() => {
         if (drawMode == "pen") {
           setAddAvgPressureOfStroke(averagePressure);
