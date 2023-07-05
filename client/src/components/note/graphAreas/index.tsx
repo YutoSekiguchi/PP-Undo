@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAtom } from 'jotai'
-import { avgPressureOfStrokeAtom, basisPressureAtom, getPressureModeAtom, historyGroupPressureAtom } from "@/infrastructures/jotai/drawer";
+import { avgPressureOfStrokeAtom, basisPressureAtom, getPressureModeAtom, historyGroupPressureAtom, nowPointPressureAtom } from "@/infrastructures/jotai/drawer";
 import {
   Box, Button, MobileStepper, Typography 
 } from "@mui/material";
@@ -24,11 +24,12 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
   const [basisPressure, ] = useAtom(basisPressureAtom);
   const [historyGroupPressure, ] = useAtom(historyGroupPressureAtom);
   const [getPressureMode, setGetPressureMode] = useAtom(getPressureModeAtom);
+  const [nowPointPressure, ] = useAtom(nowPointPressureAtom);
 
   const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     borderRadius: 5,
-    height: 50,
-    width: 200,
+    height: 30,
+    width: 180,
     marginLeft: 16,
     backgroundColor: "#063852",
     [`& .${linearProgressClasses.bar}`]: {
@@ -134,6 +135,21 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
               <BorderLinearProgress
                 variant="determinate"
                 value={basisPressure*100}
+              />
+              </Box>
+              <Box className="white-text center" sx={{width: "100%", marginTop: 1,}}>
+                <Typography fontSize={14} fontWeight="bold">
+                  今の筆圧
+                </Typography>
+              </Box>
+              <Box className="white-text center" sx={{width: "100%"}}>
+                <Typography fontSize={14} fontWeight="bold">
+                  {`${nowPointPressure.toString()}${6-nowPointPressure.toString().length != 0 ? nowPointPressure ==0? (".0000"): ("0".repeat(6-nowPointPressure.toString().length)): ""}`}
+                </Typography>
+              
+              <BorderLinearProgress
+                variant="determinate"
+                value={nowPointPressure*100}
               />
               </Box>
             </Box>

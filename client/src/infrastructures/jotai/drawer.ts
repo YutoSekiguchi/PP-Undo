@@ -155,6 +155,8 @@ export const addHistoryGroupPressureAtom = atom(null, (get, set, val: number) =>
 
 export const getPressureModeAtom = atom<"avg" | "transform">("avg");
 
+export const nowPointPressureAtom = atom<number>(0);
+
 /**
  * @description
  * リセット

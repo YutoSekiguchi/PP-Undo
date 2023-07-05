@@ -9,7 +9,7 @@ import { isAuth } from "@/modules/common/isAuth";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 import { getAveragePressure } from "@/modules/note/GetAveragePressure";
 import { NewNoteHeader } from "@/components/note/header";
-import { addAvgPressureOfStrokeAtom, addHistoryAtom, addHistoryGroupPressureAtom, avgPressureOfStrokeAtom, backgroundImageAtom, basisPressureAtom, drawModeAtom, historyForRedoAtom, isDemoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, ppUndoCountAtom, redoCountAtom, resetAtom, undoCountAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, addHistoryAtom, addHistoryGroupPressureAtom, avgPressureOfStrokeAtom, backgroundImageAtom, basisPressureAtom, drawModeAtom, historyForRedoAtom, isDemoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, nowPointPressureAtom, ppUndoCountAtom, redoCountAtom, resetAtom, undoCountAtom } from "@/infrastructures/jotai/drawer";
 import { isLineSegmentIntersecting } from "@/modules/note/IsLineSegmentIntersecting";
 import { getMinimumPoints } from "@/modules/note/GetMinimumPoints";
 import NoteImg from "@/assets/notesolidb.svg"
@@ -63,6 +63,7 @@ export const Note: () => JSX.Element = () => {
   const [, setReset] = useAtom(resetAtom);
   const [storePressureVal, setStorePressureVal] = useState<number>(0);
   const [, addHistoryGroupPressure] = useAtom(addHistoryGroupPressureAtom);
+  const [, setNowPointPressure] = useAtom(nowPointPressureAtom);
   
 
   useEffect(() => {
@@ -217,9 +218,9 @@ export const Note: () => JSX.Element = () => {
       if (storePressureVal === 0) {
         setBasisPressure(event.pointerType=="mouse"
         ? Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE
-        // : Math.round(sum/strokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
-        :Math.round(strokePressureList[strokePressureList.length - 1]*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
+        : Math.round(sum/strokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
       }
+      setNowPointPressure(Math.round(strokePressureList[strokePressureList.length - 1]*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
       const pointerX = Math.round(event.clientX*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE;
       const pointerY = Math.round((event.clientY - 65)*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE;
       const tiltX = Math.round(event.tiltX*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE;
@@ -243,6 +244,7 @@ export const Note: () => JSX.Element = () => {
   const handlePointerUp = async(event: PointerEvent<HTMLDivElement>) => {
     // if (event.pointerType === "touch") { return; }
     setIsDraw(false);
+    setNowPointPressure(0);
     const averagePressure: number = event.pointerType=="mouse"?Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: getAveragePressure(strokePressureList);
     const transformPressure: number = event.pointerType=="mouse"?averagePressure: getAveragePressure(strokePressureList);
     if (strokePressureList.length < BORDER_FINISH_POINT && storePressureVal !== 0) {

@@ -94,12 +94,12 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
   const setGraphData = () => {
     let tmp: number[] = [...Array(SPLIT_PRESSURE_COUNT + 1)].fill(0);
     if (getPressureMode == "transform") {
-      fabricDrawer?.getTransformPressureList().map((pressure, _) => {
+      fabricDrawer.getTransformPressureList().map((pressure, _) => {
         const j = Math.round(pressure*100)/100;
         tmp[Math.ceil(j*SPLIT_PRESSURE_COUNT)] += 1
       })
     } else if (getPressureMode == "avg") {
-      fabricDrawer?.getAveragePressureList().map((pressure, _) => {
+      fabricDrawer.getAveragePressureList().map((pressure, _) => {
         const j = Math.round(pressure*100)/100;
         tmp[Math.ceil(j*SPLIT_PRESSURE_COUNT)] += 1
       })
@@ -109,7 +109,6 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
 
   useEffect(() => {
     setGraphData();
-    alert("fff")
   }, [fabricDrawer.getStrokeLength(), getPressureMode, historyGroupPressure])
 
   const changeValue = async(event: Event, newValue: number | number[]) => {
