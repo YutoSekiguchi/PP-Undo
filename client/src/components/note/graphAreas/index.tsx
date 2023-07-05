@@ -142,9 +142,9 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
                 これまでの筆圧グループ
               </Typography>
             </Box>
-            <Box sx={{height: "40%", overflow: "scroll"}}>
+            <Box sx={{height: "40%", overflow: "scroll", overflowX: "hidden"}}>
                 {
-                  historyGroupPressure.map((v: number, i: number) => (
+                  historyGroupPressure.reverse().map((v: number, i: number) => (
                     <Box className="white-text center" sx={{ marginBottom: 2 }} key={i}>
                       <Typography fontSize={12}>
                         {`${v.toString()}${6-v.toString().length != 0 ? ("0".repeat(6-v.toString().length)): ""}`}
