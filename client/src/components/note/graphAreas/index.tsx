@@ -15,6 +15,7 @@ import { getAveragePressure } from "@/modules/note/GetAveragePressure";
 import { NowPressure } from "@/modules/note/NowPressure";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
+import { BORDER_WAVE_COUNT } from "@/configs/settings";
 
 export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
   const theme = useTheme();
@@ -47,7 +48,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
     backgroundColor: "#063852",
     [`& .${linearProgressClasses.bar}`]: {
       borderRadius: 5,
-      backgroundColor: waveCount <= 1? '#eee': waveCount <= 3? "#4682b4": waveCount <= 4? "#66cdaa": waveCount < 6? "#ffd700": "#ff7f50",
+      backgroundColor: waveCount <= BORDER_WAVE_COUNT -1? '#eee': "#ff7f50",
     },
   }));
 

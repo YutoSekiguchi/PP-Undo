@@ -21,7 +21,7 @@ import { TNoteData } from "@/@types/notefolders";
 import { TClientLogData, TPointDataList, TPostStrokeData } from "@/@types/note";
 import { addStroke, updateTransformPressures } from "@/infrastructures/services/strokes";
 import { fetchClientLogsByNID } from "@/infrastructures/services/ppUndoLogs";
-import { NOTE_WIDTH_RATIO, PRESSURE_ROUND_VALUE } from "@/configs/settings";
+import { BORDER_STRONG_PRESSURE, BORDER_WAVE_COUNT, BORDER_WAVE_PRESSURE, NOTE_WIDTH_RATIO, PRESSURE_ROUND_VALUE } from "@/configs/settings";
 import { confirmNumberArrayFromString } from "@/modules/common/confirmArrayFromString";
 import { rgbToHex } from "@/modules/note/RGBToHex";
 
@@ -31,7 +31,6 @@ let basePressure: number = 0;
 let strokePressureList: number[] = [];
 let scrollTop = 0;
 let pointDataList: TPointDataList[] = [];
-const BORDER_FINISH_POINT = 6;
 
 export const Note: () => JSX.Element = () => {
   const { editor, onReady } = useFabricJSEditor();
@@ -188,7 +187,7 @@ export const Note: () => JSX.Element = () => {
     drawStartTime = Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE;
     const finalStroke: any = fabricDrawer?.getFinalStroke();
     if (finalStroke && typeof finalStroke.pressure === 'undefined') {
-      if (strokePressureList.length < BORDER_FINISH_POINT) {
+      if (strokePressureList.length < BORDER_WAVE_COUNT) {
         fabricDrawer?.removeStroke(finalStroke!)
       } else {
         const averagePressure: number = event.pointerType=="mouse"?Math.random(): getAveragePressure(strokePressureList);
@@ -217,7 +216,7 @@ export const Note: () => JSX.Element = () => {
       if (strokePressureList.length == 1) {
         basePressure = strokePressureList[0];
       } else {
-        if (Math.abs(basePressure - strokePressureList[strokePressureList.length -1]) >= 0.3) {
+        if (Math.abs(basePressure - strokePressureList[strokePressureList.length -1]) >= BORDER_WAVE_PRESSURE) {
           basePressure = strokePressureList[strokePressureList.length -1]
           setWaveCount(waveCount + 1)
         }
@@ -257,7 +256,16 @@ export const Note: () => JSX.Element = () => {
     setNowPointPressure(0);
     const averagePressure: number = event.pointerType=="mouse"?Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: getAveragePressure(strokePressureList);
     const transformPressure: number = event.pointerType=="mouse"?averagePressure: getAveragePressure(strokePressureList);
-    if (strokePressureList.length < BORDER_FINISH_POINT && storePressureVal !== 0) {
+    // if (strokePressureList.length < BORDER_FINISH_POINT && storePressureVal !== 0) {
+    //   fabricDrawer?.isGrouping(true, storePressureVal);
+    //   addHistoryGroupPressure(storePressureVal);
+    //   if (!isDemo) {
+    //     await updateTransformPressures(myNote!.ID, storePressureVal)
+    //   }
+    //   setStorePressureVal(0);
+    //   setBasisPressure(0);
+    // }
+    if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE) {
       fabricDrawer?.isGrouping(true, storePressureVal);
       addHistoryGroupPressure(storePressureVal);
       if (!isDemo) {
@@ -273,6 +281,7 @@ export const Note: () => JSX.Element = () => {
         setStorePressureVal(0);
         setBasisPressure(0);
       }
+    }
       await postStrokeData(averagePressure, transformPressure, strokePressureList);
       
       setTimeout(() => {
@@ -280,8 +289,6 @@ export const Note: () => JSX.Element = () => {
           setAddAvgPressureOfStroke(averagePressure);
           const finalStroke = fabricDrawer?.getFinalStroke();
           if (finalStroke) {
-            finalStroke.stroke = "#f00"
-            
             fabricDrawer?.setAveragePressureToStroke(averagePressure);
             fabricDrawer?.setTransformPressureToStroke(transformPressure);
             fabricDrawer?.setIsGrouping(false);
@@ -290,26 +297,25 @@ export const Note: () => JSX.Element = () => {
               strokes: [finalStroke]
             })
           }
-          if (averagePressure >= 0.7) {
-            fabricDrawer?.changeStrokesC("#ff0000");
-          } else if (averagePressure <= 0.25) {
-            fabricDrawer?.changeStrokesC("#0000ff");
-          } else {
-            fabricDrawer?.changeStrokesC("#00ff00");
-          }
-          if (waveCount >= 6) {
-            fabricDrawer?.changeStrokesC("#ff00ff");
-          }
+          // if (averagePressure >= 0.7) {
+          //   fabricDrawer?.changeStrokesC("#ff0000");
+          // } else if (averagePressure <= 0.25) {
+          //   fabricDrawer?.changeStrokesC("#0000ff");
+          // } else {
+          //   fabricDrawer?.changeStrokesC("#00ff00");
+          // }
+          // if (waveCount >= 6) {
+          //   fabricDrawer?.changeStrokesC("#ff00ff");
+          // }
           fabricDrawer?.reDraw();
         }
       }, 100);
-    }
     setWaveCount(0)
   }
 
   const isWave = () => {
     basePressure = 0
-    if (waveCount >= 6) {
+    if (waveCount >= BORDER_WAVE_COUNT) {
       setWaveCount(0)
       return true;
     }
