@@ -10,5 +10,8 @@ down-dev:
 start-prod:
 	sudo chmod -R 777 db && docker-compose up --build -d --remove-orphans
 
+start-client:
+	docker-compose up --build -d --remove-orphans client
+
 down-prod:
 	docker-compose down --rmi all
