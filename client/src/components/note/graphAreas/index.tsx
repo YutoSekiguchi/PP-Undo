@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAtom } from 'jotai'
-import { avgPressureOfStrokeAtom, basisPressureAtom, getPressureModeAtom, historyGroupPressureAtom, nowPointPressureAtom } from "@/infrastructures/jotai/drawer";
+import { avgPressureOfStrokeAtom, basisPressureAtom, getPressureModeAtom, historyGroupPressureAtom, nowPointPressureAtom, waveCountAtom } from "@/infrastructures/jotai/drawer";
 import {
   Box, Button, MobileStepper, Typography 
 } from "@mui/material";
@@ -25,6 +25,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
   const [historyGroupPressure, ] = useAtom(historyGroupPressureAtom);
   const [getPressureMode, setGetPressureMode] = useAtom(getPressureModeAtom);
   const [nowPointPressure, ] = useAtom(nowPointPressureAtom);
+  const [waveCount, ] = useAtom(waveCountAtom);
 
   const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     borderRadius: 5,
@@ -35,6 +36,18 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
     [`& .${linearProgressClasses.bar}`]: {
       borderRadius: 5,
       backgroundColor: '#eee',
+    },
+  }));
+
+  const NowBorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+    borderRadius: 5,
+    height: 30,
+    width: 180,
+    marginLeft: 16,
+    backgroundColor: "#063852",
+    [`& .${linearProgressClasses.bar}`]: {
+      borderRadius: 5,
+      backgroundColor: waveCount == 0? '#eee': waveCount == 1? "#4682b4": waveCount == 2? "#66cdaa": waveCount == 3? "#ffd700": "#ff7f50",
     },
   }));
 
@@ -129,7 +142,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
               </Box>
               <Box className="white-text center" sx={{width: "100%"}}>
                 <Typography fontSize={14} fontWeight="bold">
-                  {`${basisPressure.toString()}${6-basisPressure.toString().length != 0 ? ("0".repeat(6-basisPressure.toString().length)): ""}`}
+                  {`${basisPressure.toString()}${6-basisPressure.toString().length != 0 ? (basisPressure ==0 || basisPressure ==1)? (".0000"): ("0".repeat(6-basisPressure.toString().length)): ""}`}
                 </Typography>
               
               <BorderLinearProgress
@@ -144,7 +157,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
               </Box>
               <Box className="white-text center" sx={{width: "100%"}}>
                 <Typography fontSize={14} fontWeight="bold">
-                  {`${nowPointPressure.toString()}${6-nowPointPressure.toString().length != 0 ? nowPointPressure ==0? (".0000"): ("0".repeat(6-nowPointPressure.toString().length)): ""}`}
+                  {`${nowPointPressure.toString()}${6-nowPointPressure.toString().length != 0 ? (nowPointPressure ==0 || nowPointPressure ==1)? (".0000"): ("0".repeat(6-nowPointPressure.toString().length)): ""}`}
                 </Typography>
               
               <BorderLinearProgress

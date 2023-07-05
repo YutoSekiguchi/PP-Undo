@@ -9,7 +9,7 @@ import { isAuth } from "@/modules/common/isAuth";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 import { getAveragePressure } from "@/modules/note/GetAveragePressure";
 import { NewNoteHeader } from "@/components/note/header";
-import { addAvgPressureOfStrokeAtom, addHistoryAtom, addHistoryGroupPressureAtom, avgPressureOfStrokeAtom, backgroundImageAtom, basisPressureAtom, drawModeAtom, historyForRedoAtom, isDemoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, nowPointPressureAtom, ppUndoCountAtom, redoCountAtom, resetAtom, undoCountAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, addHistoryAtom, addHistoryGroupPressureAtom, avgPressureOfStrokeAtom, backgroundImageAtom, basisPressureAtom, drawModeAtom, historyForRedoAtom, isDemoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, nowPointPressureAtom, ppUndoCountAtom, redoCountAtom, resetAtom, undoCountAtom, waveCountAtom } from "@/infrastructures/jotai/drawer";
 import { isLineSegmentIntersecting } from "@/modules/note/IsLineSegmentIntersecting";
 import { getMinimumPoints } from "@/modules/note/GetMinimumPoints";
 import NoteImg from "@/assets/notesolidb.svg"
@@ -27,6 +27,7 @@ import { rgbToHex } from "@/modules/note/RGBToHex";
 
 let drawStartTime: number = 0; // 描画時の時刻
 let drawEndTime: number = 0; // 描画終了時の時刻
+let basePressure: number = 0;
 let strokePressureList: number[] = [];
 let scrollTop = 0;
 let pointDataList: TPointDataList[] = [];
@@ -64,6 +65,7 @@ export const Note: () => JSX.Element = () => {
   const [storePressureVal, setStorePressureVal] = useState<number>(0);
   const [, addHistoryGroupPressure] = useAtom(addHistoryGroupPressureAtom);
   const [, setNowPointPressure] = useAtom(nowPointPressureAtom);
+  const [waveCount, setWaveCount] = useAtom(waveCountAtom);
   
 
   useEffect(() => {
@@ -212,6 +214,14 @@ export const Note: () => JSX.Element = () => {
     if (event.pressure !== 0) {
       strokePressureList = [...strokePressureList, Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE];
       let sum = 0;
+      if (strokePressureList.length == 1) {
+        basePressure = strokePressureList[0];
+      } else {
+        if (Math.abs(basePressure - strokePressureList[strokePressureList.length -1]) >= 0.2) {
+          basePressure = strokePressureList[strokePressureList.length -1]
+          setWaveCount(waveCount + 1)
+        }
+      }
       for (let i = 0; i < strokePressureList.length; i++) {
         sum += strokePressureList[i];
       }
@@ -259,7 +269,7 @@ export const Note: () => JSX.Element = () => {
     else {
       if (storePressureVal === 0) {
         setStorePressureVal(averagePressure);
-      } else if (isWaveArray(strokePressureList)) {
+      } else if (isWave()) {
         setStorePressureVal(0);
         setBasisPressure(0);
       }
@@ -283,25 +293,13 @@ export const Note: () => JSX.Element = () => {
     }
   }
 
-  const isWaveArray = (arr: number[]) => {
-    if (arr.length < 3) {
-      return false;
+  const isWave = () => {
+    basePressure = 0
+    if (waveCount >= 4) {
+      setWaveCount(0)
+      return true;
     }
-  
-    let waveCount = 0;
-    let base = arr[0];
-    for (let i = 1; i < arr.length; i++) {
-
-      if (Math.abs(arr[i] - base) >= 0.2) {
-        waveCount += 1
-        base = arr[i]
-      }
-  
-      if (waveCount >= 2) {
-        return true;
-      }
-    }
-
+    setWaveCount(0);
     return false;
   }
 

@@ -157,6 +157,8 @@ export const getPressureModeAtom = atom<"avg" | "transform">("avg");
 
 export const nowPointPressureAtom = atom<number>(0);
 
+export const waveCountAtom = atom<number>(0);
+
 /**
  * @description
  * リセット
