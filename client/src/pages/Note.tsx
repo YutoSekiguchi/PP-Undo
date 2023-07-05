@@ -307,7 +307,7 @@ export const Note: () => JSX.Element = () => {
           // }
           fabricDrawer?.reDraw();
         }
-        if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE) {
+        if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE && !isWave()) {
           fabricDrawer?.isGrouping(true, storePressureVal);
           addHistoryGroupPressure(storePressureVal);
           if (!isDemo) {
