@@ -31,7 +31,7 @@ let basePressure: number = 0;
 let strokePressureList: number[] = [];
 let scrollTop = 0;
 let pointDataList: TPointDataList[] = [];
-let isIncreasing: -1 | 0 | 1 = 0;
+let isIncreasing: boolean | null = null;
 
 export const Note: () => JSX.Element = () => {
   const { editor, onReady } = useFabricJSEditor();
@@ -214,21 +214,38 @@ export const Note: () => JSX.Element = () => {
     if (event.pressure !== 0) {
       strokePressureList = [...strokePressureList, event.pointerType === "mouse" ? Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE];
       let sum = 0;
-      if (strokePressureList.length == 1) {
+
+      if (strokePressureList.length === 1) {
         basePressure = strokePressureList[0];
       } else {
         console.log(strokePressureList)
         console.log(waveCount)
-        if (basePressure - Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE >= BORDER_WAVE_PRESSURE && isIncreasing != 1) {
-          basePressure = strokePressureList[strokePressureList.length -1]
-          setWaveCount(waveCount + 1)
-          isIncreasing = 1
-        } else if (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE -basePressure >= BORDER_WAVE_PRESSURE && isIncreasing != -1) {
-          basePressure = strokePressureList[strokePressureList.length -1]
-          setWaveCount(waveCount + 1)
-          isIncreasing = -1
+        const diff = (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE) - basePressure;
+        if (Math.abs(diff) >= 0.1) {
+          if (isIncreasing === null) {
+            isIncreasing = diff > 0;
+            const tmp = waveCount + 1;
+            setWaveCount(tmp)
+            basePressure = (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE)
+          } else if ((diff > 0 && !isIncreasing) || (diff < 0 && isIncreasing)) {
+            isIncreasing = !isIncreasing;
+            const tmp = waveCount + 1;
+            setWaveCount(tmp)
+            basePressure = (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE)
+          }
+
         }
+        // if (basePressure -  >= BORDER_WAVE_PRESSURE && isIncreasing != -1) {
+        //   basePressure = strokePressureList[strokePressureList.length -1]
+        //   setWaveCount(waveCount + 1)
+        //   isIncreasing = -1
+        // } else if (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE -basePressure >= BORDER_WAVE_PRESSURE && isIncreasing != 1) {
+        //   basePressure = strokePressureList[strokePressureList.length -1]
+        //   setWaveCount(waveCount + 1)
+        //   isIncreasing = 1
+        // }
       }
+
       for (let i = 0; i < strokePressureList.length; i++) {
         sum += strokePressureList[i];
       }
