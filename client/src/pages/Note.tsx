@@ -218,10 +218,9 @@ export const Note: () => JSX.Element = () => {
       if (strokePressureList.length === 1) {
         basePressure = strokePressureList[0];
       } else {
-        console.log(strokePressureList)
-        console.log(waveCount)
         const diff = (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE) - basePressure;
         if (Math.abs(diff) >= 0.1) {
+          console.log("fefefefe")
           if (isIncreasing === null) {
             isIncreasing = diff > 0;
             const tmp = waveCount + 1;
