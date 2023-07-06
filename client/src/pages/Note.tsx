@@ -220,7 +220,7 @@ export const Note: () => JSX.Element = () => {
       } else {
         const diff = (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE) - basePressure;
         if (Math.abs(diff) >= 0.1) {
-          console.log("fefefefe")
+          console.log(isIncreasing)
           if (isIncreasing === null) {
             isIncreasing = diff > 0;
             const tmp = waveCount + 1;
