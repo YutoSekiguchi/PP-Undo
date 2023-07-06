@@ -212,20 +212,18 @@ export const Note: () => JSX.Element = () => {
   const handlePointerMove = (event: any) => {
     if (!isDraw || event.pointerType === "touch") {return;}
     if (event.pressure !== 0) {
-      strokePressureList = [...strokePressureList, Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE];
+      strokePressureList = [...strokePressureList, event.pointerType === "mouse" ? Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE];
       let sum = 0;
       if (strokePressureList.length == 1) {
         basePressure = strokePressureList[0];
       } else {
-        console.log(basePressure -  strokePressureList[strokePressureList.length -1])
-        console.log(isIncreasing)
+        console.log(basePressure)
+        console.log(waveCount)
         if (basePressure - strokePressureList[strokePressureList.length -1] >= BORDER_WAVE_PRESSURE && isIncreasing != 1) {
-          alert(1)
           basePressure = strokePressureList[strokePressureList.length -1]
           setWaveCount(waveCount + 1)
           isIncreasing = 1
         } else if (strokePressureList[strokePressureList.length -1] -basePressure >= BORDER_WAVE_PRESSURE && isIncreasing != -1) {
-          alert(2)
           basePressure = strokePressureList[strokePressureList.length -1]
           setWaveCount(waveCount + 1)
           isIncreasing = -1
