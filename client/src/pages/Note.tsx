@@ -338,6 +338,7 @@ export const Note: () => JSX.Element = () => {
         }
       }, 100);
     setWaveCount(0)
+    isIncreasing = null;
   }
 
   const isWave = () => {
