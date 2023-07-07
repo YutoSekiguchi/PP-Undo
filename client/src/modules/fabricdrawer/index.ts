@@ -349,8 +349,10 @@ export class FabricDrawer {
     Object.assign(this.editor.canvas._objects[this.editor.canvas._objects.length - 1], { pressure: pressure });
   }
 
-  setIsGrouping = (v: boolean) => {
+  setIsGrouping = (v: boolean, color: string | undefined) => {
     Object.assign(this.editor.canvas._objects[this.editor.canvas._objects.length - 1], { isGrouping: v });
+    // TODO: 追加
+    Object.assign(this.editor.canvas._objects[this.editor.canvas._objects.length - 1], { baseStrokeColor: color });
   }
 
   isGrouping = (v: boolean, pressure: number) => {
@@ -358,8 +360,11 @@ export class FabricDrawer {
       if (object["isGrouping"] === false) {
         object["isGrouping"] = true;
         object["pressure"] = pressure;
+        // TODO: 追加
+        object.set({stroke: object["baseStrokeColor"]});
       }
     })
+    this.reDraw();
   }
 
   /**

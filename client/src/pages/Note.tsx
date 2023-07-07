@@ -309,23 +309,27 @@ export const Note: () => JSX.Element = () => {
           if (finalStroke) {
             fabricDrawer?.setAveragePressureToStroke(averagePressure);
             fabricDrawer?.setTransformPressureToStroke(transformPressure);
-            fabricDrawer?.setIsGrouping(false);
+            // console.log(finalStroke)
+            // TODO: 追加
+            fabricDrawer?.setIsGrouping(false, finalStroke.stroke);
             addHistory({
               type: "pen",
               strokes: [finalStroke]
             })
           }
-          // if (averagePressure >= 0.7) {
-          //   fabricDrawer?.changeStrokesC("#ff0000");
-          // } else if (averagePressure <= 0.25) {
-          //   fabricDrawer?.changeStrokesC("#0000ff");
-          // } else {
-          //   fabricDrawer?.changeStrokesC("#00ff00");
-          // }
-          // if (waveCount >= 6) {
-          //   fabricDrawer?.changeStrokesC("#ff00ff");
-          // }
+          // TODO: 追加
+          if (averagePressure >= 0.7) {
+            fabricDrawer?.changeStrokesC("#ff0000");
+          } else if (averagePressure <= 0.25) {
+            fabricDrawer?.changeStrokesC("#0000ff");
+          } else {
+            fabricDrawer?.changeStrokesC("#00ff00");
+          }
+          if (waveCount >= 6) {
+            fabricDrawer?.changeStrokesC("#ff00ff");
+          }
           fabricDrawer?.reDraw();
+
         }
         if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE && !isWave()) {
           fabricDrawer?.isGrouping(true, storePressureVal);
