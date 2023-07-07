@@ -72,9 +72,9 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
   };
 
   useEffect(() => {
-    if (activeStep === 0) {
+    if (activeStep === 1) {
       setGetPressureMode("avg");
-    } else if (activeStep === 1) {
+    } else if (activeStep === 0) {
       setGetPressureMode("transform");
     }
   }, [activeStep])
@@ -106,7 +106,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
       </Box>
       <Box className="graph-wrapper graph-wrapper-height">
         {
-          activeStep == 0 && 
+          activeStep == 1 && 
           <Box sx={{width: "100%", height: "100%"}}>
             <Box sx={{display: "flex", justifyContent: "space-around", alignItems: "center"}}>
               <DoughnutPressureGraph
@@ -133,7 +133,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
           </Box>
         }
         {
-          activeStep == 1 && 
+          activeStep == 0 && 
           <>
             <Box sx={{ width: "100%",  paddingBottom: 2, borderBottom: "1px solid #ccc" }}>
               <Box className="white-text center" sx={{width: "100%", marginTop: 1,}}>
