@@ -12,6 +12,7 @@ import {
   isDemoAtom,
   getPressureModeAtom,
   historyGroupPressureAtom,
+  basisPressureAtom,
 } from "@/infrastructures/jotai/drawer";
 import {
   Chart as ChartJS,
@@ -89,6 +90,7 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
   const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom);
   const [isDemo, ] = useAtom(isDemoAtom);
   const [getPressureMode, ] = useAtom(getPressureModeAtom);
+  const [basisPressure, ] = useAtom(basisPressureAtom);
   const [historyGroupPressure, ] = useAtom(historyGroupPressureAtom);
 
   const setGraphData = () => {
@@ -108,9 +110,8 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
   }
 
   useEffect(() => {
-    console.log(fabricDrawer.getAveragePressureList().length)
     setGraphData();
-  }, [getPressureMode, avgPressureOfStroke])
+  }, [getPressureMode, avgPressureOfStroke, basisPressure])
 
   const changeValue = async(event: Event, newValue: number | number[]) => {
     setSliderValue(newValue)

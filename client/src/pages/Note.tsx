@@ -9,7 +9,7 @@ import { isAuth } from "@/modules/common/isAuth";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 import { getAveragePressure } from "@/modules/note/GetAveragePressure";
 import { NewNoteHeader } from "@/components/note/header";
-import { addAvgPressureOfStrokeAtom, addHistoryAtom, addHistoryGroupPressureAtom, avgPressureOfStrokeAtom, backgroundImageAtom, basisPressureAtom, drawModeAtom, historyForRedoAtom, isDemoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, nowPointPressureAtom, ppUndoCountAtom, redoCountAtom, resetAtom, undoCountAtom, waveCountAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, addHistoryAtom, addHistoryGroupPressureAtom, avgPressureOfStrokeAtom, backgroundImageAtom, basisPressureAtom, drawModeAtom, getPressureModeAtom, historyForRedoAtom, isDemoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, nowPointPressureAtom, pointerXAtom, pointerYAtom, ppUndoCountAtom, redoCountAtom, resetAtom, undoCountAtom, waveCountAtom } from "@/infrastructures/jotai/drawer";
 import { isLineSegmentIntersecting } from "@/modules/note/IsLineSegmentIntersecting";
 import { getMinimumPoints } from "@/modules/note/GetMinimumPoints";
 import NoteImg from "@/assets/notesolidb.svg"
@@ -34,6 +34,8 @@ let scrollTop = 0;
 let pointDataList: TPointDataList[] = [];
 // let isIncreasing: boolean | null = null;
 let basePointInfo: {time: number, pointerX: number, pointerY: number} = {time: -1, pointerX: -1, pointerY: -1}
+
+let longDurationTimer: any;
 
 export const Note: () => JSX.Element = () => {
   const { editor, onReady } = useFabricJSEditor();
@@ -69,7 +71,9 @@ export const Note: () => JSX.Element = () => {
   const [, setNowPointPressure] = useAtom(nowPointPressureAtom);
   const [waveCount, setWaveCount] = useAtom(waveCountAtom);
   const [durationStrokePressureList, setDurationStrokePressureList] = useState<number[]>([])
-  
+  const [pX, setPointerX] = useAtom(pointerXAtom);
+  const [pY, setPointerY] = useAtom(pointerYAtom);
+  const [getPressureMode,] = useAtom(getPressureModeAtom);
 
   useEffect(() => {
     if (!editor || !fabric || !(fabricDrawer === undefined && !!editor)) {
@@ -84,7 +88,6 @@ export const Note: () => JSX.Element = () => {
       const noteData: TNoteData | null = await getFirstStrokeData();
       const instance = new FabricDrawer(editor);
       setFabricDrawer(instance);
-      console.log(noteData);
       if (instance?.getStrokeLength() == 0) {
         if (noteData !== null) {
           instance?.setSVGFromString(noteData.StrokeData.strokes.svg);
@@ -189,6 +192,9 @@ export const Note: () => JSX.Element = () => {
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     // 前のストロークが要素をはみ出してしまっていた時の処理
     drawStartTime = Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE;
+
+      clearTimeout(longDurationTimer);
+
     const finalStroke: any = fabricDrawer?.getFinalStroke();
     if (finalStroke && typeof finalStroke.pressure === 'undefined') {
       // if (strokePressureList.length < BORDER_WAVE_COUNT) {
@@ -246,7 +252,6 @@ export const Note: () => JSX.Element = () => {
           setWaveCount(BORDER_WAVE_COUNT);
           setDurationStrokePressureList([...durationStrokePressureList, pointDataList[pointDataList.length - 1]["pressure"]])
           if (durationStrokePressureList.length > 0) {
-            console.log(durationStrokePressureList);
             let sum = 0;
             for(var i=0; i<durationStrokePressureList.length; i++) {
               sum += durationStrokePressureList[i];
@@ -319,6 +324,12 @@ export const Note: () => JSX.Element = () => {
       const tiltY = Math.round(event.tiltY*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE;
       const canvasWidth = event.target.clientWidth;
       const canvasHeight = event.target.clientHeight;
+      if (Math.abs(pointerX - pX) >= 0) {
+        setPointerX(pointerX)
+      }
+      if (Math.abs(pointerY - pY) >= 0) {
+        setPointerY(pointerY)
+      }
       const pointData = {
         "pointerX": pointerX,
         "pointerY": pointerY,
@@ -389,27 +400,47 @@ export const Note: () => JSX.Element = () => {
             //   setStorePressureVal(0);
             //   setBasisPressure(0);
             // } else {
-              fabricDrawer?.changeStrokesC(getGradientColor(storePressureVal));
+              if (getPressureMode === "avg") {
+                fabricDrawer?.changeStrokesC(getGradientColor(averagePressure));
+              } else {
+                fabricDrawer?.changeStrokesC(getGradientColor(storePressureVal));
+              }
             // }
           }
           fabricDrawer?.reDraw();
 
         }
-          if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE && !isWave()) {
-          fabricDrawer?.isGrouping(true, storePressureVal);
-          addHistoryGroupPressure(storePressureVal);
-          if (!isDemo) {
-            updateTransformPressures(myNote!.ID, storePressureVal)
-          }
-          setStorePressureVal(0);
-          setBasisPressure(0);
-        }
+          // if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE && !isWave()) {
+            // }
       }, 100);
+            longDurationTimer = setTimeout(() => {
+              if(storePressureVal === 0) {
+                fabricDrawer?.isGrouping(true, averagePressure);
+                addHistoryGroupPressure(averagePressure);
+                if (!isDemo) {
+                  updateTransformPressures(myNote!.ID, averagePressure)
+                }
+              } else {
+                fabricDrawer?.isGrouping(true, storePressureVal);
+                addHistoryGroupPressure(storePressureVal);
+                if (!isDemo) {
+                  updateTransformPressures(myNote!.ID, storePressureVal)
+                }
+              }
+              setStorePressureVal(0);
+              setBasisPressure(0);
+            }, 3000)
     setWaveCount(0)
     setDurationStrokePressureList([])
     basePointInfo = {time: -1, pointerX: -1, pointerY: -1}
+    setPointerX(0)
+    setPointerY(0)
     // isIncreasing = null;
   }
+
+  useEffect(() => {
+    console.log(storePressureVal)
+  }, [storePressureVal])
 
   const isWave = () => {
     // basePressure = 0

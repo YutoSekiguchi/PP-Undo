@@ -159,6 +159,9 @@ export const nowPointPressureAtom = atom<number>(0);
 
 export const waveCountAtom = atom<number>(0);
 
+export const pointerXAtom = atom<number>(0);
+export const pointerYAtom = atom<number>(0);
+
 /**
  * @description
  * リセット

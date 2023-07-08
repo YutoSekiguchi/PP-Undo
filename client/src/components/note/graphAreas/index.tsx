@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAtom } from 'jotai'
-import { avgPressureOfStrokeAtom, basisPressureAtom, getPressureModeAtom, historyGroupPressureAtom, nowPointPressureAtom, waveCountAtom } from "@/infrastructures/jotai/drawer";
+import { avgPressureOfStrokeAtom, basisPressureAtom, getPressureModeAtom, historyGroupPressureAtom, nowPointPressureAtom, pointerXAtom, pointerYAtom, waveCountAtom } from "@/infrastructures/jotai/drawer";
 import {
   Box, Button, MobileStepper, Typography 
 } from "@mui/material";
@@ -27,6 +27,8 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
   const [getPressureMode, setGetPressureMode] = useAtom(getPressureModeAtom);
   const [nowPointPressure, ] = useAtom(nowPointPressureAtom);
   const [waveCount, ] = useAtom(waveCountAtom);
+  const [pointerX, ] = useAtom(pointerXAtom);
+  const [pointerY, ] = useAtom(pointerYAtom);
 
   const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     borderRadius: 5,
@@ -40,6 +42,22 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
     },
   }));
 
+  const MoveNowBorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+    borderRadius: 5,
+    height: 30,
+    width: 180,
+    marginLeft: 16,
+    backgroundColor: '#eeeeeecc',
+    position: "fixed",
+    top: pointerY + 120,
+    left: pointerX - 200 >= 0? pointerX - 200: pointerX,
+    zIndex: 9999,
+    [`& .${linearProgressClasses.bar}`]: {
+      borderRadius: 5,
+      backgroundColor: waveCount <= BORDER_WAVE_COUNT -1? "#507fff66": "#ff7f5066",
+    },
+  }));
+  
   const NowBorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     borderRadius: 5,
     height: 30,
@@ -133,6 +151,13 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
           </Box>
         }
         {
+          (pointerY == 0 && pointerX == 0) ?<></>
+          :<MoveNowBorderLinearProgress
+          variant="determinate"
+          value={nowPointPressure*100}
+        />
+        }
+        {
           activeStep == 0 && 
           <>
             <Box sx={{ width: "100%",  paddingBottom: 2, borderBottom: "1px solid #ccc" }}>
@@ -165,6 +190,8 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
                 variant="determinate"
                 value={nowPointPressure*100}
               />
+
+              
               </Box>
             </Box>
             <Box className="white-text center" sx={{width: "100%", marginTop: 3}}>
