@@ -24,14 +24,16 @@ import { fetchClientLogsByNID } from "@/infrastructures/services/ppUndoLogs";
 import { BORDER_STRONG_PRESSURE, BORDER_WAVE_COUNT, BORDER_WAVE_PRESSURE, NOTE_WIDTH_RATIO, PRESSURE_ROUND_VALUE } from "@/configs/settings";
 import { confirmNumberArrayFromString } from "@/modules/common/confirmArrayFromString";
 import { rgbToHex } from "@/modules/note/RGBToHex";
+import { getGradientColor } from "@/modules/note/GetGradientColor";
 
 let drawStartTime: number = 0; // 描画時の時刻
 let drawEndTime: number = 0; // 描画終了時の時刻
-let basePressure: number = 0;
+// let basePressure: number = 0;
 let strokePressureList: number[] = [];
 let scrollTop = 0;
 let pointDataList: TPointDataList[] = [];
-let isIncreasing: boolean | null = null;
+// let isIncreasing: boolean | null = null;
+let basePointInfo: {time: number, pointerX: number, pointerY: number} = {time: -1, pointerX: -1, pointerY: -1}
 
 export const Note: () => JSX.Element = () => {
   const { editor, onReady } = useFabricJSEditor();
@@ -54,7 +56,7 @@ export const Note: () => JSX.Element = () => {
   const [backgroundImage, setBackgroundImage] = useAtom(backgroundImageAtom);
   const [avgPressureOfStroke, setAvgPressureOfStroke] = useAtom(avgPressureOfStrokeAtom);
   const [, setAddAvgPressureOfStroke] = useAtom(addAvgPressureOfStrokeAtom);
-  const [, setBasisPressure] = useAtom(basisPressureAtom);
+  const [, setBasisPressure] = useAtom(basisPressureAtom); // 今の基準筆圧のところ
   const [, setLogOfBeforePPUndo] = useAtom(logOfBeforePPUndoAtom);
   const [undoCount, ] = useAtom(undoCountAtom);
   const [redoCount, ] = useAtom(redoCountAtom);
@@ -66,6 +68,7 @@ export const Note: () => JSX.Element = () => {
   const [, addHistoryGroupPressure] = useAtom(addHistoryGroupPressureAtom);
   const [, setNowPointPressure] = useAtom(nowPointPressureAtom);
   const [waveCount, setWaveCount] = useAtom(waveCountAtom);
+  const [durationStrokePressureList, setDurationStrokePressureList] = useState<number[]>([])
   
 
   useEffect(() => {
@@ -209,6 +212,43 @@ export const Note: () => JSX.Element = () => {
     setIsDraw(true);
   }
 
+  const detectLongPress = (pointDataList: any) => {
+    if (basePointInfo["time"] === -1 && basePointInfo["pointerX"] === -1 && basePointInfo["pointerY"] === -1) {
+      basePointInfo = {
+        "time": pointDataList[0]["time"],
+        "pointerX": pointDataList[0]["pointerX"],
+        "pointerY": pointDataList[0]["pointerY"]
+      }
+    } else {
+      const currentPoint = {"x": pointDataList[pointDataList.length - 1]["pointerX"], "y": pointDataList[pointDataList.length - 1]["pointerY"]}
+      const nowTime = pointDataList[pointDataList.length - 1]["time"]
+      const longPressThreshold = 30;
+      const longPressDuration = 1000; 
+      const distance = Math.sqrt((currentPoint.x - basePointInfo["pointerX"]) ** 2 + (currentPoint.y - basePointInfo["pointerY"]) ** 2);
+      if (distance > longPressThreshold) {
+        if (durationStrokePressureList.length > 0) {
+          let sum = 0;
+          for(var i=0; i<durationStrokePressureList.length; i++) {
+            sum += durationStrokePressureList[i];
+          }
+          setStorePressureVal(Math.round(sum/durationStrokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
+          setBasisPressure(Math.round(sum/durationStrokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
+        }
+        basePointInfo = {
+        "time": pointDataList[pointDataList.length -1]["time"],
+        "pointerX": pointDataList[pointDataList.length - 1]["pointerX"],
+        "pointerY": pointDataList[pointDataList.length - 1]["pointerY"]
+        }
+      } else {
+        const strokeDuration = nowTime - basePointInfo["time"];
+        if (strokeDuration >= longPressDuration) {
+          setWaveCount(4);
+          setDurationStrokePressureList([...durationStrokePressureList, pointDataList[pointDataList.length - 1]["pressure"]])
+        }
+      }
+    }
+  }
+
   const handlePointerMove = (event: any) => {
     if (!isDraw || event.pointerType === "touch") {return;}
     console.log(event.pressure)
@@ -216,27 +256,29 @@ export const Note: () => JSX.Element = () => {
       strokePressureList = [...strokePressureList, event.pointerType === "mouse" ? Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE];
       let sum = 0;
 
-      if (strokePressureList.length === 1) {
-        basePressure = strokePressureList[0];
-      } else {
-        const diff = (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE) - basePressure;
-        if (Math.abs(diff) >= 0.1) {
+      
+      // if (strokePressureList.length === 1) {
+      //   basePressure = strokePressureList[0];
+      // }
+      // else {
+      //   const diff = (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE) - basePressure;
+      //   if (Math.abs(diff) >= 0.1) {
           
-          if (isIncreasing === null && (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE) >= 0.5) {
-            isIncreasing = diff > 0;
-            const tmp = waveCount + 1;
-            console.log("a", tmp)
-            setWaveCount(tmp)
-            basePressure = (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE)
-          } else if (isIncreasing !== null&&((diff > 0 && !isIncreasing) || (diff < 0 && isIncreasing))) {
-            isIncreasing = !isIncreasing;
-            const tmp = waveCount + 1;
-            console.log("b", tmp)
-            setWaveCount(tmp)
-            basePressure = (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE)
-          }
+      //     if (isIncreasing === null && (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE) >= 0.5) {
+      //       isIncreasing = diff > 0;
+      //       const tmp = waveCount + 1;
+      //       console.log("a", tmp)
+      //       setWaveCount(tmp)
+      //       basePressure = (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE)
+      //     } else if (isIncreasing !== null&&((diff > 0 && !isIncreasing) || (diff < 0 && isIncreasing))) {
+      //       isIncreasing = !isIncreasing;
+      //       const tmp = waveCount + 1;
+      //       console.log("b", tmp)
+      //       setWaveCount(tmp)
+      //       basePressure = (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE)
+      //     }
 
-        }
+      //   }
         // if (basePressure -  >= BORDER_WAVE_PRESSURE && isIncreasing != -1) {
         //   basePressure = strokePressureList[strokePressureList.length -1]
         //   setWaveCount(waveCount + 1)
@@ -246,7 +288,7 @@ export const Note: () => JSX.Element = () => {
         //   setWaveCount(waveCount + 1)
         //   isIncreasing = 1
         // }
-      }
+      // }
 
       for (let i = 0; i < strokePressureList.length; i++) {
         sum += strokePressureList[i];
@@ -275,6 +317,7 @@ export const Note: () => JSX.Element = () => {
       }
       pointDataList = [...pointDataList, pointData]
     }
+    detectLongPress(pointDataList);
   }
 
   const handlePointerUp = async(event: PointerEvent<HTMLDivElement>) => {
@@ -293,14 +336,19 @@ export const Note: () => JSX.Element = () => {
     //   setBasisPressure(0);
     // }
     
-    if (!(storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE)) {
-      if (storePressureVal === 0) {
-        setStorePressureVal(averagePressure);
-      } else if (isWave()) {
-        setStorePressureVal(0);
-        setBasisPressure(0);
-      }
-    }
+    // if (!(storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE)) {
+    //   if (storePressureVal === 0) {
+    //     setStorePressureVal(averagePressure);
+    //     fabricDrawer?.changeStrokesC(getGradientColor(averagePressure));
+    //   } else {
+    //     if (isWave()) {
+    //       setStorePressureVal(0);
+    //       setBasisPressure(0);
+    //     } else {
+    //       fabricDrawer?.changeStrokesC(getGradientColor(storePressureVal));
+    //     }
+    //   }
+    // }
       await postStrokeData(averagePressure, transformPressure, strokePressureList);
       
       setTimeout(() => {
@@ -318,21 +366,26 @@ export const Note: () => JSX.Element = () => {
               strokes: [finalStroke]
             })
           }
-          // TODO: 追加
-          if (averagePressure >= 0.7) {
-            fabricDrawer?.changeStrokesC("#ff0000");
-          } else if (averagePressure <= 0.25) {
-            fabricDrawer?.changeStrokesC("#0000ff");
+          
+          if (storePressureVal === 0) {
+            setStorePressureVal(averagePressure);
+            fabricDrawer?.changeStrokesC(getGradientColor(averagePressure));
           } else {
-            fabricDrawer?.changeStrokesC("#00ff00");
+            // if (isWave()) {
+            //   setStorePressureVal(0);
+            //   setBasisPressure(0);
+            // } else {
+              fabricDrawer?.changeStrokesC(getGradientColor(storePressureVal));
+            // }
           }
-          if (waveCount >= 6) {
-            fabricDrawer?.changeStrokesC("#ff00ff");
-          }
+          // if (waveCount >= 6) {
+          //   fabricDrawer?.changeStrokesC("#ff00ff");
+          // }
           fabricDrawer?.reDraw();
 
         }
-        if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE && !isWave()) {
+        // if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE && !isWave()) {
+          if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE) {
           fabricDrawer?.isGrouping(true, storePressureVal);
           addHistoryGroupPressure(storePressureVal);
           if (!isDemo) {
@@ -343,18 +396,19 @@ export const Note: () => JSX.Element = () => {
         }
       }, 100);
     setWaveCount(0)
-    isIncreasing = null;
+    setDurationStrokePressureList([])
+    // isIncreasing = null;
   }
 
-  const isWave = () => {
-    basePressure = 0
-    if (waveCount >= BORDER_WAVE_COUNT) {
-      setWaveCount(0)
-      return true;
-    }
-    setWaveCount(0);
-    return false;
-  }
+  // const isWave = () => {
+  //   basePressure = 0
+  //   if (waveCount >= BORDER_WAVE_COUNT) {
+  //     setWaveCount(0)
+  //     return true;
+  //   }
+  //   setWaveCount(0);
+  //   return false;
+  // }
 
   const postStrokeData = async (averagePressure: number, transformPressure: number, strokePressureList: number[]) => {
     // const regex = /<g\b[^>]*>(.*?)<\/g>/gs;
