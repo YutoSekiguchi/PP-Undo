@@ -235,6 +235,9 @@ export const Note: () => JSX.Element = () => {
           setBasisPressure(Math.round(sum/durationStrokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
           // fabricDrawer?.changeStrokesC();
           fabricDrawer?.cancelStrokeColor(getGradientColor(Math.round(sum/durationStrokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE));
+          basePointInfo = {time: -1, pointerX: -1, pointerY: -1}
+          setDurationStrokePressureList([])
+          setWaveCount(0);
         }
         basePointInfo = {
         "time": pointDataList[pointDataList.length -1]["time"],
@@ -398,6 +401,7 @@ export const Note: () => JSX.Element = () => {
       }, 100);
     setWaveCount(0)
     setDurationStrokePressureList([])
+    basePointInfo = {time: -1, pointerX: -1, pointerY: -1}
     // isIncreasing = null;
   }
 
