@@ -227,6 +227,7 @@ export const Note: () => JSX.Element = () => {
       const distance = Math.sqrt((currentPoint.x - basePointInfo["pointerX"]) ** 2 + (currentPoint.y - basePointInfo["pointerY"]) ** 2);
       if (distance > longPressThreshold) {
         if (durationStrokePressureList.length > 0) {
+          console.log(durationStrokePressureList);
           let sum = 0;
           for(var i=0; i<durationStrokePressureList.length; i++) {
             sum += durationStrokePressureList[i];
@@ -256,7 +257,6 @@ export const Note: () => JSX.Element = () => {
 
   const handlePointerMove = (event: any) => {
     if (!isDraw || event.pointerType === "touch") {return;}
-    console.log(event.pressure)
     if (event.pressure !== 0) {
       strokePressureList = [...strokePressureList, event.pointerType === "mouse" ? Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE];
       let sum = 0;
