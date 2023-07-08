@@ -211,6 +211,7 @@ export const Note: () => JSX.Element = () => {
 
   const handlePointerMove = (event: any) => {
     if (!isDraw || event.pointerType === "touch") {return;}
+    console.log(event.pressure)
     if (event.pressure !== 0) {
       strokePressureList = [...strokePressureList, event.pointerType === "mouse" ? Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE];
       let sum = 0;
