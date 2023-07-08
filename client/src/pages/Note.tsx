@@ -226,20 +226,7 @@ export const Note: () => JSX.Element = () => {
       const longPressDuration = 1500; 
       const distance = Math.sqrt((currentPoint.x - basePointInfo["pointerX"]) ** 2 + (currentPoint.y - basePointInfo["pointerY"]) ** 2);
       if (distance > longPressThreshold) {
-        if (durationStrokePressureList.length > 0) {
-          console.log(durationStrokePressureList);
-          let sum = 0;
-          for(var i=0; i<durationStrokePressureList.length; i++) {
-            sum += durationStrokePressureList[i];
-          }
-          setStorePressureVal(Math.round(sum/durationStrokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
-          setBasisPressure(Math.round(sum/durationStrokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
-          // fabricDrawer?.changeStrokesC();
-          fabricDrawer?.cancelStrokeColor(getGradientColor(Math.round(sum/durationStrokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE));
-          basePointInfo = {time: -1, pointerX: -1, pointerY: -1}
-          setDurationStrokePressureList([])
-          setWaveCount(0);
-        }
+        
         basePointInfo = {
         "time": pointDataList[pointDataList.length -1]["time"],
         "pointerX": pointDataList[pointDataList.length - 1]["pointerX"],
@@ -249,7 +236,22 @@ export const Note: () => JSX.Element = () => {
         const strokeDuration = nowTime - basePointInfo["time"];
         if (strokeDuration >= longPressDuration) {
           setWaveCount(BORDER_WAVE_COUNT);
+          console.log(durationStrokePressureList)
           setDurationStrokePressureList([...durationStrokePressureList, pointDataList[pointDataList.length - 1]["pressure"]])
+          if (durationStrokePressureList.length > 0) {
+            console.log(durationStrokePressureList);
+            let sum = 0;
+            for(var i=0; i<durationStrokePressureList.length; i++) {
+              sum += durationStrokePressureList[i];
+            }
+            setStorePressureVal(Math.round(sum/durationStrokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
+            setBasisPressure(Math.round(sum/durationStrokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
+            // fabricDrawer?.changeStrokesC();
+            fabricDrawer?.cancelStrokeColor(getGradientColor(Math.round(sum/durationStrokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE));
+            basePointInfo = {time: -1, pointerX: -1, pointerY: -1}
+            // setDurationStrokePressureList([])
+            // setWaveCount(0);
+          }
         }
       }
     }
