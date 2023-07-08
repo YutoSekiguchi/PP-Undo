@@ -205,6 +205,7 @@ export const Note: () => JSX.Element = () => {
         fabricDrawer?.reDraw();
         fabricDrawer?.setAveragePressureToStroke(averagePressure);
         fabricDrawer?.setTransformPressureToStroke(resultPressure);
+        fabricDrawer?.setIsGrouping(false, finalStroke.stroke);
         addHistory({
           type: "pen",
           strokes: [finalStroke]
