@@ -205,7 +205,7 @@ export const Note: () => JSX.Element = () => {
         fabricDrawer?.reDraw();
         fabricDrawer?.setAveragePressureToStroke(averagePressure);
         fabricDrawer?.setTransformPressureToStroke(resultPressure);
-        fabricDrawer?.setIsGrouping(false, finalStroke.stroke);
+        fabricDrawer?.setIsGrouping(false, finalStroke.stroke? finalStroke.stroke: "#000000");
         addHistory({
           type: "pen",
           strokes: [finalStroke]
@@ -375,7 +375,7 @@ export const Note: () => JSX.Element = () => {
             fabricDrawer?.setTransformPressureToStroke(transformPressure);
             // console.log(finalStroke)
             // TODO: 追加
-            fabricDrawer?.setIsGrouping(false, finalStroke.stroke);
+            fabricDrawer?.setIsGrouping(false, finalStroke.stroke? finalStroke.stroke : "#000000");
             addHistory({
               type: "pen",
               strokes: [finalStroke]

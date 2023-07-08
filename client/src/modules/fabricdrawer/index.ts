@@ -349,10 +349,11 @@ export class FabricDrawer {
     Object.assign(this.editor.canvas._objects[this.editor.canvas._objects.length - 1], { pressure: pressure });
   }
 
-  setIsGrouping = (v: boolean, color: string | undefined) => {
+  setIsGrouping = (v: boolean, color: string) => {
     Object.assign(this.editor.canvas._objects[this.editor.canvas._objects.length - 1], { isGrouping: v });
     // TODO: 追加
     Object.assign(this.editor.canvas._objects[this.editor.canvas._objects.length - 1], { baseStrokeColor: color });
+    console.log(this.editor.canvas._objects[this.editor.canvas._objects.length - 1])
   }
 
   isGrouping = (v: boolean, pressure: number) => {
