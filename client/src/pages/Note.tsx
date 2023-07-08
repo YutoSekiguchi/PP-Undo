@@ -222,8 +222,8 @@ export const Note: () => JSX.Element = () => {
     } else {
       const currentPoint = {"x": pointDataList[pointDataList.length - 1]["pointerX"], "y": pointDataList[pointDataList.length - 1]["pointerY"]}
       const nowTime = pointDataList[pointDataList.length - 1]["time"]
-      const longPressThreshold = 30;
-      const longPressDuration = 1000; 
+      const longPressThreshold = 100;
+      const longPressDuration = 1500; 
       const distance = Math.sqrt((currentPoint.x - basePointInfo["pointerX"]) ** 2 + (currentPoint.y - basePointInfo["pointerY"]) ** 2);
       if (distance > longPressThreshold) {
         if (durationStrokePressureList.length > 0) {
@@ -233,6 +233,8 @@ export const Note: () => JSX.Element = () => {
           }
           setStorePressureVal(Math.round(sum/durationStrokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
           setBasisPressure(Math.round(sum/durationStrokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
+          // fabricDrawer?.changeStrokesC();
+          fabricDrawer?.cancelStrokeColor(getGradientColor(Math.round(sum/durationStrokePressureList.length*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE));
         }
         basePointInfo = {
         "time": pointDataList[pointDataList.length -1]["time"],
@@ -384,8 +386,7 @@ export const Note: () => JSX.Element = () => {
           fabricDrawer?.reDraw();
 
         }
-        // if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE && !isWave()) {
-          if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE) {
+          if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE && !isWave()) {
           fabricDrawer?.isGrouping(true, storePressureVal);
           addHistoryGroupPressure(storePressureVal);
           if (!isDemo) {
@@ -400,15 +401,15 @@ export const Note: () => JSX.Element = () => {
     // isIncreasing = null;
   }
 
-  // const isWave = () => {
-  //   basePressure = 0
-  //   if (waveCount >= BORDER_WAVE_COUNT) {
-  //     setWaveCount(0)
-  //     return true;
-  //   }
-  //   setWaveCount(0);
-  //   return false;
-  // }
+  const isWave = () => {
+    // basePressure = 0
+    if (waveCount >= BORDER_WAVE_COUNT) {
+      setWaveCount(0)
+      return true;
+    }
+    setWaveCount(0);
+    return false;
+  }
 
   const postStrokeData = async (averagePressure: number, transformPressure: number, strokePressureList: number[]) => {
     // const regex = /<g\b[^>]*>(.*?)<\/g>/gs;

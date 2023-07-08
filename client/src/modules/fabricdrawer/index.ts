@@ -367,6 +367,15 @@ export class FabricDrawer {
     this.reDraw();
   }
 
+  cancelStrokeColor = (color: string) => {
+    this.editor.canvas._objects.map((object: any, _: number) => {
+      if (object["isGrouping"] === false) {
+        object.set({stroke: color});
+      }
+    })
+    this.reDraw();
+  }
+
   /**
    * @return {number[]}
    */
