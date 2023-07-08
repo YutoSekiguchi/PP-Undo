@@ -242,7 +242,7 @@ export const Note: () => JSX.Element = () => {
       } else {
         const strokeDuration = nowTime - basePointInfo["time"];
         if (strokeDuration >= longPressDuration) {
-          setWaveCount(4);
+          setWaveCount(BORDER_WAVE_COUNT);
           setDurationStrokePressureList([...durationStrokePressureList, pointDataList[pointDataList.length - 1]["pressure"]])
         }
       }
