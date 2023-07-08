@@ -196,6 +196,13 @@ export const Note: () => JSX.Element = () => {
       // } else {
         const averagePressure: number = event.pointerType=="mouse"?Math.random(): getAveragePressure(strokePressureList);
         const resultPressure: number = event.pointerType=="mouse"?Math.random(): getAveragePressure(strokePressureList);
+        if (storePressureVal === 0) {
+          setStorePressureVal(averagePressure);
+          fabricDrawer?.changeStrokesC(getGradientColor(averagePressure));
+        } else {
+            fabricDrawer?.changeStrokesC(getGradientColor(storePressureVal));
+        }
+        fabricDrawer?.reDraw();
         fabricDrawer?.setAveragePressureToStroke(averagePressure);
         fabricDrawer?.setTransformPressureToStroke(resultPressure);
         addHistory({
@@ -228,7 +235,7 @@ export const Note: () => JSX.Element = () => {
       if (distance > longPressThreshold) {
         
         basePointInfo = {
-        "time": pointDataList[pointDataList.length -1]["time"],
+        "time": pointDataList[pointDataList.length -1]["time"]? pointDataList[pointDataList.length -1]["time"]: performance.now(),
         "pointerX": pointDataList[pointDataList.length - 1]["pointerX"],
         "pointerY": pointDataList[pointDataList.length - 1]["pointerY"]
         }
@@ -385,9 +392,6 @@ export const Note: () => JSX.Element = () => {
               fabricDrawer?.changeStrokesC(getGradientColor(storePressureVal));
             // }
           }
-          // if (waveCount >= 6) {
-          //   fabricDrawer?.changeStrokesC("#ff00ff");
-          // }
           fabricDrawer?.reDraw();
 
         }
