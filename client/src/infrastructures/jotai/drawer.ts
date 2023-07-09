@@ -176,4 +176,5 @@ export const resetAtom = atom(null, (_get, set) => {
   set(historyForRedoAtom, []);
   set(avgPressureOfStrokeAtom, []);
   set(historyGroupPressureAtom, []);
+  set(basisPressureAtom, 0);
 })

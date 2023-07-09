@@ -216,7 +216,7 @@ export const Note: () => JSX.Element = () => {
           type: "pen",
           strokes: [finalStroke]
         })
-        postStrokeData(resultPressure, resultPressure, strokePressureList);
+        postStrokeData(resultPressure, resultPressure, strokePressureList, false);
       // }
     }
     //
@@ -374,8 +374,8 @@ export const Note: () => JSX.Element = () => {
     //     }
     //   }
     // }
-      await postStrokeData(averagePressure, transformPressure, strokePressureList);
-      
+      const isGesture = waveCount >= BORDER_WAVE_COUNT
+      await postStrokeData(averagePressure, transformPressure, strokePressureList, isGesture);
       setTimeout(() => {
         if (drawMode == "pen") {
           setAddAvgPressureOfStroke(averagePressure);
@@ -413,23 +413,23 @@ export const Note: () => JSX.Element = () => {
           // if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE && !isWave()) {
             // }
       }, 100);
-            longDurationTimer = setTimeout(() => {
-              if(storePressureVal === 0) {
-                fabricDrawer?.isGrouping(true, averagePressure);
-                addHistoryGroupPressure(averagePressure);
-                if (!isDemo) {
-                  updateTransformPressures(myNote!.ID, averagePressure)
-                }
-              } else {
-                fabricDrawer?.isGrouping(true, storePressureVal);
-                addHistoryGroupPressure(storePressureVal);
-                if (!isDemo) {
-                  updateTransformPressures(myNote!.ID, storePressureVal)
-                }
-              }
-              setStorePressureVal(0);
-              setBasisPressure(0);
-            }, 3000)
+      longDurationTimer = setTimeout(() => {
+        if(storePressureVal === 0) {
+          fabricDrawer?.isGrouping(true, averagePressure);
+          addHistoryGroupPressure(averagePressure);
+          if (!isDemo) {
+            updateTransformPressures(myNote!.ID, averagePressure)
+          }
+        } else {
+          fabricDrawer?.isGrouping(true, storePressureVal);
+          addHistoryGroupPressure(storePressureVal);
+          if (!isDemo) {
+            updateTransformPressures(myNote!.ID, storePressureVal)
+          }
+        }
+        setStorePressureVal(0);
+        setBasisPressure(0);
+      }, 3000)
     setWaveCount(0)
     setDurationStrokePressureList([])
     basePointInfo = {time: -1, pointerX: -1, pointerY: -1}
@@ -438,21 +438,17 @@ export const Note: () => JSX.Element = () => {
     // isIncreasing = null;
   }
 
-  useEffect(() => {
-    console.log(storePressureVal)
-  }, [storePressureVal])
+  // const isWave = () => {
+  //   // basePressure = 0
+  //   if (waveCount >= BORDER_WAVE_COUNT) {
+  //     setWaveCount(0)
+  //     return true;
+  //   }
+  //   setWaveCount(0);
+  //   return false;
+  // }
 
-  const isWave = () => {
-    // basePressure = 0
-    if (waveCount >= BORDER_WAVE_COUNT) {
-      setWaveCount(0)
-      return true;
-    }
-    setWaveCount(0);
-    return false;
-  }
-
-  const postStrokeData = async (averagePressure: number, transformPressure: number, strokePressureList: number[]) => {
+  const postStrokeData = async (averagePressure: number, transformPressure: number, strokePressureList: number[], isGesture: boolean) => {
     // const regex = /<g\b[^>]*>(.*?)<\/g>/gs;
     // const lastStrokeSVG = fabricDrawer?.getSVG().match(regex)
     // console.log(lastStrokeSVG[lastStrokeSVG.length - 1])
@@ -481,6 +477,7 @@ export const Note: () => JSX.Element = () => {
       Time: drawEndTime - drawStartTime,
       Mode: drawMode,
       Save: 0,
+      IsGesture: isGesture? 1: 0,
     }
     await addStroke(data);
   }
@@ -573,7 +570,7 @@ export const Note: () => JSX.Element = () => {
           strokes: eraseStrokes
         })
       }
-      postStrokeData(averagePressure, resultPressure, strokePressureList);
+      postStrokeData(averagePressure, resultPressure, strokePressureList, false);
       setEraseStrokes([]);
     }, 100)
   }

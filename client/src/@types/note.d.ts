@@ -129,6 +129,7 @@ export interface TPostStrokeData {
   Mode: string;
   Save: number;
   GroupNum?: number;
+  IsGesture: number;
 }
 
 export interface TPostPPUndoCountsData {
