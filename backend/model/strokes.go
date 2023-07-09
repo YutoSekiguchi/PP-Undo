@@ -17,5 +17,6 @@ type Strokes struct {
 	Mode         string     `gorm:"not null;column:mode"`
 	Save         int        `gorm:"not null;column:save" `
 	GroupNum     int        `gorm:"column:group_num"`
+	IsGesture    int `gorm:"not null;colmn:is_gesture"`
 	CreatedAt    time.Time  `sql:"DEFALUT:current_timestamp;column:created_at"`
 }
