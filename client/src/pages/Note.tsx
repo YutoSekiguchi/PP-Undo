@@ -236,7 +236,7 @@ export const Note: () => JSX.Element = () => {
     } else {
       const currentPoint = {"x": pointDataList[pointDataList.length - 1]["pointerX"], "y": pointDataList[pointDataList.length - 1]["pointerY"]}
       const nowTime = pointDataList[pointDataList.length - 1]["time"]
-      const longPressThreshold = 100;
+      const longPressThreshold = 50;
       const longPressDuration = 1500; 
       const distance = Math.sqrt((currentPoint.x - basePointInfo["pointerX"]) ** 2 + (currentPoint.y - basePointInfo["pointerY"]) ** 2);
       if (distance > longPressThreshold) {
@@ -324,10 +324,10 @@ export const Note: () => JSX.Element = () => {
       const tiltY = Math.round(event.tiltY*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE;
       const canvasWidth = event.target.clientWidth;
       const canvasHeight = event.target.clientHeight;
-      if (Math.abs(pointerX - pX) >= 0) {
+      if (pX == 0) {
         setPointerX(pointerX)
       }
-      if (Math.abs(pointerY - pY) >= 0) {
+      if (pY == 0) {
         setPointerY(pointerY)
       }
       const pointData = {

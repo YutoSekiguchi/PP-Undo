@@ -16,6 +16,7 @@ import { NowPressure } from "@/modules/note/NowPressure";
 import { FabricDrawer } from "@/modules/fabricdrawer";
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import { BORDER_WAVE_COUNT } from "@/configs/settings";
+import { getGradientColor } from "@/modules/note/GetGradientColor";
 
 export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
   const theme = useTheme();
@@ -44,17 +45,17 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
 
   const MoveNowBorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     borderRadius: 5,
-    height: 30,
-    width: 180,
+    height: 15,
+    width: 80,
     marginLeft: 16,
-    backgroundColor: '#eeeeeecc',
+    backgroundColor: waveCount <= BORDER_WAVE_COUNT -1? '#eeeeeecc': ,
     position: "fixed",
-    top: pointerY + 120,
-    left: pointerX - 200 >= 0? pointerX - 200: pointerX,
+    top: pointerY + 30,
+    left: pointerX - 110,
     zIndex: 9999,
     [`& .${linearProgressClasses.bar}`]: {
       borderRadius: 5,
-      backgroundColor: waveCount <= BORDER_WAVE_COUNT -1? "#507fff66": "#ff7f5066",
+      backgroundColor: `${getGradientColor(nowPointPressure)}66`,
     },
   }));
   
