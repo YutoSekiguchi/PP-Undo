@@ -429,7 +429,7 @@ export const Note: () => JSX.Element = () => {
         }
         setStorePressureVal(0);
         setBasisPressure(0);
-      }, 3000)
+      }, 8000)
     setWaveCount(0)
     setDurationStrokePressureList([])
     basePointInfo = {time: -1, pointerX: -1, pointerY: -1}
