@@ -629,9 +629,9 @@ export const Note: () => JSX.Element = () => {
           <NewNoteHeader fabricDrawer={fabricDrawer} save={save} />
         }
         <Box sx={{ display: "flex" }} className="width100">
-          <Box sx={{ position: "fixed", bottom: 50, left: 50, zIndex: 9999 }}>
+          <Box sx={{ position: "fixed", bottom: 50, left: 50, zIndex: 9999, }}>
 
-            <Button variant="contained" onClick={buttonClick}>次の行へ</Button>
+            <Button sx={{ width: "150px", height: "80px" }} variant="contained" onClick={buttonClick} >次の行へ</Button>
           </Box>
           <Box className="canvasWrapper" id="canvasWrapper" 
             sx={{ 
