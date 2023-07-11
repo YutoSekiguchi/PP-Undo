@@ -482,7 +482,7 @@ export const Note: () => JSX.Element = () => {
             "pressure": fabricDrawer?.getAveragePressureList(),
             "svg": fabricDrawer?.getSVG(),
             // "svg": fabricDrawer?.getImg(),
-            // "svg": "",
+            "svg": "",
             "data": "",
           }
       },
