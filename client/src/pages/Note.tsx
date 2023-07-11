@@ -480,7 +480,7 @@ export const Note: () => JSX.Element = () => {
         "Strokes": 
           {
             "pressure": fabricDrawer?.getAveragePressureList(),
-            "svg": fabricDrawer?.getSVG(),
+            // "svg": fabricDrawer?.getSVG(),
             // "svg": fabricDrawer?.getImg(),
             "svg": "",
             "data": "",
