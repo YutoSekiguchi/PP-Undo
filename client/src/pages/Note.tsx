@@ -4,7 +4,7 @@ import { fabric } from "fabric";
 import lscache from "lscache";
 import { FabricJSCanvas, useFabricJSEditor } from "fabricjs-react";
 import { FabricDrawer } from "@/modules/fabricdrawer";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { isAuth } from "@/modules/common/isAuth";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 import { getAveragePressure } from "@/modules/note/GetAveragePressure";
@@ -413,29 +413,48 @@ export const Note: () => JSX.Element = () => {
           // if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE && !isWave()) {
             // }
       }, 100);
-      longDurationTimer = setTimeout(() => {
-        if(storePressureVal === 0) {
-          fabricDrawer?.isGrouping(true, averagePressure);
-          addHistoryGroupPressure(averagePressure);
-          if (!isDemo) {
-            updateTransformPressures(myNote!.ID, averagePressure)
-          }
-        } else {
-          fabricDrawer?.isGrouping(true, storePressureVal);
-          addHistoryGroupPressure(storePressureVal);
-          if (!isDemo) {
-            updateTransformPressures(myNote!.ID, storePressureVal)
-          }
-        }
-        setStorePressureVal(0);
-        setBasisPressure(0);
-      }, 8000)
+      // longDurationTimer = setTimeout(() => {
+      //   if(storePressureVal === 0) {
+      //     fabricDrawer?.isGrouping(true, averagePressure);
+      //     addHistoryGroupPressure(averagePressure);
+      //     if (!isDemo) {
+      //       updateTransformPressures(myNote!.ID, averagePressure)
+      //     }
+      //   } else {
+      //     fabricDrawer?.isGrouping(true, storePressureVal);
+      //     addHistoryGroupPressure(storePressureVal);
+      //     if (!isDemo) {
+      //       updateTransformPressures(myNote!.ID, storePressureVal)
+      //     }
+      //   }
+      //   setStorePressureVal(0);
+      //   setBasisPressure(0);
+      // }, 8000)
     setWaveCount(0)
     setDurationStrokePressureList([])
     basePointInfo = {time: -1, pointerX: -1, pointerY: -1}
     setPointerX(0)
     setPointerY(0)
     // isIncreasing = null;
+  }
+
+  const buttonClick = () => {
+    if(storePressureVal === 0) {
+      const averagePressure: number = getAveragePressure(strokePressureList);
+      fabricDrawer?.isGrouping(true, averagePressure);
+      addHistoryGroupPressure(averagePressure);
+      if (!isDemo) {
+        updateTransformPressures(myNote!.ID, averagePressure)
+      }
+    } else {
+      fabricDrawer?.isGrouping(true, storePressureVal);
+      addHistoryGroupPressure(storePressureVal);
+      if (!isDemo) {
+        updateTransformPressures(myNote!.ID, storePressureVal)
+      }
+    }
+    setStorePressureVal(0);
+    setBasisPressure(0);
   }
 
   // const isWave = () => {
@@ -610,6 +629,10 @@ export const Note: () => JSX.Element = () => {
           <NewNoteHeader fabricDrawer={fabricDrawer} save={save} />
         }
         <Box sx={{ display: "flex" }} className="width100">
+          <Box sx={{ position: "fixed", bottom: 50, left: 50, zIndex: 9999 }}>
+
+            <Button variant="contained" onClick={buttonClick}>次の行へ</Button>
+          </Box>
           <Box className="canvasWrapper" id="canvasWrapper" 
             sx={{ 
               width: window.innerWidth * NOTE_WIDTH_RATIO,
