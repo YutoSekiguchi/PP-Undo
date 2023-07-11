@@ -45,18 +45,19 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
 
   const MoveNowBorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     borderRadius: 5,
-    height: 15,
-    width: 80,
+    height: 20,
+    width: 100,
     marginLeft: 16,
     backgroundColor: '#eeeeeecc',
-    border: (waveCount > BORDER_WAVE_COUNT -1)? "#5549efaa 1px solid": "",
+    border: (waveCount > BORDER_WAVE_COUNT -1)? "#e00000aa 5px solid": "",
+    padding: 5,
     position: "fixed",
     top: pointerY + 30,
     left: pointerX - 110,
     zIndex: 9999,
     [`& .${linearProgressClasses.bar}`]: {
       borderRadius: 5,
-      backgroundColor: `${getGradientColor(nowPointPressure)}66`,
+      backgroundColor: `${getGradientColor(nowPointPressure, false)}66`,
     },
   }));
   

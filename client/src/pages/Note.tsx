@@ -237,7 +237,7 @@ export const Note: () => JSX.Element = () => {
       const currentPoint = {"x": pointDataList[pointDataList.length - 1]["pointerX"], "y": pointDataList[pointDataList.length - 1]["pointerY"]}
       const nowTime = pointDataList[pointDataList.length - 1]["time"]
       const longPressThreshold = 50;
-      const longPressDuration = 1500; 
+      const longPressDuration = 1800; 
       const distance = Math.sqrt((currentPoint.x - basePointInfo["pointerX"]) ** 2 + (currentPoint.y - basePointInfo["pointerY"]) ** 2);
       if (distance > longPressThreshold) {
         

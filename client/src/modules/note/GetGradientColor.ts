@@ -1,4 +1,4 @@
-export const getGradientColor = (value: number) => {
+export const getGradientColor = (value: number, exam: boolean = true) => {
   var startColor = [0, 0, 255]; // 青 (#0000ff)
   var middleColor = [0, 255, 0]; // 緑 (#00ff00)
   var endColor = [255, 0, 0]; // 赤 (#ff0000)
@@ -14,6 +14,13 @@ export const getGradientColor = (value: number) => {
   }
 
   var colorCode = '#' + componentToHex(r) + componentToHex(g) + componentToHex(b);
+  
+
+  // 実験用のためだけ
+  if (exam) {
+    colorCode = "#ee0000"
+  }
+
   return colorCode;
 }
 
