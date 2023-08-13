@@ -14,9 +14,13 @@ import { FabricDrawer } from "@/modules/fabricdrawer";
 
 export const LogRedo: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
   const DisplayLogButton = styled(Button) ({
-    backgroundColor:'#fff',
-    color: '#1A2939',
+    color: '#fff',
+    border: "2px double transparent",
+    backgroundImage: "linear-gradient(rgb(13, 14, 33), rgb(13, 14, 33)), radial-gradient(circle at left top, rgb(1, 110, 218), rgb(217, 0, 192))",
+    backgroundOrigin: "border-box",
+    backgroundClip: "padding-box, border-box",
     '&:hover': {
+      backgroundImage: "linear-gradient(rgb(50, 50, 50), rgb(30, 30, 33)), radial-gradient(circle at left top, rgb(1, 110, 218), rgb(217, 0, 192))",
       backgroundColor: cyan[700],
       color: '#fff',
     },
@@ -38,7 +42,7 @@ export const LogRedo: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }
       <Box className="display-button-wrapper">
         <Badge badgeContent={logNotifierCount} color="info">
           <DisplayLogButton
-            className="big-text center display-button"
+            className="big-text center"
             onClick={showLog}
           >
             Display Log

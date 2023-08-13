@@ -5,11 +5,18 @@ import { Slider } from "@mui/material";
 export const SPLIT_PRESSURE_COUNT = 20;
 
 export const xLabels: number[] = [...Array(SPLIT_PRESSURE_COUNT + 1)].map((_, i) => Math.round((i*(1/SPLIT_PRESSURE_COUNT))*100)/100);
+// グラデーションの色を設定
+const gradientColors = ['#016eda', '#d900c0'];
+// グラデーションを生成する関数
+const generateGradient = (colors: string[]) => `linear-gradient(to right, ${colors.join(', ')})`;
+
 
 export const datasetsConfig: TPPUndoGraphDatasetsConfig = {
   label: "ストローク数",
-  borderColor: "#00b3ff",
-  backgroundColor: "#9e4c9833",
+  // borderColor: "#00b3ff",
+  // backgroundColor: "#9e4c9833",
+  borderColor: "#ffd700",
+  backgroundColor: "#ffff0033",
   pointBackgroundColor: "#f9fafa",
   fill: true,
   smooth: true,
@@ -48,11 +55,15 @@ export const options: {} = {
   },
 }
 
+
+
 export const PrettoSlider = styled(Slider)({
-  color: 'rgba(142, 84, 219, 1)',
+  // color: 'rgba(200, 84, 219, 1)',
+  // color: generateGradient(gradientColors),
   height: 12,
   '& .MuiSlider-track': {
     border: 'none',
+    background: generateGradient(gradientColors),
   },
   '& .MuiSlider-rail': {
     color: '#cc66ff',
@@ -61,8 +72,9 @@ export const PrettoSlider = styled(Slider)({
   '& .MuiSlider-thumb': {
     height: 28,
     width: 28,
-    backgroundColor: '#ddd',
-    border: '4px solid currentColor',
+    backgroundColor: "#ddd",
+    color: "rgb(200, 15, 199)",
+    border: '3px solid currentColor',
     '&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
       boxShadow: 'inherit',
     },

@@ -11,6 +11,13 @@
   right: 0;
 }
 
+@mixin border-gradient {
+  border: 2px double transparent;
+  background-image: linear-gradient(rgb(13, 14, 33), rgb(13, 14, 33)), radial-gradient(circle at left top, rgb(1, 110, 218), rgb(217, 0, 192));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
 #pressure-line-graph {
   max-height: 220px;
 }
@@ -29,17 +36,18 @@
 }
 
 .graph-wrapper {
-  background-color: variables.$dark-blue-color;
+  // background-color: variables.$dark-blue-color;
+  @include border-gradient();
   min-height: 300px;
   height: 30vh;
   max-height: 400px;
   margin: 20px 20px;
   padding: 10px 5px;
   border-radius: 10px;
-  border: 1px solid;
-  box-shadow:
-    0 0 7px #aaa,
-    0 0 20px #00f,
+  // border: 1px solid;
+  // box-shadow:
+  //   0 0 7px #aaa,
+  //   0 0 20px #00f,
 }
 
 

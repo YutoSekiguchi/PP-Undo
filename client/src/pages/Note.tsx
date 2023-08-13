@@ -351,6 +351,9 @@ export const Note: () => JSX.Element = () => {
     setNowPointPressure(0);
     const averagePressure: number = event.pointerType=="mouse"?Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: getAveragePressure(strokePressureList);
     const transformPressure: number = event.pointerType=="mouse"?averagePressure: getAveragePressure(strokePressureList);
+    if(storePressureVal === 0) {
+      setBasisPressure(transformPressure);
+    }
     // if (strokePressureList.length < BORDER_FINISH_POINT && storePressureVal !== 0) {
     //   fabricDrawer?.isGrouping(true, storePressureVal);
     //   addHistoryGroupPressure(storePressureVal);
@@ -413,23 +416,23 @@ export const Note: () => JSX.Element = () => {
           // if (storePressureVal !== 0 && averagePressure >= BORDER_STRONG_PRESSURE && !isWave()) {
             // }
       }, 100);
-      // longDurationTimer = setTimeout(() => {
-      //   if(storePressureVal === 0) {
-      //     fabricDrawer?.isGrouping(true, averagePressure);
-      //     addHistoryGroupPressure(averagePressure);
-      //     if (!isDemo) {
-      //       updateTransformPressures(myNote!.ID, averagePressure)
-      //     }
-      //   } else {
-      //     fabricDrawer?.isGrouping(true, storePressureVal);
-      //     addHistoryGroupPressure(storePressureVal);
-      //     if (!isDemo) {
-      //       updateTransformPressures(myNote!.ID, storePressureVal)
-      //     }
-      //   }
-      //   setStorePressureVal(0);
-      //   setBasisPressure(0);
-      // }, 8000)
+      longDurationTimer = setTimeout(() => {
+        if(storePressureVal === 0) {
+          fabricDrawer?.isGrouping(true, averagePressure);
+          addHistoryGroupPressure(averagePressure);
+          if (!isDemo) {
+            updateTransformPressures(myNote!.ID, averagePressure)
+          }
+        } else {
+          fabricDrawer?.isGrouping(true, storePressureVal);
+          addHistoryGroupPressure(storePressureVal);
+          if (!isDemo) {
+            updateTransformPressures(myNote!.ID, storePressureVal)
+          }
+        }
+        setStorePressureVal(0);
+        setBasisPressure(0);
+      }, 8000)
     setWaveCount(0)
     setDurationStrokePressureList([])
     basePointInfo = {time: -1, pointerX: -1, pointerY: -1}
@@ -438,24 +441,24 @@ export const Note: () => JSX.Element = () => {
     // isIncreasing = null;
   }
 
-  const buttonClick = () => {
-    if(storePressureVal === 0) {
-      const averagePressure: number = getAveragePressure(strokePressureList);
-      fabricDrawer?.isGrouping(true, averagePressure);
-      addHistoryGroupPressure(averagePressure);
-      if (!isDemo) {
-        updateTransformPressures(myNote!.ID, averagePressure)
-      }
-    } else {
-      fabricDrawer?.isGrouping(true, storePressureVal);
-      addHistoryGroupPressure(storePressureVal);
-      if (!isDemo) {
-        updateTransformPressures(myNote!.ID, storePressureVal)
-      }
-    }
-    setStorePressureVal(0);
-    setBasisPressure(0);
-  }
+  // const buttonClick = () => {
+  //   if(storePressureVal === 0) {
+  //     const averagePressure: number = getAveragePressure(strokePressureList);
+  //     fabricDrawer?.isGrouping(true, averagePressure);
+  //     addHistoryGroupPressure(averagePressure);
+  //     if (!isDemo) {
+  //       updateTransformPressures(myNote!.ID, averagePressure)
+  //     }
+  //   } else {
+  //     fabricDrawer?.isGrouping(true, storePressureVal);
+  //     addHistoryGroupPressure(storePressureVal);
+  //     if (!isDemo) {
+  //       updateTransformPressures(myNote!.ID, storePressureVal)
+  //     }
+  //   }
+  //   setStorePressureVal(0);
+  //   setBasisPressure(0);
+  // }
 
   // const isWave = () => {
   //   // basePressure = 0
@@ -629,10 +632,10 @@ export const Note: () => JSX.Element = () => {
           <NewNoteHeader fabricDrawer={fabricDrawer} save={save} />
         }
         <Box sx={{ display: "flex" }} className="width100">
-          <Box sx={{ position: "fixed", bottom: 50, left: 50, zIndex: 9999, }}>
+          {/* <Box sx={{ position: "fixed", bottom: 50, left: 50, zIndex: 9999, }}>
 
             <Button sx={{ width: "150px", height: "80px" }} variant="contained" onClick={buttonClick} >次の行へ</Button>
-          </Box>
+          </Box> */}
           <Box className="canvasWrapper" id="canvasWrapper" 
             sx={{ 
               width: window.innerWidth * NOTE_WIDTH_RATIO,

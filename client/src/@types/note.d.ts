@@ -37,9 +37,9 @@ export interface TDoughnutPressureGraphProps {
 
 export interface TPPUndoGraphDatasetsConfig {
   label: string;
-  borderColor: string;
-  backgroundColor?: string;
-  pointBackgroundColor?: string;
+  borderColor: any;
+  backgroundColor?: any;
+  pointBackgroundColor?: any;
   fill?: boolean | string;
   smooth?: boolean;
   tension?: number;
