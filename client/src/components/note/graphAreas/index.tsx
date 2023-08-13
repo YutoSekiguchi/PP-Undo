@@ -166,7 +166,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
             <Box sx={{ width: "100%",  paddingBottom: 2, borderBottom: "1px solid #ccc" }}>
               <Box className="white-text center" sx={{width: "100%", marginTop: 1,}}>
                 <Typography fontSize={14} fontWeight="bold">
-                  今の基準筆圧
+                  ストローク群筆圧
                 </Typography>
               </Box>
               <Box className="white-text center" sx={{width: "100%"}}>
@@ -181,7 +181,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
               </Box>
               <Box className="white-text center" sx={{width: "100%", marginTop: 1,}}>
                 <Typography fontSize={14} fontWeight="bold">
-                  今の筆圧
+                  リアルタイム筆圧
                 </Typography>
               </Box>
               <Box className="white-text center" sx={{width: "100%"}}>
