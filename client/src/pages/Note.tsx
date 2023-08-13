@@ -193,7 +193,7 @@ export const Note: () => JSX.Element = () => {
     // 前のストロークが要素をはみ出してしまっていた時の処理
     drawStartTime = Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE;
 
-      clearTimeout(longDurationTimer);
+    clearTimeout(longDurationTimer);
 
     const finalStroke: any = fabricDrawer?.getFinalStroke();
     if (finalStroke && typeof finalStroke.pressure === 'undefined') {
@@ -271,6 +271,7 @@ export const Note: () => JSX.Element = () => {
 
   const handlePointerMove = (event: any) => {
     if (!isDraw || event.pointerType === "touch") {return;}
+    if (drawMode == "pointer") { return; }
     if (event.pressure !== 0) {
       strokePressureList = [...strokePressureList, event.pointerType === "mouse" ? Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE];
       let sum = 0;
@@ -347,6 +348,7 @@ export const Note: () => JSX.Element = () => {
 
   const handlePointerUp = async(event: PointerEvent<HTMLDivElement>) => {
     // if (event.pointerType === "touch") { return; }
+    if (drawMode === "pointer") { return; }
     setIsDraw(false);
     setNowPointPressure(0);
     const averagePressure: number = event.pointerType=="mouse"?Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: getAveragePressure(strokePressureList);

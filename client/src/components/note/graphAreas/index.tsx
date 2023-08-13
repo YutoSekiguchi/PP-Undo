@@ -36,11 +36,17 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
     height: 30,
     width: 180,
     marginLeft: 16,
-    backgroundColor: "#063852",
+    backgroundImage: "linear-gradient(270deg, rgba(61, 200, 194, 1), rgba(206, 216, 0, 1) 35%, rgba(243, 184, 51, 1) 55%, rgba(255, 174, 68, 1) 74%, rgba(234, 114, 0, 1))",
+    transform: "rotate(180deg)",
     [`& .${linearProgressClasses.bar}`]: {
-      borderRadius: 5,
-      backgroundColor: '#eee',
+      // borderRadius: 5,
+      // backgroundColor: '#eee',
+      backgroundColor: "#063852",
+      // backgroundImage: `linear-gradient(90deg, rgba(74,211,255,1) 30% ${basisPressure > 0.3 ? `,rgba(158,220,190,1) 60%` : ""} ${basisPressure > 0.5 ? `,rgba(255,171,0,1) 90%` : ""} ${basisPressure > 0.7 ? `,rgba(255,0,0,1) 100%` : ""})`,
     },
+    [`& .${linearProgressClasses.bar2Indeterminate}`]:{
+      backgroundColor: "red"
+    } 
   }));
 
   const MoveNowBorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
@@ -176,10 +182,10 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
               
               <BorderLinearProgress
                 variant="determinate"
-                value={basisPressure*100}
+                value={100-basisPressure*100}
               />
               </Box>
-              <Box className="white-text center" sx={{width: "100%", marginTop: 1,}}>
+              {/* <Box className="white-text center" sx={{width: "100%", marginTop: 1,}}>
                 <Typography fontSize={14} fontWeight="bold">
                   リアルタイム筆圧
                 </Typography>
@@ -195,7 +201,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
               />
 
               
-              </Box>
+              </Box> */}
             </Box>
             <Box className="white-text center" sx={{width: "100%", marginTop: 3}}>
               <Typography fontSize={12} fontWeight="bold">
