@@ -5,3 +5,10 @@ export interface TSideBarMenu {
   };
   path: string;
 }
+
+export interface TStrokeDataStrokes {
+  data: any[] | undefined;
+  pressure: number[];
+  avgPressure: number[];
+  svg: string | undefined;
+}

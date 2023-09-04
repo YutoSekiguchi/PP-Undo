@@ -1,4 +1,5 @@
 import React from "react";
+import { TStrokeDataStrokes } from "./common";
 
 export interface TPostNoteFolder {
   UID: number;
@@ -54,7 +55,7 @@ export interface TNoteData {
   Width: number;
   Height: number;
   NoteImage: string;
-  StrokeData: any;
+  StrokeData: {"strokes": TStrokeDataStrokes};
   AvgPressure: number;
   AvgPressureList: string;
   AllAvgPressureList: string;
