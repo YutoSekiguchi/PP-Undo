@@ -77,6 +77,7 @@ export interface TLogStrokeData {
   sliderValue: number | number[];
   strokes: any[];
   svg: string;
+  avgPressureList: number[];
   pressureList: number[];
 }
 
@@ -159,6 +160,7 @@ export interface TPostLogData {
   NID: number;
   StrokeData: any;
   LogImage: string;
+  PressureList: string;
   AvgPressureList: string;
   Save: number;
   SliderValue: number | number[];
@@ -211,6 +213,5 @@ export interface TPostClientLogData {
 export interface TClientLogData extends TPostClientLogData, TIDAndCreatedAt {}
 
 export interface TStrokeData extends TPostStrokeData, TIDAndCreatedAt {}
-
 
 export interface TLogData extends TPostLogData, TIDAndCreatedAt {}

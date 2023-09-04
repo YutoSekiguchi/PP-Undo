@@ -13,6 +13,7 @@ type StrokeData struct {
 type StrokeDataStrokes struct {
 	Data []interface{} `json:"data"`
 	Pressure []float64 `json:"pressure"`
+	AvgPressure []float64 `json:"avgPressure"`
 	Svg string `json:"svg"`
 }
 
