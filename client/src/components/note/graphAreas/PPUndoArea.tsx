@@ -158,7 +158,8 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
       createTime: now,
       strokes: [],
       svg: svg,
-      pressureList: fabricDrawer.getAveragePressureList(),
+      avgPressureList: fabricDrawer.getAveragePressureList(),
+      pressureList: fabricDrawer.getTransformPressureList(),
     };
     setPrevSliderValue(sliderValue);
     setLogData(strokeData);
@@ -181,9 +182,10 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
       UID: myNote?.UID? myNote?.UID: 0,
       NID: myNote?.ID? myNote?.ID: 0,
       // StrokeData: {"Strokes": {"data": logData!.strokes, "pressure": fabricDrawer!.getPressureList(), "svg": fabricDrawer?.getSVG()}},
-      StrokeData: {"Strokes": {"data": [], "pressure": [], "svg": ""}},
+      StrokeData: {"Strokes": {"data": [], "pressure": [], "avgPressure": [], "svg": ""}},
       // LogImage: logData!.image? logData!.image: "",
       LogImage: "",
+      PressureList: logData!.pressureList? logData!.pressureList.join(','): "",
       AvgPressureList: avgPressureOfStroke.join(','),
       Save: 0,
       SliderValue: sliderValue,
@@ -201,7 +203,7 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
       const postPPUndoCountsData: TPostPPUndoCountsData = {
         UID: myNote?.UID? myNote?.UID: 0,
         NID: myNote?.ID? myNote?.ID: 0,
-        AfterPPUndoStrokeData: {"Strokes": {"data": fabricDrawer.getAllStrokes(), "pressure": fabricDrawer.getAveragePressureList(), "svg": fabricDrawer.getSVG()}},
+        AfterPPUndoStrokeData: {"Strokes": {"data": fabricDrawer.getAllStrokes(), "pressure": fabricDrawer.getTransformPressureList(), "avgPressure": fabricDrawer.getAveragePressureList(), "svg": fabricDrawer.getSVG()}},
         AfterPPUndoImageData: "",
         BeforePPUndoStrokeCount: logData!.strokes.length,
         AfterPPUndoStrokeCount: fabricDrawer.getStrokeLength(),
