@@ -101,6 +101,7 @@ CREATE TABLE IF NOT EXISTS logs (
   nid INT NOT NULL,
   stroke_data JSON NOT NULL,
   log_image LONGTEXT NOT NULL,
+  pressure_list TEXT NOT NULL,
   avg_pressure_list TEXT NOT NULL,
   save INT NOT NULL,
   slider_value FLOAT NOT NULL,

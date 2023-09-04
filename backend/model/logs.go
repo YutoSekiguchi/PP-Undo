@@ -8,6 +8,7 @@ type Logs struct {
 	NID                      int       `gorm:"not null;column:nid"`
 	StrokeData               StrokeData    `gorm:"not null;column:stroke_data"`
 	LogImage                 string    `gorm:"not null;column:log_image"`
+	PressureList             string    `gorm:"not null;column:pressure_list"`
 	AvgPressureList          string    `gorm:"not null;column:avg_pressure_list"`
 	Save                     int       `gorm:"not null;column:save"`
 	SliderValue              float64   `gorm:"not null;column:slider_value"`
