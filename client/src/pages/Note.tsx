@@ -90,7 +90,7 @@ export const Note: () => JSX.Element = () => {
       setFabricDrawer(instance);
       if (instance?.getStrokeLength() == 0) {
         if (noteData !== null) {
-          instance?.setSVGFromString(noteData.StrokeData.strokes.svg);
+          instance?.setSVGFromString(noteData.StrokeData.strokes.svg!);
           if (noteData.AllAvgPressureList !== "") {
             setAvgPressureOfStroke(confirmNumberArrayFromString(noteData.AllAvgPressureList));
           }
@@ -98,8 +98,9 @@ export const Note: () => JSX.Element = () => {
             if (editor.canvas._objects[i].stroke!.slice(0, 3) === "rgb") {
               editor.canvas._objects[i].stroke = rgbToHex(editor.canvas._objects[i].stroke!)
             }
+            console.log(noteData);
             Object.assign(editor.canvas._objects[i], { pressure: noteData.StrokeData.strokes.pressure[i] });
-            Object.assign(editor.canvas._objects[i], { averagePressure: noteData.StrokeData.strokes.averagePressure[i] });
+            Object.assign(editor.canvas._objects[i], { averagePressure: noteData.StrokeData.strokes.avgPressure[i] });
           }
         }
       }
@@ -603,7 +604,7 @@ export const Note: () => JSX.Element = () => {
     if (isDemo) { return; }
     try {
       myNote!.NoteImage = fabricDrawer!.getImg();
-      myNote!.StrokeData = {"Strokes": {"data": editor?.canvas.getObjects(), "pressure": fabricDrawer!.getAveragePressureList(), "svg": fabricDrawer?.getSVG()}};
+      myNote!.StrokeData = {"strokes": {"data": editor?.canvas.getObjects(), "pressure": fabricDrawer!.getTransformPressureList(), "avgPressure": fabricDrawer!.getAveragePressureList(),"svg": fabricDrawer?.getSVG()}};
       myNote!.AvgPressure = fabricDrawer!.getAveragePressure();
       myNote!.AvgPressureList = fabricDrawer!.getPressureListAsString();
       myNote!.AllAvgPressureList = avgPressureOfStroke.join(',');
