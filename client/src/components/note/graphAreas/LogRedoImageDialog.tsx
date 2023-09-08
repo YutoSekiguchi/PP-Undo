@@ -29,9 +29,9 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
     setIsLoadingScreen(true);
 
     const beforeLogRedoNoteImage = fabricDrawer.getImg();
-    const beforeLogRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getAveragePressureList(), "svg": fabricDrawer.getSVG()}};
+    const beforeLogRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "avgPressure": fabricDrawer.getAveragePressureList(), "pressure": fabricDrawer.getTransformPressureList(), "svg": fabricDrawer.getSVG()}};
     const beforeLogRedoStrokeCount = fabricDrawer?.getStrokeLength();
-    
+
     fabricDrawer.clear();
     fabricDrawer.setSVGFromString(logOfBeforePPUndo[dialogIndex].svg)
     for(let i=0; i<logOfBeforePPUndo[dialogIndex].pressureList.length; i++) {
@@ -45,9 +45,9 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
     setSliderValue(logOfBeforePPUndo[dialogIndex].sliderValue);
 
     const afterLogRedoNoteImage = fabricDrawer.getImg();
-    const afterLogRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "pressure": fabricDrawer.getAveragePressureList(), "svg": fabricDrawer.getSVG()}};
+    const afterLogRedoStrokeData = {"Strokes": {"data": fabricDrawer.editor.canvas.getObjects(), "avgPressure": fabricDrawer.getAveragePressureList(), "pressure": fabricDrawer.getTransformPressureList(), "svg": fabricDrawer.getSVG()}};
     const afterLogRedoStrokeCount = fabricDrawer.getStrokeLength();
-    
+
     if(!isDemo) {
       const postLogRedoCountData: TPostLogRedoCountsData = {
         UID: myNote?.UID? myNote?.UID: 0,
@@ -83,7 +83,7 @@ export const LogRedoImageDialog: React.FC<TLogRedoImageDialogProps> = (props) =>
       <CancelButton
         close={closeDialog}
       />
-      <Box 
+      <Box
         className="dialog-image-wrapper"
         sx={{
           width: window.innerWidth * NOTE_WIDTH_RATIO,
