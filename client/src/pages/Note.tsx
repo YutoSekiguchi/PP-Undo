@@ -9,7 +9,7 @@ import { isAuth } from "@/modules/common/isAuth";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 import { getAveragePressure } from "@/modules/note/GetAveragePressure";
 import { NewNoteHeader } from "@/components/note/header";
-import { addAvgPressureOfStrokeAtom, addHistoryAtom, addHistoryGroupPressureAtom, avgPressureOfStrokeAtom, backgroundImageAtom, basisPressureAtom, drawModeAtom, getPressureModeAtom, historyForRedoAtom, isDemoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, nowPointPressureAtom, pointerXAtom, pointerYAtom, ppUndoCountAtom, redoCountAtom, resetAtom, undoCountAtom, waveCountAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, addHistoryAtom, addHistoryGroupPressureAtom, avgPressureOfStrokeAtom, backgroundImageAtom, basisPressureAtom, drawModeAtom, getPressureModeAtom, historyForRedoAtom, historyGroupPressureAtom, isDemoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, nowPointPressureAtom, pointerXAtom, pointerYAtom, ppUndoCountAtom, redoCountAtom, resetAtom, undoCountAtom, waveCountAtom } from "@/infrastructures/jotai/drawer";
 import { isLineSegmentIntersecting } from "@/modules/note/IsLineSegmentIntersecting";
 import { getMinimumPoints } from "@/modules/note/GetMinimumPoints";
 import NoteImg from "@/assets/note.png"
@@ -74,6 +74,7 @@ export const Note: () => JSX.Element = () => {
   const [pX, setPointerX] = useAtom(pointerXAtom);
   const [pY, setPointerY] = useAtom(pointerYAtom);
   const [getPressureMode,] = useAtom(getPressureModeAtom);
+  const [, setHistoryGroupPressure] = useAtom(historyGroupPressureAtom);
 
   useEffect(() => {
     if (!editor || !fabric || !(fabricDrawer === undefined && !!editor)) {
@@ -94,14 +95,21 @@ export const Note: () => JSX.Element = () => {
           if (noteData.AllAvgPressureList !== "") {
             setAvgPressureOfStroke(confirmNumberArrayFromString(noteData.AllAvgPressureList));
           }
+          console.log(noteData);
+          var groupPressureList: number[] = [];
+          var prevGroupPressure = -1;
           for(let i=0; i<editor.canvas._objects.length; i++) {
             if (editor.canvas._objects[i].stroke!.slice(0, 3) === "rgb") {
               editor.canvas._objects[i].stroke = rgbToHex(editor.canvas._objects[i].stroke!)
             }
-            console.log(noteData);
+            if (noteData.StrokeData.strokes.pressure[i] !== prevGroupPressure) {
+              groupPressureList.push(noteData.StrokeData.strokes.pressure[i]);
+            }
+            prevGroupPressure = noteData.StrokeData.strokes.pressure[i];
             Object.assign(editor.canvas._objects[i], { pressure: noteData.StrokeData.strokes.pressure[i] });
             Object.assign(editor.canvas._objects[i], { averagePressure: noteData.StrokeData.strokes.avgPressure[i] });
           }
+          setHistoryGroupPressure(groupPressureList);
         }
       }
       finishLoading(2500);
