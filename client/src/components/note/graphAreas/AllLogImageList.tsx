@@ -162,7 +162,7 @@ export const AllLogImageList: React.FC<TLogImageListProps> = (props) => {
                     <Box
                       className="log-image-wrapper"
                       sx={{
-                        backgroundImage: `url("${logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].backgroundImage}")`,
+                        // backgroundImage: `url("${logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].backgroundImage}")`,
                         height: `${window.innerWidth * NOTE_WIDTH_RATIO * noteAspectRatio}`,
                         backgroundSize: "cover"
                       }}
@@ -173,7 +173,7 @@ export const AllLogImageList: React.FC<TLogImageListProps> = (props) => {
                   </Badge>
                   : <Box className="log-image-wrapper"
                     sx={{
-                      backgroundImage: `url("${logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].backgroundImage}")`,
+                      // backgroundImage: `url("${logOfBeforePPUndo[logOfBeforePPUndo.length - (activeStep*displayLogCount+i) - 1].backgroundImage}")`,
                       backgroundSize: "cover"
                     }}
                     >
