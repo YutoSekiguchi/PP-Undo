@@ -10,6 +10,8 @@ import { cyan } from '@mui/material/colors';
 import { AllLogImageList } from "./AllLogImageList";
 import { logNotifierCountAtom } from "@/infrastructures/jotai/drawer";
 import { FabricDrawer } from "@/modules/fabricdrawer";
+import { LogRedoIcon } from "./LogRedoIcon";
+import Spacer from "@/components/common/Spacer";
 
 
 export const LogRedo: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
@@ -45,6 +47,8 @@ export const LogRedo: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }
             className="big-text center"
             onClick={showLog}
           >
+            <LogRedoIcon />
+            <Spacer size={6} />
             Display Log
           </DisplayLogButton>
         </Badge>
