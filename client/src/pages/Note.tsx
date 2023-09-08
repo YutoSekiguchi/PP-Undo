@@ -12,7 +12,7 @@ import { NewNoteHeader } from "@/components/note/header";
 import { addAvgPressureOfStrokeAtom, addHistoryAtom, addHistoryGroupPressureAtom, avgPressureOfStrokeAtom, backgroundImageAtom, basisPressureAtom, drawModeAtom, getPressureModeAtom, historyForRedoAtom, isDemoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, nowPointPressureAtom, pointerXAtom, pointerYAtom, ppUndoCountAtom, redoCountAtom, resetAtom, undoCountAtom, waveCountAtom } from "@/infrastructures/jotai/drawer";
 import { isLineSegmentIntersecting } from "@/modules/note/IsLineSegmentIntersecting";
 import { getMinimumPoints } from "@/modules/note/GetMinimumPoints";
-import NoteImg from "@/assets/notesolidb.svg"
+import NoteImg from "@/assets/note.png"
 import { Location, Params, useLocation, useNavigate, useParams } from "react-router-dom";
 import { LoadingScreen } from "@/components/common/LoadingScreen";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
@@ -660,7 +660,7 @@ export const Note: () => JSX.Element = () => {
                 className="fabric-canvas"
                 onReady={onReady}
                 css={{
-                  // backgroundImage: `url("${NoteImg}")`,
+                  backgroundImage: `url("${NoteImg}")`,
                   touchAction: "none",
                   // display:`${isPointer? "block": "none"}`,
                   overflow: `${drawMode == "strokeErase"? "hidden": ""}`,
