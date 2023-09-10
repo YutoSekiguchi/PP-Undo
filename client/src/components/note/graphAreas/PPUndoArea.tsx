@@ -218,7 +218,7 @@ export const PPUndoArea: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawe
 
 	return (
     <>
-      <Box className="graph-wrapper">
+      <Box className="graph-wrapper ppundo-height">
         <Typography component="div">
           <Box className="big-white-text center ppundo-title">PPUndo</Box>
         </Typography>

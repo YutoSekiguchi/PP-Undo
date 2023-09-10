@@ -38,9 +38,9 @@
 .graph-wrapper {
   // background-color: variables.$dark-blue-color;
   @include border-gradient();
-  min-height: 300px;
-  height: 30vh;
-  max-height: 400px;
+  // min-height: 300px;
+  // height: 30vh;
+  // max-height: 400px;
   margin: 20px 20px;
   padding: 10px 5px;
   border-radius: 10px;
@@ -50,11 +50,14 @@
   //   0 0 20px #00f,
 }
 
+.ppundo-height {
+  max-height: 400px;
+}
 
 .graph-wrapper-height {
-  min-height: 280px;
-  height: 42vh;
-  max-height: 500px;
+  min-height: 360px;
+  // height: 42vh;
+  // max-height: 500px;
   position: relative;
 }
 

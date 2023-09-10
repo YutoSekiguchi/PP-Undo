@@ -24,7 +24,7 @@ export const datasetsConfig: TPPUndoGraphDatasetsConfig = {
 }
 
 export const options: {} = {
-  maintainAspectRatio: true,
+  // maintainAspectRatio: true,
   plugins: {
     legend:{
       display:false,
