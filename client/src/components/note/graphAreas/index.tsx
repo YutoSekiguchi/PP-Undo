@@ -135,7 +135,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
         <LogRedo fabricDrawer={fabricDrawer} />
         <Box className="white-text center pointer" onClick={changePressureMode}>
           <Typography fontSize={12} fontWeight="bold" className="mode-text">
-            {getPressureMode=="avg"? "アベレージモード": "Newモード"}
+            {getPressureMode=="avg"? "アベレージモード": "グルーピングモード"}
           </Typography>
         </Box>
       </Box>
