@@ -17,6 +17,8 @@ import { FabricDrawer } from "@/modules/fabricdrawer";
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 import { BORDER_WAVE_COUNT } from "@/configs/settings";
 import { getGradientColor } from "@/modules/note/GetGradientColor";
+import ModeChangeIcon from "@/components/icons/ModeChangeIcon";
+import Spacer from "@/components/common/Spacer";
 
 export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
   const theme = useTheme();
@@ -133,8 +135,10 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
       <PPUndoArea fabricDrawer={fabricDrawer} />
       <Box sx={{ display: "flex", justifyContent: "space-around", alignItems: "center" }}>
         <LogRedo fabricDrawer={fabricDrawer} />
-        <Box className="white-text center pointer" onClick={changePressureMode}>
-          <Typography fontSize={12} fontWeight="bold" className="mode-text">
+        <Box className="white-text center pointer mode-text" onClick={changePressureMode}>
+          <ModeChangeIcon />
+          <Spacer size={6} />
+          <Typography fontSize={12} fontWeight="bold">
             {getPressureMode=="avg"? "アベレージモード": "グルーピングモード"}
           </Typography>
         </Box>

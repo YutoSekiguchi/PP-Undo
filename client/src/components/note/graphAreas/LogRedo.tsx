@@ -10,7 +10,7 @@ import { cyan } from '@mui/material/colors';
 import { AllLogImageList } from "./AllLogImageList";
 import { logNotifierCountAtom } from "@/infrastructures/jotai/drawer";
 import { FabricDrawer } from "@/modules/fabricdrawer";
-import { LogRedoIcon } from "./LogRedoIcon";
+import { LogRedoIcon } from "@/components/icons/LogRedoIcon";
 import Spacer from "@/components/common/Spacer";
 
 
