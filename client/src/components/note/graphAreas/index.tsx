@@ -98,6 +98,14 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
+  const changePressureMode = () => {
+    if (activeStep == 0) {
+      handleNext();
+    } else {
+      handleBack();
+    }
+  }
+
   useEffect(() => {
     if (activeStep === 1) {
       setGetPressureMode("avg");
@@ -125,7 +133,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
       <PPUndoArea fabricDrawer={fabricDrawer} />
       <Box sx={{ display: "flex", justifyContent: "space-around", alignItems: "center" }}>
         <LogRedo fabricDrawer={fabricDrawer} />
-        <Box className="white-text center">
+        <Box className="white-text center pointer" onClick={changePressureMode}>
           <Typography fontSize={12} fontWeight="bold" className="mode-text">
             {getPressureMode=="avg"? "アベレージモード": "Newモード"}
           </Typography>
