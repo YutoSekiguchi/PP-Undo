@@ -2,6 +2,8 @@ import { atom } from 'jotai';
 import { addUser, fetchUserDataByNameAndPassword } from '@/infrastructures/services/authentication/Auth';
 import lscache from 'lscache';
 
+const SESSION_TIME = 60 * 24;
+
 /**
  * @description
  * ユーザ情報の保持
@@ -31,7 +33,7 @@ export const signinAtom = atom(null, async (_get, set, obj: TAuth) => {
     if (addUserResData != null) {
       set(userDataAtom, addUserResData);
     }
-    lscache.set('loginUserData', addUserResData, 180);
+    lscache.set('loginUserData', addUserResData, SESSION_TIME);
     return addUserResData;
   } else {
     // 存在する場合
@@ -46,6 +48,6 @@ export const signinAtom = atom(null, async (_get, set, obj: TAuth) => {
 export const loginAtom = atom(null, async (_get, set, obj: TAuth) => {
   const userData = await fetchUserDataByNameAndPassword(obj.userName, obj.password);
   set(userDataAtom, userData);
-  lscache.set('loginUserData', userData, 180);
+  lscache.set('loginUserData', userData, SESSION_TIME);
   return userData;
 })
