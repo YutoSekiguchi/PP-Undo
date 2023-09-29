@@ -26,7 +26,7 @@ import { isAuth } from "@/modules/common/isAuth";
 import styled from "@emotion/styled";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { addEraseSelectedObjectsCount } from "@/infrastructures/services/erase/selectedObjectsCounts";
-import { PRESSURE_ROUND_VALUE } from "@/configs/settings";
+import { APP_NAME, PRESSURE_ROUND_VALUE } from "@/configs/settings";
 
 export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => Promise<void>}> = ({ fabricDrawer, save }) => {
   const navigate = useNavigate();
@@ -135,7 +135,7 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => Pro
                 component="div"
                 sx={{ fontWeight: "bold" }}
               >
-                PP-Undo改{isDemo&& "デモ"}
+                {APP_NAME}{isDemo&& "デモ"}
               </Typography>
             </Box>
 

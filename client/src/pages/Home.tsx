@@ -7,6 +7,7 @@ import { useState } from "react";
 import { AccountCircle } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { LoginDialog } from "@/components/common/authentication/LoginDialog";
+import { APP_NAME } from "@/configs/settings";
 
 export const Home: () => JSX.Element = () => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ export const Home: () => JSX.Element = () => {
           : <>
             <Box className="no-login-welcome">
               <Typography variant="h5">
-                ようこそ<br />ログインしてPP-Undoを使ってみましょう!!
+                ようこそ<br />ログインして{APP_NAME}を使ってみましょう!!
               </Typography>
             </Box>
           </>
@@ -53,7 +54,7 @@ export const Home: () => JSX.Element = () => {
     return (
       <>
         <Typography variant="body2" color="#888">
-          PP-Undoを使用して快適なデジタル手書きを経験しましょう
+          {APP_NAME}を使用して快適なデジタル手書きを経験しましょう
         </Typography>
         <Button
           color="primary"

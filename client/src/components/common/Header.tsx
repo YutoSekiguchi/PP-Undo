@@ -16,6 +16,7 @@ import { Person } from "@mui/icons-material";
 import { TUserData } from "@/@types/authentication";
 import lscache from "lscache";
 import { isAuth } from "@/modules/common/isAuth";
+import { APP_NAME } from "@/configs/settings";
 
 export const Header:React.FC =() => {
   const location: Location = useLocation();
@@ -65,7 +66,7 @@ export const Header:React.FC =() => {
                   component="div"
                   sx={{ fontWeight: "bold" }}
                 >
-                  PP-Undo改
+                  {APP_NAME}
                 </Typography>
               </Box>
               
