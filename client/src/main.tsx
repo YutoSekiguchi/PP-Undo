@@ -22,9 +22,21 @@ const darkTheme = createTheme({
   }
 });
 
-const lightTheme = createTheme({
+export const lightTheme = createTheme({
   palette: {
     mode: "light",
+    primary: {
+      main: '#00acc1',
+      contrastText: '#fff',
+    },
+    secondary: {
+      main: '#f50057',
+      contrastText: '#fff',
+    },
+    error: {
+      main: '#f44336',
+      contrastText: '#fff',
+    },
     text: {
       primary: "#444746",
     }
