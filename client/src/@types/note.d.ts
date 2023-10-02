@@ -215,3 +215,10 @@ export interface TClientLogData extends TPostClientLogData, TIDAndCreatedAt {}
 export interface TStrokeData extends TPostStrokeData, TIDAndCreatedAt {}
 
 export interface TLogData extends TPostLogData, TIDAndCreatedAt {}
+
+export interface TGroupBox {
+  top: number | null;
+  bottom: number | null;
+  right: number | null;
+  left: number | null;
+}
