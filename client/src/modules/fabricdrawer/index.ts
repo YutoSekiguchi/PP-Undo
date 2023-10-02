@@ -1,4 +1,4 @@
-import { TAddText } from "@/@types/note";
+import { TAddText, TGroupBox } from "@/@types/note";
 import { fabric } from "fabric";
 import { FabricJSEditor } from "fabricjs-react"
 
@@ -420,5 +420,37 @@ export class FabricDrawer {
       count += 1
     })
     return Math.round((total / count) * 100) / 100;
+  }
+
+  getGroupBox = (): TGroupBox => {
+    let groupBox: TGroupBox = {
+      "top": null,
+      "bottom": null,
+      "left": null,
+      "right": null,
+    }
+    this.editor.canvas._objects.map((object: any, _: number) => {
+      if (object["isGrouping"] === false) {
+        const top = groupBox["top"];
+        const bottom = groupBox["bottom"];
+        const left = groupBox["left"];
+        const right = groupBox["right"];
+        const objBottom = object["top"] + object["height"];
+        const objRight = object["left"] + object["width"];
+        if (top === null || top > object["top"]) {
+          groupBox["top"] = Math.floor(object["top"]);
+        }
+        if (bottom === null || bottom < objBottom) {
+          groupBox["bottom"] = Math.ceil(objBottom);
+        }
+        if (left === null || left > object["left"]) {
+          groupBox["left"] = Math.floor(object["left"]);
+        }
+        if (right === null || right < objRight) {
+          groupBox["right"] = Math.ceil(objRight);
+        }
+      }
+    })
+    return groupBox;
   }
 }
