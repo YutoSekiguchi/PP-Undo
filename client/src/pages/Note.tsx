@@ -18,13 +18,14 @@ import { LoadingScreen } from "@/components/common/LoadingScreen";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { fetchNoteByID, updateNote } from "@/infrastructures/services/note";
 import { TNoteData } from "@/@types/notefolders";
-import { TClientLogData, TPointDataList, TPostStrokeData } from "@/@types/note";
+import { TClientLogData, TGroupBox, TPointDataList, TPostStrokeData } from "@/@types/note";
 import { addStroke, updateTransformPressures } from "@/infrastructures/services/strokes";
 import { fetchClientLogsByNID } from "@/infrastructures/services/ppUndoLogs";
 import { BORDER_STRONG_PRESSURE, BORDER_WAVE_COUNT, BORDER_WAVE_PRESSURE, NOTE_WIDTH_RATIO, PRESSURE_ROUND_VALUE } from "@/configs/settings";
 import { confirmNumberArrayFromString } from "@/modules/common/confirmArrayFromString";
 import { rgbToHex } from "@/modules/note/RGBToHex";
 import { getGradientColor } from "@/modules/note/GetGradientColor";
+import { GroupBoxComponent } from "@/components/note/GroupBoxComponent";
 
 let drawStartTime: number = 0; // 描画時の時刻
 let drawEndTime: number = 0; // 描画終了時の時刻
@@ -51,6 +52,7 @@ export const Note: () => JSX.Element = () => {
   const [prevOffset, setPrevOffset] = useState<{x: number, y: number} | null>(null);
   const [fabricDrawer, setFabricDrawer] = useState<FabricDrawer>();
   const [eraseStrokes, setEraseStrokes] = useState<any[]>([]);
+  const [groupBoxState, setGroupBoxState] = useState<TGroupBox | undefined>(undefined);
   const [myNote, setMyNote] = useAtom(myNoteAtom);
   const [drawMode, ] = useAtom(drawModeAtom); // penか消しゴムか
   const [, addHistory] = useAtom(addHistoryAtom);
@@ -58,7 +60,7 @@ export const Note: () => JSX.Element = () => {
   const [backgroundImage, setBackgroundImage] = useAtom(backgroundImageAtom);
   const [avgPressureOfStroke, setAvgPressureOfStroke] = useAtom(avgPressureOfStrokeAtom);
   const [, setAddAvgPressureOfStroke] = useAtom(addAvgPressureOfStrokeAtom);
-  const [, setBasisPressure] = useAtom(basisPressureAtom); // 今の基準筆圧のところ
+  const [basisPressure, setBasisPressure] = useAtom(basisPressureAtom); // 今の基準筆圧のところ
   const [, setLogOfBeforePPUndo] = useAtom(logOfBeforePPUndoAtom);
   const [undoCount, ] = useAtom(undoCountAtom);
   const [redoCount, ] = useAtom(redoCountAtom);
@@ -213,10 +215,11 @@ export const Note: () => JSX.Element = () => {
         const resultPressure: number = event.pointerType=="mouse"?Math.random(): getAveragePressure(strokePressureList);
         if (storePressureVal === 0) {
           setStorePressureVal(averagePressure);
-          fabricDrawer?.changeStrokesC(getGradientColor(averagePressure));
-        } else {
-            fabricDrawer?.changeStrokesC(getGradientColor(storePressureVal));
-        }
+          // fabricDrawer?.changeStrokesC(getGradientColor(averagePressure));
+        } 
+        // else {
+        //     fabricDrawer?.changeStrokesC(getGradientColor(storePressureVal));
+        // }
         fabricDrawer?.reDraw();
         fabricDrawer?.setAveragePressureToStroke(averagePressure);
         fabricDrawer?.setTransformPressureToStroke(resultPressure);
@@ -408,17 +411,17 @@ export const Note: () => JSX.Element = () => {
           
           if (storePressureVal === 0) {
             setStorePressureVal(averagePressure);
-            fabricDrawer?.changeStrokesC(getGradientColor(averagePressure));
+            // fabricDrawer?.changeStrokesC(getGradientColor(averagePressure));
           } else {
             // if (isWave()) {
             //   setStorePressureVal(0);
             //   setBasisPressure(0);
             // } else {
-              if (getPressureMode === "avg") {
-                fabricDrawer?.changeStrokesC(getGradientColor(averagePressure));
-              } else {
-                fabricDrawer?.changeStrokesC(getGradientColor(storePressureVal));
-              }
+              // if (getPressureMode === "avg") {
+              //   fabricDrawer?.changeStrokesC(getGradientColor(averagePressure));
+              // } else {
+              //   fabricDrawer?.changeStrokesC(getGradientColor(storePressureVal));
+              // }
             // }
           }
           fabricDrawer?.reDraw();
@@ -443,6 +446,7 @@ export const Note: () => JSX.Element = () => {
         }
         setStorePressureVal(0);
         setBasisPressure(0);
+        setGroupBoxState(undefined);
       }, 8000)
     setWaveCount(0)
     setDurationStrokePressureList([])
@@ -451,6 +455,15 @@ export const Note: () => JSX.Element = () => {
     setPointerY(0)
     // isIncreasing = null;
   }
+
+  useEffect(() => {
+    setTimeout(() => {
+      const groupBoxTmp = fabricDrawer?.getGroupBox();
+      if (groupBoxTmp?.bottom !== null && groupBoxTmp?.left !== null && groupBoxTmp?.top !== null && groupBoxTmp?.right !== null) {
+        setGroupBoxState(groupBoxTmp);
+      }
+    }, 10)
+  }, [fabricDrawer?.getStrokeLength()])
 
   // const buttonClick = () => {
   //   if(storePressureVal === 0) {
@@ -654,6 +667,7 @@ export const Note: () => JSX.Element = () => {
               position: "relative" 
             }}
           >
+            {groupBoxState && !isDraw && <GroupBoxComponent rectangle={groupBoxState} basePressure={basisPressure} />}
             <Box
               className="fabric-canvas-wrapper"
               sx={{

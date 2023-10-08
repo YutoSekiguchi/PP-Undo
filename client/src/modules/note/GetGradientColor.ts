@@ -17,9 +17,9 @@ export const getGradientColor = (value: number, exam: boolean = true) => {
   
 
   // 実験用のためだけ
-  if (exam) {
-    colorCode = "#ee0000"
-  }
+  // if (exam) {
+  //   colorCode = "#ee0000"
+  // }
 
   return colorCode;
 }

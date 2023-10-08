@@ -12,7 +12,7 @@ export const GroupBoxComponent = (props: Props) => {
     // 色相（Hue）を計算し、0から240の範囲にマッピング
     const hue = (1 - value) * 240;
     // HSLカラーモデルを使用して色を生成
-    const hslColor = `hsla(${hue}, 100%, 65%, 50%)`;
+    const hslColor = `hsla(${hue}, 100%, 50%, 30%)`;
     return hslColor;
   }
 
@@ -20,22 +20,22 @@ export const GroupBoxComponent = (props: Props) => {
   const [style, setStyle] = useState<React.CSSProperties>({
     pointerEvents: 'none',
     position: "absolute",
-    left: rectangle.left !== null? rectangle.left: 0,
-    top: rectangle.top !== null? rectangle.top: 0,
-    width: (rectangle.right !== null && rectangle.left !== null)? rectangle.right - rectangle.left: 0,
-    height: (rectangle.bottom !== null && rectangle.top !== null)? rectangle.bottom - rectangle.top: 0,
-    border: `2px solid ${interpolateColor(basePressure)}`,
+    left: rectangle.left !== null? rectangle.left-15: 0,
+    top: rectangle.top !== null? rectangle.top-15: 0,
+    width: (rectangle.right !== null && rectangle.left !== null)? rectangle.right - rectangle.left+30: 0,
+    height: (rectangle.bottom !== null && rectangle.top !== null)? rectangle.bottom - rectangle.top+30: 0,
+    border: `5px solid ${interpolateColor(basePressure)}`,
     zIndex: 9999,
   });
   useEffect(() => {
     setStyle({
       pointerEvents: 'none',
       position: "absolute",
-      left: rectangle.left !== null? rectangle.left: 0,
-      top: rectangle.top !== null? rectangle.top: 0,
-      width: (rectangle.right !== null && rectangle.left !== null)? rectangle.right - rectangle.left: 0,
-      height: (rectangle.bottom !== null && rectangle.top !== null)? rectangle.bottom - rectangle.top: 0,
-      border: `2px solid ${interpolateColor(basePressure)}`,
+      left: rectangle.left !== null? rectangle.left-15: 0,
+      top: rectangle.top !== null? rectangle.top-15: 0,
+      width: (rectangle.right !== null && rectangle.left !== null)? rectangle.right - rectangle.left+30: 0,
+      height: (rectangle.bottom !== null && rectangle.top !== null)? rectangle.bottom - rectangle.top+30: 0,
+      border: `5px solid ${interpolateColor(basePressure)}`,
       zIndex: 9999,
     })
   }, [rectangle])
