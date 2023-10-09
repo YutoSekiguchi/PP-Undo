@@ -52,6 +52,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
   }));
 
   const MoveNowBorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+    pointerEvents: 'none',
     borderRadius: 5,
     height: 20,
     width: 100,
