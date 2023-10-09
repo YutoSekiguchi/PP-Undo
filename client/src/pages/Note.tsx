@@ -76,7 +76,7 @@ export const Note: () => JSX.Element = () => {
   const [pX, setPointerX] = useAtom(pointerXAtom);
   const [pY, setPointerY] = useAtom(pointerYAtom);
   const [getPressureMode,] = useAtom(getPressureModeAtom);
-  const [, setHistoryGroupPressure] = useAtom(historyGroupPressureAtom);
+  const [historyGroupPressure, setHistoryGroupPressure] = useAtom(historyGroupPressureAtom);
 
   useEffect(() => {
     if (!editor || !fabric || !(fabricDrawer === undefined && !!editor)) {
@@ -432,13 +432,13 @@ export const Note: () => JSX.Element = () => {
       }, 100);
       longDurationTimer = setTimeout(() => {
         if(storePressureVal === 0) {
-          fabricDrawer?.isGrouping(true, averagePressure);
+          fabricDrawer?.isGrouping(true, averagePressure, historyGroupPressure.length + 1);
           addHistoryGroupPressure(averagePressure);
           if (!isDemo) {
             updateTransformPressures(myNote!.ID, averagePressure)
           }
         } else {
-          fabricDrawer?.isGrouping(true, storePressureVal);
+          fabricDrawer?.isGrouping(true, storePressureVal, historyGroupPressure.length + 1);
           addHistoryGroupPressure(storePressureVal);
           if (!isDemo) {
             updateTransformPressures(myNote!.ID, storePressureVal)

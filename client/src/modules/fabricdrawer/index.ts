@@ -356,11 +356,12 @@ export class FabricDrawer {
     // console.log(this.editor.canvas._objects[this.editor.canvas._objects.length - 1])
   }
 
-  isGrouping = (v: boolean, pressure: number) => {
+  isGrouping = (v: boolean, pressure: number, groupNum: number) => {
     this.editor.canvas._objects.map((object: any, _: number) => {
       if (object["isGrouping"] === false) {
         object["isGrouping"] = true;
         object["pressure"] = pressure;
+        object.set({groupNum: groupNum});
         // TODO: 追加
         object.set({stroke: object["baseStrokeColor"]});
       }
