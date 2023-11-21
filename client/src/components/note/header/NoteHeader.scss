@@ -79,6 +79,11 @@ $button-border: 1px solid gray;
   color: #000;
 }
 
+.mode-pressure-stroke-erase-svg {
+  width: $mode-svg-size;
+  height: $mode-svg-size;
+}
+
 @mixin mode($size) {
   width: $size;
   height: $size;

@@ -7,7 +7,7 @@ import { SPLIT_PRESSURE_COUNT } from '@/configs/PPUndoGraphConifig';
  * @description
  * 描画モードを保持
 **/
-export const drawModeAtom = atom<"pen" | "strokeErase" | "pointer">("pen");
+export const drawModeAtom = atom<"pen" | "strokeErase" | "pointer" | "pressureStrokeErase">("pen");
 
 /**
  * @description

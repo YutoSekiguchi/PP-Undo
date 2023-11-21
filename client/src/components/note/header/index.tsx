@@ -27,6 +27,7 @@ import styled from "@emotion/styled";
 import { myNoteAtom } from "@/infrastructures/jotai/notes";
 import { addEraseSelectedObjectsCount } from "@/infrastructures/services/erase/selectedObjectsCounts";
 import { APP_NAME, PRESSURE_ROUND_VALUE } from "@/configs/settings";
+import { PressureStrokeEraseButton } from "./PressureStrokeEraseButton";
 
 export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => Promise<void>}> = ({ fabricDrawer, save }) => {
   const navigate = useNavigate();
@@ -144,6 +145,8 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => Pro
                 <PointerButton fabricDrawer={fabricDrawer} />
                 <Spacer size={6} axis="horizontal" />
                 <StrokeEraseButton fabricDrawer={fabricDrawer} />
+                <Spacer size={6} axis="horizontal" />
+                <PressureStrokeEraseButton fabricDrawer={fabricDrawer} />
                 <Spacer size={6} axis="horizontal" />
                 <PenButton fabricDrawer={fabricDrawer} />
               </Box>

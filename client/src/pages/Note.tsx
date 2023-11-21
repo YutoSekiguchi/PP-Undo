@@ -31,6 +31,7 @@ let drawStartTime: number = 0; // 描画時の時刻
 let drawEndTime: number = 0; // 描画終了時の時刻
 // let basePressure: number = 0;
 let strokePressureList: number[] = [];
+let eraseStrokePressureList: number[] = [];
 let scrollTop = 0;
 let pointDataList: TPointDataList[] = [];
 // let isIncreasing: boolean | null = null;
@@ -527,7 +528,6 @@ export const Note: () => JSX.Element = () => {
     }
     await addStroke(data);
   }
-
   
   const handleEraseDown = (event: PointerEvent<HTMLCanvasElement>) => {
     // if (event.pointerType === "touch") {
@@ -545,12 +545,21 @@ export const Note: () => JSX.Element = () => {
   }
 
   const handleEraseMove = (event: PointerEvent<HTMLCanvasElement>) => {
-    if (!isDraw && drawMode === "strokeErase") { return; }
+    if ((!isDraw && (drawMode === "strokeErase" || drawMode === "pressureStrokeErase"))) { return; }
     // if (event.pointerType === "touch") { return; }
-    strokePressureList = [...strokePressureList, event.pressure];
+    strokePressureList = [...strokePressureList, event.pointerType === "mouse" ? Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE];
     const offsetXAbout = Math.round(event.nativeEvent.offsetX);
     const offsetYAbout = Math.round(event.nativeEvent.offsetY);
     const paths = fabricDrawer?.getObjectPaths();
+    const pointerX = Math.round(event.clientX*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE;
+    const pointerY = Math.round((event.clientY - 65)*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE;
+    setNowPointPressure(Math.round(strokePressureList[strokePressureList.length - 1]*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE);
+    if (pX == 0) {
+      setPointerX(pointerX)
+    }
+    if (pY == 0) {
+      setPointerY(pointerY)
+    }
     paths?.map((path: any, index: number) => {
       let isErase = false;
       const stroke = fabricDrawer?.getStroke(index);
@@ -561,6 +570,9 @@ export const Note: () => JSX.Element = () => {
       const diffTop = stroke?.top!==undefined
       ? Math.round(stroke.top - minPoints.top)
       : 0;
+      console.log(path);
+      console.log(diffLeft, diffTop);
+
       for(var j=0; j<path.length; j++) {
         if (isErase) {break}
         const points = path[j];
@@ -591,7 +603,11 @@ export const Note: () => JSX.Element = () => {
               pointY,
             );
             if ((isIntersect || isIntersectPrev) && stroke) {
-              fabricDrawer?.removeStroke(stroke);
+              if (drawMode === "strokeErase") {
+                fabricDrawer?.removeStroke(stroke);
+              } else if (drawMode === "pressureStrokeErase") {
+
+              }
               setEraseStrokes(eraseStrokes.concat([stroke]));
               isErase = true;
             }
@@ -609,6 +625,9 @@ export const Note: () => JSX.Element = () => {
     setIsDraw(false);
     const averagePressure: number = event.pointerType=="mouse"?Math.random(): getAveragePressure(strokePressureList);
     const resultPressure: number = event.pointerType=="mouse"?Math.random(): getAveragePressure(strokePressureList);
+    setPointerX(0);
+    setPointerY(0);
+    setNowPointPressure(0);
     setTimeout(() => {
       if (eraseStrokes.length > 0) {
         addHistory({
@@ -690,7 +709,7 @@ export const Note: () => JSX.Element = () => {
                 }}
               />
             </Box>
-            {drawMode == "strokeErase" &&
+            {(drawMode === "strokeErase" || drawMode === "pressureStrokeErase") &&
               <canvas
                 id="erase-drawer"
                 className="canvas"
