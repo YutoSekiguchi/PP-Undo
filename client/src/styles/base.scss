@@ -11,6 +11,7 @@ html {
 
 .canvas {
   @include mixins.tl-static-position($position: absolute);
+  touch-action: none;
 }
 
 .stroke-history {
