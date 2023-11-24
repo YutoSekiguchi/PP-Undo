@@ -163,7 +163,7 @@ export const Note: () => JSX.Element = () => {
   }, [isLoading])
   
   useEffect(() => {
-    if(drawMode === "strokeErase") {
+    if(drawMode === "strokeErase" || drawMode === "pressureStrokeErase") {
       const body = document.getElementsByTagName('body')[0];
       scrollTop = window.scrollY;
       body.style.top = (scrollTop * -1) + 'px';
