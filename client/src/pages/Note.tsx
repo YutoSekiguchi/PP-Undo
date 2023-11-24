@@ -709,7 +709,7 @@ export const Note: () => JSX.Element = () => {
                   backgroundImage: `url("${NoteImg}")`,
                   touchAction: "none",
                   // display:`${isPointer? "block": "none"}`,
-                  overflow: `${drawMode == "strokeErase"? "hidden": ""}`,
+                  overflow: `${(drawMode === "strokeErase" || drawMode === "pressureStrokeErase")? "hidden": ""}`,
                   backgroundSize: "contain"
                 }}
               />
