@@ -136,7 +136,7 @@ export const NewNoteHeader:React.FC<{fabricDrawer: FabricDrawer, save: () => Pro
                 component="div"
                 sx={{ fontWeight: "bold" }}
               >
-                {APP_NAME}{isDemo&& "デモ"}
+                {APP_NAME}{isDemo&& "DEMO"}
               </Typography>
             </Box>
 

@@ -7,10 +7,24 @@ export const isLineSegmentIntersecting = (
   y3: number,
   x4: number,
   y4: number) => {
-  //交差判定
-  const ta = (x3 - x4) * (y1 - y3) + (y3 - y4) * (x3 - x1);
-  const tb = (x3 - x4) * (y2 - y3) + (y3 - y4) * (x3 - x2);
-  const tc = (x1 - x2) * (y3 - y1) + (y1 - y2) * (x1 - x3);
-  const td = (x1 - x2) * (y4 - y1) + (y1 - y2) * (x1 - x4);
-  return ta * tb < 0 && tc * td < 0;
+  // 各線分のベクトルを計算
+  const dx1 = x2 - x1;
+  const dy1 = y2 - y1;
+  const dx2 = x4 - x3;
+  const dy2 = y4 - y3;
+
+  // ベクトルの外積を計算
+  const delta = dx1 * dy2 - dy1 * dx2;
+
+  // 線分が平行の場合、交差していない
+  if (delta === 0) {
+    return false;
+  }
+
+  // パラメータs, tを計算
+  const s = (dx2 * (y1 - y3) - dy2 * (x1 - x3)) / delta;
+  const t = (dx1 * (y1 - y3) - dy1 * (x1 - x3)) / delta;
+
+  // 交差条件の判定
+  return (0 <= s && s <= 1) && (0 <= t && t <= 1);
 }

@@ -2,12 +2,12 @@
 @use '../../../styles/variables.scss';
 
 $undo-redo-button-size: 40px;
-$undo-redo-svg-size: 2em;
+$undo-redo-svg-size: 2rem;
 $choice-color-button-size: 25px;
 $not-choice-color-button-size: 25px;
-$mode-svg-size: 36px;
+$mode-svg-size: 2rem;
 $mode-button-size: $undo-redo-button-size;
-$no-mode-button-size: 28px;
+$no-mode-button-size: 1.8rem;
 $button-border: 1px solid gray;
 
 .note-header {

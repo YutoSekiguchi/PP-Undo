@@ -547,7 +547,8 @@ export const Note: () => JSX.Element = () => {
   const handleEraseMove = (event: PointerEvent<HTMLCanvasElement>) => {
     if ((!isDraw && (drawMode === "strokeErase" || drawMode === "pressureStrokeErase"))) { return; }
     // if (event.pointerType === "touch") { return; }
-    strokePressureList = [...strokePressureList, event.pointerType === "mouse" ? Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE];
+    const tmpPressure = event.pointerType === "mouse" ? Math.round(Math.random() * PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE: Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE
+    strokePressureList = [...strokePressureList, tmpPressure];
     const offsetXAbout = Math.round(event.nativeEvent.offsetX);
     const offsetYAbout = Math.round(event.nativeEvent.offsetY);
     const paths = fabricDrawer?.getObjectPaths();
@@ -563,6 +564,7 @@ export const Note: () => JSX.Element = () => {
     paths?.map((path: any, index: number) => {
       let isErase = false;
       const stroke = fabricDrawer?.getStroke(index);
+      const strokeTransformPressure = fabricDrawer?.getTransformPressureOfOneStroke(index);
       const minPoints = getMinimumPoints(path);
       const diffLeft = stroke?.left!==undefined
       ? Math.round(stroke.left - minPoints.left)
@@ -570,8 +572,6 @@ export const Note: () => JSX.Element = () => {
       const diffTop = stroke?.top!==undefined
       ? Math.round(stroke.top - minPoints.top)
       : 0;
-      console.log(path);
-      console.log(diffLeft, diffTop);
 
       for(var j=0; j<path.length; j++) {
         if (isErase) {break}
@@ -606,7 +606,12 @@ export const Note: () => JSX.Element = () => {
               if (drawMode === "strokeErase") {
                 fabricDrawer?.removeStroke(stroke);
               } else if (drawMode === "pressureStrokeErase") {
-
+                // 筆圧が近いストロークのみ削除
+                if (strokeTransformPressure) {
+                  if (tmpPressure >= strokeTransformPressure - 0.1 && tmpPressure <= strokeTransformPressure + 0.1) {
+                    fabricDrawer?.removeStroke(stroke);
+                  }
+                }
               }
               setEraseStrokes(eraseStrokes.concat([stroke]));
               isErase = true;

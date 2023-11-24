@@ -400,6 +400,15 @@ export class FabricDrawer {
     return res;
   }
 
+
+  /**
+   * @param {number} [index]
+   */
+  getTransformPressureOfOneStroke = (index: number): number => {
+    const copyObj: any = this.editor.canvas._objects[index]
+    return copyObj.pressure;
+  }
+
   getPressureListAsString = (): string => {
     const li: number[] = [];
     this.editor.canvas._objects.map((object: any, _: number) => {
