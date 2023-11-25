@@ -90,6 +90,7 @@ $button-border: 1px solid gray;
   width: $size;
   height: $size;
   border: $button-border;
+  background-color: #eee;
   cursor: pointer;
   @include mixins.rounded();
   @include mixins.center();
