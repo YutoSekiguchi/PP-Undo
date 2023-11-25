@@ -20,6 +20,7 @@ export const GroupBoxComponent = (props: Props) => {
   const [style, setStyle] = useState<React.CSSProperties>({
     pointerEvents: 'none',
     position: "absolute",
+    display: (rectangle.left !== null && rectangle.top !== null && rectangle.right !== null && rectangle.bottom !== null)? "block": "none",
     left: rectangle.left !== null? rectangle.left-15: 0,
     top: rectangle.top !== null? rectangle.top-15: 0,
     width: (rectangle.right !== null && rectangle.left !== null)? rectangle.right - rectangle.left+30: 0,
@@ -31,6 +32,7 @@ export const GroupBoxComponent = (props: Props) => {
     setStyle({
       pointerEvents: 'none',
       position: "absolute",
+      display: (rectangle.left !== null && rectangle.top !== null && rectangle.right !== null && rectangle.bottom !== null)? "block": "none",
       left: rectangle.left !== null? rectangle.left-15: 0,
       top: rectangle.top !== null? rectangle.top-15: 0,
       width: (rectangle.right !== null && rectangle.left !== null)? rectangle.right - rectangle.left+30: 0,
@@ -38,6 +40,7 @@ export const GroupBoxComponent = (props: Props) => {
       border: `5px solid ${interpolateColor(basePressure)}`,
       zIndex: 9999,
     })
+    console.log(rectangle)
   }, [rectangle])
   return <div style={style}></div>
 }
