@@ -460,10 +460,13 @@ export const Note: () => JSX.Element = () => {
   useEffect(() => {
     setTimeout(() => {
       const groupBoxTmp = fabricDrawer?.getGroupBox();
-      if (groupBoxTmp?.bottom !== null && groupBoxTmp?.left !== null && groupBoxTmp?.top !== null && groupBoxTmp?.right !== null) {
-        setGroupBoxState(groupBoxTmp);
+      // if (groupBoxTmp?.bottom !== null && groupBoxTmp?.left !== null && groupBoxTmp?.top !== null && groupBoxTmp?.right !== null) {
+      setGroupBoxState(groupBoxTmp);
+      if (groupBoxTmp?.bottom === null && groupBoxTmp?.left === null && groupBoxTmp?.top === null && groupBoxTmp?.right === null) {
+        setStorePressureVal(0);
+        setBasisPressure(0);
       }
-    }, 10)
+    }, 100)
   }, [fabricDrawer?.getStrokeLength()])
 
   // const buttonClick = () => {
@@ -542,6 +545,7 @@ export const Note: () => JSX.Element = () => {
     drawStartTime = Math.round(performance.now() * PRESSURE_ROUND_VALUE) / PRESSURE_ROUND_VALUE;
     strokePressureList = [];
     setIsDraw(true);
+    clearTimeout(longDurationTimer);
   }
 
   const handleEraseMove = (event: PointerEvent<HTMLCanvasElement>) => {
@@ -691,7 +695,9 @@ export const Note: () => JSX.Element = () => {
               position: "relative" 
             }}
           >
-            {groupBoxState && !isDraw && <GroupBoxComponent rectangle={groupBoxState} basePressure={basisPressure} />}
+            {groupBoxState && !isDraw && 
+              <GroupBoxComponent rectangle={groupBoxState} basePressure={basisPressure} />
+            }
             <Box
               className="fabric-canvas-wrapper"
               sx={{
