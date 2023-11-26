@@ -22,7 +22,7 @@ import Spacer from "@/components/common/Spacer";
 
 export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
   const theme = useTheme();
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(1);
   const maxSteps = 2;
   const [avgPressureOfStroke, ] = useAtom(avgPressureOfStrokeAtom);
   const [basisPressure, ] = useAtom(basisPressureAtom);
