@@ -300,13 +300,11 @@ export const Note: () => JSX.Element = () => {
       //     if (isIncreasing === null && (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE) >= 0.5) {
       //       isIncreasing = diff > 0;
       //       const tmp = waveCount + 1;
-      //       console.log("a", tmp)
       //       setWaveCount(tmp)
       //       basePressure = (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE)
       //     } else if (isIncreasing !== null&&((diff > 0 && !isIncreasing) || (diff < 0 && isIncreasing))) {
       //       isIncreasing = !isIncreasing;
       //       const tmp = waveCount + 1;
-      //       console.log("b", tmp)
       //       setWaveCount(tmp)
       //       basePressure = (Math.round(event.pressure*PRESSURE_ROUND_VALUE)/PRESSURE_ROUND_VALUE)
       //     }
@@ -612,9 +610,27 @@ export const Note: () => JSX.Element = () => {
               } else if (drawMode === "pressureStrokeErase") {
                 // 筆圧が近いストロークのみ削除
                 if (strokeTransformPressure) {
-                  if (tmpPressure >= strokeTransformPressure - 0.1 && tmpPressure <= strokeTransformPressure + 0.1) {
-                    fabricDrawer?.removeStroke(stroke);
+                  // 細かいversion
+                  // if (tmpPressure >= strokeTransformPressure - 0.1 && tmpPressure <= strokeTransformPressure + 0.1) {
+                  //   fabricDrawer?.removeStroke(stroke);
+                  // }
+
+                  // 強中弱バージョン
+                  if (tmpPressure >= 0 && tmpPressure <= 0.35) {
+                    if (strokeTransformPressure >= 0 && strokeTransformPressure <= 0.35) {
+                      fabricDrawer?.removeStroke(stroke);
+                    }
+                  } else if (tmpPressure >= 0.35 && tmpPressure <= 0.7) {
+                    if (strokeTransformPressure >= 0.35 && strokeTransformPressure <= 0.7) {
+                      fabricDrawer?.removeStroke(stroke);
+                    }
                   }
+                  else if (tmpPressure >= 0.7 && tmpPressure <= 1) {
+                    if (strokeTransformPressure >= 0.7 && strokeTransformPressure <= 1) {
+                      fabricDrawer?.removeStroke(stroke);
+                    }
+                  }
+
                 }
               }
               setEraseStrokes(eraseStrokes.concat([stroke]));
