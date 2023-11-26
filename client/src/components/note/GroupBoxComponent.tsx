@@ -40,7 +40,6 @@ export const GroupBoxComponent = (props: Props) => {
       border: `5px solid ${interpolateColor(basePressure)}`,
       zIndex: 9999,
     })
-    console.log(rectangle)
   }, [rectangle])
   return <div style={style}></div>
 }
