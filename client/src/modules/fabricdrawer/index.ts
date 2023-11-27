@@ -499,23 +499,6 @@ export class FabricDrawer {
           prevRight = null;
           pressure = object["pressure"];
         }
-        if (prevGroupNum !== object["groupNum"] && index === this.editor.canvas._objects.length - 1) {
-          groupBoxList.push({
-            "top": object["top"],
-            "bottom": object["top"] + object["height"],
-            "left": object["left"],
-            "right": object["left"] + object["width"],
-            "pressure": object["pressure"],
-          })
-        } else if (index === this.editor.canvas._objects.length - 1) {
-          groupBoxList.push({
-            "top": prevTop,
-            "bottom": prevBottom,
-            "left": prevLeft,
-            "right": prevRight,
-            "pressure": pressure,
-          })
-        }
         const top = prevTop;
         const bottom = prevBottom;
         const left = prevLeft;
@@ -533,6 +516,24 @@ export class FabricDrawer {
         }
         if (right === null || right < objRight) {
           prevRight = Math.ceil(objRight);
+        }
+
+        if (prevGroupNum !== object["groupNum"] && index === this.editor.canvas._objects.length - 1) {
+          groupBoxList.push({
+            "top": object["top"],
+            "bottom": object["top"] + object["height"],
+            "left": object["left"],
+            "right": object["left"] + object["width"],
+            "pressure": object["pressure"],
+          })
+        } else if (index === this.editor.canvas._objects.length - 1) {
+          groupBoxList.push({
+            "top": prevTop,
+            "bottom": prevBottom,
+            "left": prevLeft,
+            "right": prevRight,
+            "pressure": pressure,
+          })
         }
       }
     })
