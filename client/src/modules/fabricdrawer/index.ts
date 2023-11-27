@@ -526,7 +526,7 @@ export class FabricDrawer {
             "right": object["left"] + object["width"],
             "pressure": object["pressure"],
           })
-        } else if (index === this.editor.canvas._objects.length - 1) {
+        } else if (index === this.editor.canvas._objects.length - 1 || (index !== this.editor.canvas._objects.length - 1 && prevGroupNum !== object["groupNum"])) {
           groupBoxList.push({
             "top": prevTop,
             "bottom": prevBottom,
