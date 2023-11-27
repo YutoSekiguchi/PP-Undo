@@ -482,7 +482,7 @@ export class FabricDrawer {
     this.editor.canvas._objects.map((object: any, index: number) => {
       console.log(object)
       if (object["isGrouping"] === true) {
-        if (prevGroupNum !== object["groupNum"]) {
+        if (prevGroupNum !== object["groupNum"] && index !== this.editor.canvas._objects.length - 1) {
           if (prevGroupNum !== -1) {
             groupBoxList.push({
               "top": prevTop,
@@ -499,7 +499,7 @@ export class FabricDrawer {
           prevRight = null;
           pressure = object["pressure"];
         }
-        if (prevGroupNum !== object["groupNum"] || index === this.editor.canvas._objects.length - 1) {
+        if (prevGroupNum !== object["groupNum"] && index === this.editor.canvas._objects.length - 1) {
           groupBoxList.push({
             "top": object["top"],
             "bottom": object["top"] + object["height"],
