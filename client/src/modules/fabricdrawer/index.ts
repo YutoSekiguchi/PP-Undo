@@ -362,7 +362,6 @@ export class FabricDrawer {
         object["isGrouping"] = true;
         object["pressure"] = pressure;
         object.set({groupNum: groupNum});
-        // TODO: 追加
         object.set({stroke: object["baseStrokeColor"]});
       }
     })
@@ -432,15 +431,20 @@ export class FabricDrawer {
     return Math.round((total / count) * 100) / 100;
   }
 
+  // 書いてる最中のGroupBoxを定義
   getGroupBox = (): TGroupBox => {
     let groupBox: TGroupBox = {
       "top": null,
       "bottom": null,
       "left": null,
       "right": null,
+      "pressure": null,
     }
     this.editor.canvas._objects.map((object: any, _: number) => {
       if (object["isGrouping"] === false) {
+        if (groupBox["pressure"] === null) {
+          groupBox["pressure"] = object.pressure;
+        }
         const top = groupBox["top"];
         const bottom = groupBox["bottom"];
         const left = groupBox["left"];
@@ -462,5 +466,68 @@ export class FabricDrawer {
       }
     })
     return groupBox;
+  }
+
+  // これまでに作成されたGroupBoxを定義
+  getAlreadyMadeGroupBoxes = (): TGroupBox[] => {
+    let groupBoxList: TGroupBox[] = [];
+    let prevGroupNum = -1;
+    let prevTop: null | number = null;
+    let prevBottom: null | number = null;
+    let prevLeft: null | number = null;
+    let prevRight: null | number = null;
+    let pressure: null | number = null;
+    
+    // isGroupingがTrueの中でGroupNumごとにGroupBoxを作成
+    this.editor.canvas._objects.map((object: any, index: number) => {
+      console.log(object)
+      if (object["isGrouping"] === true) {
+        if (prevGroupNum !== object["groupNum"]) {
+          if (prevGroupNum !== -1) {
+            groupBoxList.push({
+              "top": prevTop,
+              "bottom": prevBottom,
+              "left": prevLeft,
+              "right": prevRight,
+              "pressure": pressure,
+            })
+          }
+          prevGroupNum = object["groupNum"];
+          prevTop = null;
+          prevBottom = null;
+          prevLeft = null;
+          prevRight = null;
+          pressure = object["pressure"];
+        }
+        if (index === this.editor.canvas._objects.length - 1) {
+          groupBoxList.push({
+            "top": object["top"],
+            "bottom": object["top"] + object["height"],
+            "left": object["left"],
+            "right": object["left"] + object["width"],
+            "pressure": object["pressure"],
+          })
+        }
+        const top = prevTop;
+        const bottom = prevBottom;
+        const left = prevLeft;
+        const right = prevRight;
+        const objBottom = object["top"] + object["height"];
+        const objRight = object["left"] + object["width"];
+        if (top === null || top > object["top"]) {
+          prevTop = Math.floor(object["top"]);
+        }
+        if (bottom === null || bottom < objBottom) {
+          prevBottom = Math.ceil(objBottom);
+        }
+        if (left === null || left > object["left"]) {
+          prevLeft = Math.floor(object["left"]);
+        }
+        if (right === null || right < objRight) {
+          prevRight = Math.ceil(objRight);
+        }
+      }
+    })
+    return groupBoxList;
   }
 }

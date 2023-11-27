@@ -9,7 +9,7 @@ import { isAuth } from "@/modules/common/isAuth";
 import { NoteGraphAreas } from "@/components/note/graphAreas";
 import { getAveragePressure } from "@/modules/note/GetAveragePressure";
 import { NewNoteHeader } from "@/components/note/header";
-import { addAvgPressureOfStrokeAtom, addHistoryAtom, addHistoryGroupPressureAtom, avgPressureOfStrokeAtom, backgroundImageAtom, basisPressureAtom, drawModeAtom, getPressureModeAtom, historyForRedoAtom, historyGroupPressureAtom, isDemoAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, nowPointPressureAtom, pointerXAtom, pointerYAtom, ppUndoCountAtom, redoCountAtom, resetAtom, undoCountAtom, waveCountAtom } from "@/infrastructures/jotai/drawer";
+import { addAvgPressureOfStrokeAtom, addHistoryAtom, addHistoryGroupPressureAtom, avgPressureOfStrokeAtom, backgroundImageAtom, basisPressureAtom, drawModeAtom, getPressureModeAtom, historyForRedoAtom, historyGroupPressureAtom, isDemoAtom, isShowAllGroupBoxAtom, logOfBeforePPUndoAtom, logRedoCountAtom, noteAspectRatiotAtom, nowPointPressureAtom, pointerXAtom, pointerYAtom, ppUndoCountAtom, redoCountAtom, resetAtom, undoCountAtom, waveCountAtom } from "@/infrastructures/jotai/drawer";
 import { isLineSegmentIntersecting } from "@/modules/note/IsLineSegmentIntersecting";
 import { getMinimumPoints } from "@/modules/note/GetMinimumPoints";
 import NoteImg from "@/assets/note.png"
@@ -78,6 +78,7 @@ export const Note: () => JSX.Element = () => {
   const [pY, setPointerY] = useAtom(pointerYAtom);
   const [getPressureMode,] = useAtom(getPressureModeAtom);
   const [historyGroupPressure, setHistoryGroupPressure] = useAtom(historyGroupPressureAtom);
+  const [isShowAllGroupBox, ] = useAtom(isShowAllGroupBoxAtom);
 
   useEffect(() => {
     if (!editor || !fabric || !(fabricDrawer === undefined && !!editor)) {
@@ -446,7 +447,7 @@ export const Note: () => JSX.Element = () => {
         setStorePressureVal(0);
         setBasisPressure(0);
         setGroupBoxState(undefined);
-      }, 8000)
+      }, 4000)
     setWaveCount(0)
     setDurationStrokePressureList([])
     basePointInfo = {time: -1, pointerX: -1, pointerY: -1}
@@ -711,8 +712,18 @@ export const Note: () => JSX.Element = () => {
               position: "relative" 
             }}
           >
-            {groupBoxState && !isDraw && 
+            {groupBoxState && !isDraw && (getPressureMode=="transform") && 
               <GroupBoxComponent rectangle={groupBoxState} basePressure={basisPressure} />
+            }
+            {
+              isShowAllGroupBox && !isDraw && 
+              <>
+                {
+                  fabricDrawer?.getAlreadyMadeGroupBoxes().map((groupBox: TGroupBox, index: number) => {
+                    return <GroupBoxComponent rectangle={groupBox} basePressure={groupBox["pressure"] || 0} key={index} />
+                  }
+                )}
+              </>
             }
             <Box
               className="fabric-canvas-wrapper"

@@ -12,7 +12,7 @@ export const GroupBoxComponent = (props: Props) => {
     // 色相（Hue）を計算し、0から240の範囲にマッピング
     const hue = (1 - value) * 240;
     // HSLカラーモデルを使用して色を生成
-    const hslColor = `hsla(${hue}, 100%, 50%, 30%)`;
+    const hslColor = `hsla(${hue}, 100%, 50%, 50%)`;
     return hslColor;
   }
 

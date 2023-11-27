@@ -221,4 +221,5 @@ export interface TGroupBox {
   bottom: number | null;
   right: number | null;
   left: number | null;
+  pressure: number | null;
 }

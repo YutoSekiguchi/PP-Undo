@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAtom } from 'jotai'
-import { avgPressureOfStrokeAtom, basisPressureAtom, getPressureModeAtom, historyGroupPressureAtom, nowPointPressureAtom, pointerXAtom, pointerYAtom, waveCountAtom } from "@/infrastructures/jotai/drawer";
+import { avgPressureOfStrokeAtom, basisPressureAtom, getPressureModeAtom, historyGroupPressureAtom, isShowAllGroupBoxAtom, nowPointPressureAtom, pointerXAtom, pointerYAtom, waveCountAtom } from "@/infrastructures/jotai/drawer";
 import {
   Box, Button, MobileStepper, Typography 
 } from "@mui/material";
@@ -19,6 +19,7 @@ import { BORDER_WAVE_COUNT } from "@/configs/settings";
 import { getGradientColor } from "@/modules/note/GetGradientColor";
 import ModeChangeIcon from "@/components/icons/ModeChangeIcon";
 import Spacer from "@/components/common/Spacer";
+import GradientButton from "@/components/common/GradientButton";
 
 export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricDrawer }) => {
   const theme = useTheme();
@@ -32,6 +33,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
   const [waveCount, ] = useAtom(waveCountAtom);
   const [pointerX, ] = useAtom(pointerXAtom);
   const [pointerY, ] = useAtom(pointerYAtom);
+  const [isShowAllGroupBox, setIsShowAllGroupBox] = useAtom(isShowAllGroupBoxAtom);
 
   const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     borderRadius: 5,
@@ -100,6 +102,10 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
+
+  const handleClickShowAllGroupBox = () => {
+    setIsShowAllGroupBox(!isShowAllGroupBox);
+  }
 
   const changePressureMode = () => {
     if (activeStep == 0) {
@@ -198,23 +204,6 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
                 value={100-basisPressure*100}
               />
               </Box>
-              {/* <Box className="white-text center" sx={{width: "100%", marginTop: 1,}}>
-                <Typography fontSize={14} fontWeight="bold">
-                  リアルタイム筆圧
-                </Typography>
-              </Box>
-              <Box className="white-text center" sx={{width: "100%"}}>
-                <Typography fontSize={14} fontWeight="bold">
-                  {`${nowPointPressure.toString()}${6-nowPointPressure.toString().length != 0 ? (nowPointPressure ==0 || nowPointPressure ==1)? (".0000"): ("0".repeat(6-nowPointPressure.toString().length)): ""}`}
-                </Typography>
-              
-              <NowBorderLinearProgress
-                variant="determinate"
-                value={nowPointPressure*100}
-              />
-
-              
-              </Box> */}
             </Box>
             <Box className="white-text center" sx={{width: "100%", marginTop: 3}}>
               <Typography fontSize={12} fontWeight="bold">
@@ -236,8 +225,6 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
                 ))
               }
             </Box>
-            {/* <NowPressureGraphArea /> */}
-            {/* <AvgPressureGraphArea /> */}
           </>
         }
         <GraphStepper
@@ -270,7 +257,11 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
         }
       />
       </Box>
-      
+      <Box className="center">
+        <Box onClick={handleClickShowAllGroupBox}>
+          <GradientButton text={isShowAllGroupBox? "グループを非表示":"グループ表示"} />
+        </Box>
+      </Box>
     </Box>
 	);
 }

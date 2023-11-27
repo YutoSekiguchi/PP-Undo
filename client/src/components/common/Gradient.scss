@@ -1,0 +1,16 @@
+.gradient-button {
+  padding: 10px 20px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(to right, #9D50BB, #6E48AA);
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  outline: none;
+  transition: opacity 0.3s;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}

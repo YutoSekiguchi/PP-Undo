@@ -11,6 +11,12 @@ export const drawModeAtom = atom<"pen" | "strokeErase" | "pointer" | "pressureSt
 
 /**
  * @description
+ * 全体のGroupの可視化の表示管理
+ */
+export const isShowAllGroupBoxAtom = atom<boolean>(false);
+
+/**
+ * @description
  * デモかどうか
  */
 export const isDemoAtom = atom<boolean>(false);
