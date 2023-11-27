@@ -480,7 +480,6 @@ export class FabricDrawer {
     
     // isGroupingがTrueの中でGroupNumごとにGroupBoxを作成
     this.editor.canvas._objects.map((object: any, index: number) => {
-      console.log(object)
       if (object["isGrouping"] === true) {
         if (prevGroupNum !== object["groupNum"] && index !== this.editor.canvas._objects.length - 1) {
           if (prevGroupNum !== -1) {
@@ -518,7 +517,13 @@ export class FabricDrawer {
           prevRight = Math.ceil(objRight);
         }
 
-        if (prevGroupNum !== object["groupNum"] && index === this.editor.canvas._objects.length - 1) {
+        let isLast = true;
+        let copyObj: any = null;
+        if (this.editor.canvas._objects.length - 1 !== index) {
+          isLast = false;
+          copyObj = this.editor.canvas._objects[index + 1];
+        }
+        if (prevGroupNum !== object["groupNum"] && isLast) {
           groupBoxList.push({
             "top": object["top"],
             "bottom": object["top"] + object["height"],
@@ -526,7 +531,7 @@ export class FabricDrawer {
             "right": object["left"] + object["width"],
             "pressure": object["pressure"],
           })
-        } else if (index === this.editor.canvas._objects.length - 1 || (index !== this.editor.canvas._objects.length - 1 && prevGroupNum !== object["groupNum"])) {
+        } else if (isLast || (!isLast && copyObj["isGrouping"] === false)) {
           groupBoxList.push({
             "top": prevTop,
             "bottom": prevBottom,
