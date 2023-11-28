@@ -210,7 +210,7 @@ export const NoteGraphAreas: React.FC<{fabricDrawer: FabricDrawer}> = ({ fabricD
                 これまでの筆圧グループ
               </Typography>
             </Box>
-            <Box sx={{height: "40%", overflow: "scroll", overflowX: "hidden"}}>
+            <Box sx={{maxHeight: "250px", overflowY: "scroll", overflowX: "hidden"}}>
               {
                 historyGroupPressure.map((v: number, i: number) => (
                   <Box className="white-text center" sx={{ marginBottom: 2 }} key={i}>
